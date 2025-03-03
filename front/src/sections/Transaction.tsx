@@ -66,7 +66,7 @@ function Transaction() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    
+
     // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false);
@@ -80,7 +80,7 @@ function Transaction() {
 
   if (isComplete) {
     return (
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-white/90 text-black">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="bg-[#161617] rounded-2xl p-8 text-center">
@@ -91,7 +91,7 @@ function Transaction() {
             </div>
             <h2 className="text-3xl font-bold mb-4">Payment Successful!</h2>
             <p className="text-gray-400 mb-8">Your transaction has been completed successfully.</p>
-            <button 
+            <button
               onClick={() => navigate('/')}
               className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
             >
@@ -105,39 +105,39 @@ function Transaction() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white/90 text-black">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-16">
-        <button 
+        <button
           onClick={goBack}
-          className="flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+          className="flex items-center text-gray-700 hover:text-white mb-8 transition-colors"
         >
           <ArrowLeft className="mr-2 h-5 w-5" />
           Back
         </button>
 
-        <div className="bg-[#161617] rounded-2xl p-8">
-          <h1 className="text-2xl font-bold mb-8">Complete Your Transaction</h1>
-          
+        <div className="bg-gray-200/70 rounded-2xl p-8">
+          <h1 className="text-2xl font-bold mb-8 text-gray-700">Complete Your Transaction</h1>
+
           {seller ? (
-            <div className="mb-8 p-6 bg-[#232324] rounded-lg">
-              <h2 className="text-xl font-semibold mb-4">Seller Information</h2>
+            <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">Seller Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-gray-400">Name</p>
-                  <p className="text-white font-medium">{seller.name}</p>
+                  <p className="text-gray-700">Name</p>
+                  <p className="text-gray-800 font-medium">{seller.name}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Location</p>
-                  <p className="text-white font-medium">{seller.location}</p>
+                  <p className="text-gray-700">Location</p>
+                  <p className="text-gray-800 font-medium">{seller.location}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Rating</p>
+                  <p className="text-gray-700">Rating</p>
                   <p className="text-yellow-500">{'★'.repeat(seller.rating)}{'☆'.repeat(5 - seller.rating)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Reviews</p>
-                  <p className="text-white font-medium">{seller.reviews} reviews</p>
+                  <p className="text-gray-700">Reviews</p>
+                  <p className="text-gray-800 font-medium">{seller.reviews} reviews</p>
                 </div>
               </div>
             </div>
@@ -148,19 +148,19 @@ function Transaction() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">Payment Method</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div 
-                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'credit' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+              <div
+                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'credit' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500'}`}
                 onClick={() => handlePaymentMethodChange('credit')}
               >
                 <div className="flex items-center">
                   <CreditCard className="h-6 w-6 mr-3 text-gray-400" />
-                  <span>Credit Card</span>
+                  <span className='text-gray-700'>Credit Card</span>
                 </div>
               </div>
-              <div 
-                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'wallet' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+              <div
+                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'wallet' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500'}`}
                 onClick={() => handlePaymentMethodChange('wallet')}
               >
                 <div className="flex items-center">
@@ -168,8 +168,8 @@ function Transaction() {
                   <span>Digital Wallet</span>
                 </div>
               </div>
-              <div 
-                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'cash' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+              <div
+                className={`p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'cash' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500'}`}
                 onClick={() => handlePaymentMethodChange('cash')}
               >
                 <div className="flex items-center">
@@ -180,11 +180,11 @@ function Transaction() {
             </div>
 
             {paymentMethod === 'credit' && (
-              <div className="bg-[#232324] p-6 rounded-lg mb-8 animate-fadeIn">
-                <h3 className="text-lg font-medium mb-4">Credit Card Details</h3>
+              <div className="bg-gray-300/50 p-6 rounded-lg mb-8 animate-fadeIn">
+                <h3 className="text-lg font-medium mb-4 text-gray-700">Credit Card Details</h3>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="cardNumber" className="block text-sm text-gray-400 mb-1">Card Number</label>
+                    <label htmlFor="cardNumber" className="block text-sm text-gray-700 mb-1">Card Number</label>
                     <input
                       type="text"
                       id="cardNumber"
@@ -192,7 +192,7 @@ function Transaction() {
                       value={cardDetails.cardNumber}
                       onChange={handleCardInputChange}
                       placeholder="1234 5678 9012 3456"
-                      className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                       required
                     />
                   </div>
@@ -205,7 +205,7 @@ function Transaction() {
                       value={cardDetails.cardHolder}
                       onChange={handleCardInputChange}
                       placeholder="John Doe"
-                      className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                       required
                     />
                   </div>
@@ -219,7 +219,7 @@ function Transaction() {
                         value={cardDetails.expiryDate}
                         onChange={handleCardInputChange}
                         placeholder="MM/YY"
-                        className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                         required
                       />
                     </div>
@@ -232,7 +232,7 @@ function Transaction() {
                         value={cardDetails.cvv}
                         onChange={handleCardInputChange}
                         placeholder="123"
-                        className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                         required
                       />
                     </div>
@@ -242,30 +242,30 @@ function Transaction() {
             )}
 
             {paymentMethod === 'wallet' && (
-              <div className="bg-[#232324] p-6 rounded-lg mb-8 animate-fadeIn">
+              <div className="bg-gray-300/50 p-6 rounded-lg mb-8 animate-fadeIn">
                 <h3 className="text-lg font-medium mb-4">Digital Wallet</h3>
-                <p className="text-gray-400 mb-4">Choose your preferred digital wallet:</p>
+                <p className="text-gray-700 mb-4">Choose your preferred digital wallet:</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div 
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'PayPal' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+                  <div
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'PayPal' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('PayPal')}
                   >
                     <p>PayPal</p>
                   </div>
-                  <div 
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'GCash' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+                  <div
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'GCash' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('GCash')}
                   >
                     <p>GCash</p>
                   </div>
-                  <div 
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Maya' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+                  <div
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Maya' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('Maya')}
                   >
                     <p>Maya</p>
                   </div>
-                  <div 
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Coins.ph' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500'}`}
+                  <div
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Coins.ph' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('Coins.ph')}
                   >
                     <p>Coins.ph</p>
@@ -317,11 +317,10 @@ function Transaction() {
               <button
                 type="submit"
                 disabled={!paymentMethod || (paymentMethod === 'wallet' && !selectedWallet) || isProcessing}
-                className={`px-8 py-3 rounded-full font-medium transition-all ${
-                  !paymentMethod || (paymentMethod === 'wallet' && !selectedWallet) || isProcessing
+                className={`px-8 py-3 rounded-full font-medium transition-all ${!paymentMethod || (paymentMethod === 'wallet' && !selectedWallet) || isProcessing
                     ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                  }`}
               >
                 {isProcessing ? 'Processing...' : 'Complete Payment'}
               </button>

@@ -31,9 +31,9 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#161617] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-700 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-white">Sellers for {productName}</h2>
+      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+        <div className="p-6 flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-black">Sellers for {productName}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -50,18 +50,18 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
               {sellers.map((seller) => (
                 <div
                   key={seller.id}
-                  className="bg-[#232324] rounded-lg p-4 flex items-center justify-between hover:bg-[#2c2c2d] transition-colors cursor-pointer"
+                  className="bg-gray-200 rounded-lg p-4 flex items-center justify-between hover:bg-gray-300 transition-colors cursor-pointer"
                   onClick={() => handleSellerSelect(seller)}
                 >
                   <div>
-                    <h3 className="text-white font-medium">{seller.name}</h3>
-                    <p className="text-gray-400 text-sm mt-1">Location: {seller.location}</p>
+                    <h3 className="text-black font-medium">{seller.name}</h3>
+                    <p className="text-gray-700 text-sm mt-1">Location: {seller.location}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-yellow-500 mb-1">
                       {'★'.repeat(seller.rating)}{'☆'.repeat(5 - seller.rating)}
                     </div>
-                    <p className="text-gray-400 text-sm">{seller.reviews} reviews</p>
+                    <p className="text-gray-700 text-sm">{seller.reviews} reviews</p>
                   </div>
                 </div>
               ))}
@@ -69,10 +69,10 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
           )}
         </div>
         
-        <div className="p-6 border-t border-gray-700 flex justify-end">
+        <div className="p-6 border-t border-gray-300 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+            className="px-6 py-2 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-colors"
           >
             Close
           </button>

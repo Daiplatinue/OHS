@@ -195,7 +195,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white/90">
 
       <Navbar />
 
@@ -283,16 +283,16 @@ function App() {
       </div>
 
       {/* Featured Products */}
-      <div className="bg-black text-gray-300 py-16">
+      <div className="bg-white/90 text-black py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col space-y-8">
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-semibold scroll-reveal">Featured Services</h2>
-              <p className="text-sm text-gray-400">Showing {filteredProducts.length} services</p>
+              <p className="text-sm text-gray-500">Showing {filteredProducts.length} services</p>
             </div>
 
             {/* Filters Bar */}
-            <div className="flex flex-wrap gap-4 items-center bg-[#161617] p-4 rounded-lg">
+            <div className="flex flex-wrap gap-4 items-center bg-gray-200/70 p-4 rounded-lg">
               {/* Search */}
               <div className="relative flex-grow max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -301,7 +301,7 @@ function App() {
                   placeholder="Search services"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-[#232324] rounded-full text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 bg-white rounded-full text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -311,7 +311,7 @@ function App() {
                   type="number"
                   value={priceRange[0]}
                   onChange={(e) => handlePriceChange(Number(e.target.value), 0)}
-                  className="w-24 px-3 py-2 bg-[#232324] rounded-full text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-24 px-3 py-2 bg-white rounded-full text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Min"
                 />
                 <span>-</span>
@@ -319,7 +319,7 @@ function App() {
                   type="number"
                   value={priceRange[1]}
                   onChange={(e) => handlePriceChange(Number(e.target.value), 1)}
-                  className="w-24 px-3 py-2 bg-[#232324] rounded-full text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-24 px-3 py-2 bg-white rounded-full text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Max"
                 />
               </div>
@@ -332,7 +332,7 @@ function App() {
                     onClick={() => handleCategoryToggle(category)}
                     className={`px-4 py-2 rounded-full text-sm transition-all ${selectedCategories.includes(category)
                       ? 'bg-blue-500 text-white'
-                      : 'bg-[#232324] text-gray-300 hover:bg-[#2c2c2d]'
+                      : 'bg-white text-black hover:bg-gray-300 cursor-pointer'
                       }`}
                   >
                     {category}
@@ -356,7 +356,7 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {filteredProducts.map((product) => (
                 <div key={product.id}
-                  className="group cursor-pointer bg-black border border-gray-500 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 scroll-reveal hover-scale">
+                  className="group cursor-pointer bg-gray-200/70 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 scroll-reveal hover-scale">
                   <div className="relative overflow-hidden rounded-lg mb-4">
                     <img
                       src={product.image}
@@ -364,13 +364,13 @@ function App() {
                       className="w-full h-64 object-cover transform transition duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-lg font-medium mb-2 text-white">{product.name}</h3>
-                  <p className="text-sm text-gray-400 mb-16 line-clamp-3">{product.description}</p>
+                  <h3 className="text-lg font-medium mb-2 text-black">{product.name}</h3>
+                  <p className="text-sm text-gray-600 mb-16 line-clamp-3">{product.description}</p>
                   <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
-                    <span className="text-lg font-medium text-white">₱{product.price}</span>
+                    <span className="text-lg font-medium text-black">₱{product.price}</span>
                     <button
                       onClick={() => handleSeeMore(product.name)}
-                      className="text-blue-500 flex items-center transition-all duration-300 hover:text-blue-600 hover:translate-x-1"
+                      className="text-sky-500 flex items-center transition-all duration-300 hover:text-blue-600 hover:translate-x-1"
                     >
                       See More <ChevronRight className="h-4 w-4 ml-1" />
                     </button>

@@ -5,6 +5,7 @@ import Home from './sections/Home';
 import Login from './sections/Login';
 import HeroSection from './sections/HeroSection';
 import Transaction from './sections/Transaction';
+import Admin from './sections/Admin';
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/hero' element={<HeroSection />} />
         <Route path='/transaction' element={<Transaction />} />
+        <Route path='/admin' element={<Admin />} />
 
 
       </Routes>
