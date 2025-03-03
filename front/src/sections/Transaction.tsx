@@ -83,17 +83,17 @@ function Transaction() {
       <div className="min-h-screen bg-white/90 text-black">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-16">
-          <div className="bg-[#161617] rounded-2xl p-8 text-center">
-            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-gray-300/50 rounded-2xl p-8 text-center">
+            <div className="w-20 h-20 bg-green-400/90 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold mb-4">Payment Successful!</h2>
-            <p className="text-gray-400 mb-8">Your transaction has been completed successfully.</p>
+            <h2 className="text-3xl font-bold mb-4 text-gray-700">Payment Successful!</h2>
+            <p className="text-gray-600 mb-8">Your transaction has been completed successfully.</p>
             <button
               onClick={() => navigate('/')}
-              className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+              className="px-8 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-colors"
             >
               Return to Home
             </button>
@@ -165,7 +165,7 @@ function Transaction() {
               >
                 <div className="flex items-center">
                   <Wallet className="h-6 w-6 mr-3 text-gray-400" />
-                  <span>Digital Wallet</span>
+                  <span className='text-gray-700'>Digital Wallet</span>
                 </div>
               </div>
               <div
@@ -174,7 +174,7 @@ function Transaction() {
               >
                 <div className="flex items-center">
                   <DollarSign className="h-6 w-6 mr-3 text-gray-400" />
-                  <span>Cash on Delivery</span>
+                  <span className='text-gray-700'>Cash on Delivery</span>
                 </div>
               </div>
             </div>
@@ -232,7 +232,7 @@ function Transaction() {
                         value={cardDetails.cvv}
                         onChange={handleCardInputChange}
                         placeholder="123"
-                       className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                        className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                         required
                       />
                     </div>
@@ -247,36 +247,36 @@ function Transaction() {
                 <p className="text-gray-700 mb-4">Choose your preferred digital wallet:</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'PayPal' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'PayPal' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('PayPal')}
                   >
-                    <p>PayPal</p>
+                    <p className='text-gray-700'>PayPal</p>
                   </div>
                   <div
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'GCash' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'GCash' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('GCash')}
                   >
-                    <p>GCash</p>
+                    <p className='text-gray-700'>GCash</p>
                   </div>
                   <div
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Maya' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Maya' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('Maya')}
                   >
-                    <p>Maya</p>
+                    <p className='text-gray-700'>Maya</p>
                   </div>
                   <div
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Coins.ph' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-all ${selectedWallet === 'Coins.ph' ? 'border-sky-300 bg-sky-500/10' : 'border-gray-400 hover:border-gray-500 text-gray-800'}`}
                     onClick={() => handleWalletSelect('Coins.ph')}
                   >
-                    <p>Coins.ph</p>
+                    <p className='text-gray-700'>Coins.ph</p>
                   </div>
                 </div>
 
                 {selectedWallet && (
                   <div className="space-y-4 animate-fadeIn">
-                    <h4 className="text-md font-medium mb-2">{selectedWallet} Details</h4>
+                    <h4 className="text-md font-medium mb-2 text-gray-700">{selectedWallet} Details</h4>
                     <div>
-                      <label htmlFor="accountName" className="block text-sm text-gray-400 mb-1">Account Name</label>
+                      <label htmlFor="accountName" className="block text-sm text-gray-500 mb-1">Account Name</label>
                       <input
                         type="text"
                         id="accountName"
@@ -284,7 +284,7 @@ function Transaction() {
                         value={walletDetails.accountName}
                         onChange={handleWalletInputChange}
                         placeholder="Enter your account name"
-                        className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                         required
                       />
                     </div>
@@ -297,7 +297,7 @@ function Transaction() {
                         value={walletDetails.accountNumber}
                         onChange={handleWalletInputChange}
                         placeholder="Enter your account number"
-                        className="w-full px-4 py-3 bg-[#161617] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-gray-200 border border-gray-400 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
                         required
                       />
                     </div>
@@ -307,9 +307,9 @@ function Transaction() {
             )}
 
             {paymentMethod === 'cash' && (
-              <div className="bg-[#232324] p-6 rounded-lg mb-8 animate-fadeIn">
-                <h3 className="text-lg font-medium mb-4">Cash on Delivery</h3>
-                <p className="text-gray-400">Payment will be collected upon service completion.</p>
+              <div className="bg-gray-300/60 p-6 rounded-lg mb-8 animate-fadeIn">
+                <h3 className="text-lg font-medium mb-4 text-gray-700">Cash on Delivery</h3>
+                <p className="text-gray-600">Payment will be collected upon service completion.</p>
               </div>
             )}
 
@@ -318,8 +318,8 @@ function Transaction() {
                 type="submit"
                 disabled={!paymentMethod || (paymentMethod === 'wallet' && !selectedWallet) || isProcessing}
                 className={`px-8 py-3 rounded-full font-medium transition-all ${!paymentMethod || (paymentMethod === 'wallet' && !selectedWallet) || isProcessing
-                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-sky-500 text-white hover:bg-sky-600'
                   }`}
               >
                 {isProcessing ? 'Processing...' : 'Complete Payment'}
