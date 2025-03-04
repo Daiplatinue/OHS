@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, Menu, User, Settings, CreditCard, Projector, MessageCircleMore, LogOut, PowerOff, AtSign, Mail, Bell, CircleUserRound, Newspaper } from 'lucide-react';
+import { Home, User, CreditCard, Projector, MessageCircleMore, PowerOff, Mail, Bell, CircleUserRound, Newspaper } from 'lucide-react';
 
 interface DockItemProps {
   icon: React.ReactNode;
