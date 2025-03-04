@@ -1,3 +1,6 @@
+import { image } from "@heroui/react"
+import image1 from "../../assets/Construction Worker Focused.jpeg";
+
 function ServiceShowcase() {
     return (
         <>
@@ -33,7 +36,7 @@ function ServiceShowcase() {
                         </div>
                         <div className="relative scroll-reveal">
                             <img
-                                src="https://cdn.pixabay.com/photo/2024/08/03/10/09/handyman-8941879_960_720.jpg"
+                                src={image1}
                                 alt="Premium Headphones"
                                 className="rounded-3xl transform hover:scale-105 transition duration-700"
                             />
