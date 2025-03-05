@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo";
-import {MapPin, ChevronRight, Camera } from 'lucide-react';
+import { MapPin, ChevronRight, Camera } from 'lucide-react';
+import AdminBookingModal from './AdminBookingModal';
 
 interface Service {
     id: number;
@@ -8,11 +9,13 @@ interface Service {
     price: number;
     description: string;
     hasNotification: boolean;
+    notificationCount?: number;
     image: string;
 }
 
 function Bookings() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
+    const [showNotification, setShowNotification] = useState(true);
 
     const companyDetails = {
         name: "Sisyphus Ventures",
@@ -20,6 +23,7 @@ function Bookings() {
         description: "Professional home services and repairs with guaranteed satisfaction. Available 24/7 for all your maintenance needs.",
         logo: "https://cdn.pixabay.com/photo/2020/01/25/21/55/adult-4793442_1280.jpg",
         coverPhoto: "https://cdn.pixabay.com/photo/2016/12/05/21/08/cologne-1884931_1280.jpg",
+        followers: 34.5,
     };
 
     const services: Service[] = [
@@ -27,50 +31,11 @@ function Bookings() {
             id: 1,
             name: "Plumbing Services",
             price: 8000,
-            description: "Keep your water systems running smoothly with expert plumbing services, from leak repairs to pipe installations.",
+            description: "Keep your water systems running smoothly with expert plumbing services.",
             hasNotification: true,
+            notificationCount: 3,
             image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg"
         },
-        {
-            id: 2,
-            name: "Handyman Services",
-            price: 5499,
-            description: "Get quality home repairs and improvements at HandyGo's discounted rates—fast, affordable, and hassle-free.",
-            hasNotification: false,
-            image: "https://cdn.pixabay.com/photo/2023/09/07/15/30/ai-generated-8239323_960_720.png"
-        },
-        {
-            id: 3,
-            name: "Home Cleaning Services",
-            price: 12000,
-            description: "Enjoy a spotless, sanitized home with deep cleaning, carpet care, and move-in/move-out services.",
-            hasNotification: false,
-            image: "https://cdn.pixabay.com/photo/2024/04/17/17/10/ai-generated-8702547_1280.jpg"
-        },
-        {
-            id: 4,
-            name: "Pest Control Services",
-            price: 29000,
-            description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
-            hasNotification: false,
-            image: "https://cdn.pixabay.com/photo/2023/07/04/10/32/ai-generated-8106005_960_720.jpg"
-        },
-        {
-            id: 5,
-            name: "Pest Control Services",
-            price: 29000,
-            description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
-            hasNotification: false,
-            image: "https://cdn.pixabay.com/photo/2023/07/04/10/32/ai-generated-8106005_960_720.jpg"
-        },
-        {
-            id: 6,
-            name: "Pest Control Services",
-            price: 29000,
-            description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
-            hasNotification: false,
-            image: "https://cdn.pixabay.com/photo/2023/07/04/10/32/ai-generated-8106005_960_720.jpg"
-        }
     ];
 
     return (
@@ -84,7 +49,7 @@ function Bookings() {
             <div className="max-w-7xl mx-auto">
                 {/* Cover Photo */}
                 <div className="relative h-80 overflow-hidden rounded-b-3xl">
-                    <img 
+                    <img
                         src={companyDetails.coverPhoto}
                         alt="Cover"
                         className="w-full h-full object-cover"
@@ -94,12 +59,12 @@ function Bookings() {
                     </button>
                 </div>
 
-                {/* Profile Info */}
+                {/* Profile Info with Stats */}
                 <div className="relative px-4 pb-8">
                     <div className="absolute -top-16 left-8">
                         <div className="relative">
                             <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-white">
-                                <img 
+                                <img
                                     src={companyDetails.logo}
                                     alt={companyDetails.name}
                                     className="w-full h-full object-cover"
@@ -111,18 +76,37 @@ function Bookings() {
                         </div>
                     </div>
 
-                    <div className="pt-20 flex justify-between items-start">
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">{companyDetails.name}</h1>
-                            <div className="flex items-center gap-2 mt-1 text-gray-600">
-                                <MapPin className="h-4 w-4" />
-                                <span>{companyDetails.location}</span>
+                    <div className="pt-20">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">{companyDetails.name}</h1>
+                                <div className="flex items-center gap-2 mt-1 text-gray-600">
+                                    <MapPin className="h-4 w-4" />
+                                    <span>{companyDetails.location}</span>
+                                </div>
                             </div>
-                            <p className="mt-4 text-gray-600 max-w-2xl">{companyDetails.description}</p>
+                            <button className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all">
+                                Edit Profile
+                            </button>
                         </div>
-                        <button className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all">
-                            Edit Profile
-                        </button>
+
+                        {/* Stats Section */}
+                        <div className="flex gap-6 mb-6">
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-semibold">{companyDetails.followers.toLocaleString() + 'M'}</div>
+                                    <div className="text-sm text-gray-600">Followers</div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-semibold">6.7M</div>
+                                    <div className="text-sm text-gray-600">Reviews</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p className="text-gray-600 max-w-2xl">{companyDetails.description}</p>
                     </div>
                 </div>
 
@@ -134,10 +118,20 @@ function Bookings() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {services.map((service) => (
-                            <div 
+                            <div
                                 key={service.id}
-                                className="bg-gray-200/70 rounded-3xl p-6 hover:shadow-lg transition-all duration-300"
+                                className="bg-gray-200/70 rounded-3xl p-6 hover:shadow-lg transition-all duration-300 relative"
                             >
+                                {service.hasNotification && showNotification && (
+                                    <div className="absolute -top-2 -right-2 z-10">
+                                        <div className="relative">
+                                            <div className="absolute -top-1 -right-1 animate-ping h-6 w-6 rounded-full bg-red-400 opacity-75"></div>
+                                            <div className="relative bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                                {service.notificationCount}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="relative overflow-hidden rounded-2xl mb-4">
                                     <img
                                         src={service.image}
@@ -148,8 +142,8 @@ function Bookings() {
                                 <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
                                 <p className="text-gray-600 text-sm mb-4 line-clamp-3">{service.description}</p>
                                 <div className="flex justify-between items-center mt-15">
-                                    <div className="text-lg font-medium">₱{service.price}</div>
-                                    <button 
+                                    <div className="text-lg font-medium">₱{service.price.toLocaleString()}</div>
+                                    <button
                                         onClick={() => setSelectedService(service)}
                                         className="text-sky-500 hover:text-sky-600 flex items-center gap-1 group"
                                     >
@@ -162,6 +156,14 @@ function Bookings() {
                     </div>
                 </div>
             </div>
+
+            {/* Admin Booking Modal */}
+            {selectedService && (
+                <AdminBookingModal
+                    service={selectedService}
+                    onClose={() => setSelectedService(null)}
+                />
+            )}
         </div>
     );
 }

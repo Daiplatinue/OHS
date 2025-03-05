@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Area, AreaChart, BarChart as RechartsBarChart, Bar, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Activity, Users, Mail, TrendingUp, DollarSign, Wallet, ArrowUpRight } from 'lucide-react';
+import { Activity, Users, Mail, TrendingUp, DollarSign } from 'lucide-react';
 
 import MyFloatingDockCeo from './Styles/MyFloatingDock-Ceo';
 
