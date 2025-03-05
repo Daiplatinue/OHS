@@ -1,4 +1,4 @@
-import { Search, ShoppingBag } from "lucide-react"
+import { Bell, Sun } from "lucide-react"
 
 function Navbar() {
     return (
@@ -11,19 +11,19 @@ function Navbar() {
                         <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Why Choose Us</a></li>
                         <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Why HandyGo</a></li>
                         <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Meet Our Team</a></li>
-                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">References</a></li>
-                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Sponsors</a></li>
-                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Learn More</a></li>
-                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Contact</a></li>
-                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Support</a></li>
+                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">My Mode of Payment</a></li>
+                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">My Bookings</a></li>
+                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Contact Support</a></li>
+                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">Email Us</a></li>
+                        <li><a href="#" className="text-black hover:text-gray-500 transition-colors">My Account</a></li>
                         <li>
                             <a href="#" className="text-black hover:text-gray-500 transition-colors">
-                                <Search className="w-4 h-4" />
+                                <Sun className="w-4 h-4" />
                             </a>
                         </li>
                         <li>
                             <a href="#" className="text-black hover:text-gray-500 transition-colors">
-                                <ShoppingBag className="w-4 h-4" />
+                                <Bell className="w-4 h-4" />
                             </a>
                         </li>
                     </ul>

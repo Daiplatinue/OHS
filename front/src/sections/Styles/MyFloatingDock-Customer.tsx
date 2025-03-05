@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, User, CreditCard, Projector, MessageCircleMore, PowerOff, Mail, Bell, CircleUserRound, Newspaper } from 'lucide-react';
+import { Home, MessageCircleMore, PowerOff, Mail, Bell, CircleUserRound, Newspaper, PhilippinePeso, Album, Droplet, UsersRound, Phone } from 'lucide-react';
 
 interface DockItemProps {
   icon: React.ReactNode;
@@ -51,62 +51,56 @@ const FloatingDock: React.FC = () => {
       <DockItem
         icon={<Home size={20} strokeWidth={1.5} color='gray' />}
         label="Home"
-        to="/admin"
+        to="/"
         isActive={location.pathname === '/'}
       />
       <DockItem
-        icon={<User size={20} strokeWidth={1.5} color='gray' />}
-        label="Accounts"
-        to="/admin"
-        isActive={location.pathname === '/search'}
+        icon={<Droplet size={20} strokeWidth={1.5} color='gray' />}
+        label="Services"
+        to="/"
+        isActive={location.pathname === '/'}
       />
       <DockItem
-        icon={<CreditCard size={20} strokeWidth={1.5} color='gray' />}
-        label="Payments"
-        to="/admin/transactions"
-        isActive={location.pathname === '/menu'}
+        icon={<Album size={20} strokeWidth={1.5} color='gray' />}
+        label="Bookings"
+        to="/customer/my-bookings"
+        isActive={location.pathname === '/customer/my-bookings'}
       />
       <DockItem
-        icon={<Projector size={20} strokeWidth={1.5} color='gray' />}
-        label="Activities"
-        to="/profile"
-        isActive={location.pathname === '/profile'}
-      />
-      <DockItem
-        icon={<MessageCircleMore size={20} strokeWidth={1.5} color='gray' />}
-        label="Chats"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
-      />
-      <DockItem
-        icon={<Mail size={20} strokeWidth={1.5} color='gray' />}
-        label="Emails"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        icon={<Phone size={20} strokeWidth={1.5} color='gray' />}
+        label="Contact Support"
+        to="/"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<Bell size={20} strokeWidth={1.5} color='gray' />}
         label="Notifications"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<CircleUserRound size={20} strokeWidth={1.5} color='gray' />}
         label="Profile"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<Newspaper size={20} strokeWidth={1.5} color='gray' />}
         label="News"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/"
+        isActive={location.pathname === '/'}
+      />
+      <DockItem
+        icon={<MessageCircleMore size={20} strokeWidth={1.5} color='gray' />}
+        label="Chats"
+        to="/"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<PowerOff size={20} strokeWidth={1.5} color='gray' />}
         label="Logout"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/"
+        isActive={location.pathname === '/'}
       />
     </div>
   );
