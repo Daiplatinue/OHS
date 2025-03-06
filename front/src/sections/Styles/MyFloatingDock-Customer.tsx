@@ -1,63 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, MessageCircleMore, PowerOff, Bell, CircleUserRound, Newspaper, Album, Search, Calendar, Clock, XCircle, Filter, Ban, Edit2, ArrowRight, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
-
-const dummyBookings = [
-  {
-    id: 1,
-    companyName: "Sisyphus Ventures",
-    service: "Plumbing Services",
-    status: "pending",
-    date: "2024-03-20",
-    price: 8000,
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  },
-  {
-    id: 2,
-    companyName: "TechFix Solutions",
-    service: "Electronics Repair",
-    status: "ongoing",
-    date: "2024-03-19",
-    price: 5000,
-    image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  },
-  {
-    id: 3,
-    companyName: "GreenThumb Gardens",
-    service: "Landscaping",
-    status: "cancelled",
-    date: "2024-03-18",
-    price: 12000,
-    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  },
-  {
-    id: 4,
-    companyName: "ElectroFix Pro",
-    service: "Electrical Services",
-    status: "pending",
-    date: "2024-03-17",
-    price: 6500,
-    image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  },
-  {
-    id: 5,
-    companyName: "CleanPro Services",
-    service: "House Cleaning",
-    status: "ongoing",
-    date: "2024-03-16",
-    price: 3500,
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  },
-  {
-    id: 6,
-    companyName: "GardenMasters",
-    service: "Garden Maintenance",
-    status: "pending",
-    date: "2024-03-15",
-    price: 4500,
-    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-  }
-];
+import { Home, MessageCircleMore, PowerOff, Bell, CircleUserRound, Newspaper, Album, Search, Calendar, Clock, XCircle, Filter, ArrowRight, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface DockItemProps {
   icon: React.ReactNode;
@@ -133,27 +76,81 @@ interface Booking {
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
+  const [timeLeft, setTimeLeft] = useState<number>(30);
+  const [status, setStatus] = useState(booking.status);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (status === 'ongoing') {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer);
+            setStatus('cancelled');
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [status]);
+
   const getActionButtons = () => {
-    switch (booking.status) {
+    switch (status) {
       case 'pending':
         return (
-          <div className="flex gap-2 mt-4">
-            <button className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
-              <Ban className="w-4 h-4" />
-              Cancel
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors">
-              <Edit2 className="w-4 h-4" />
-              Update
-            </button>
-          </div>
-        );
-      case 'ongoing':
-        return (
-          <button className="flex items-center gap-1 px-4 py-2 mt-4 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors w-full justify-center">
+          <button className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors">
             <ArrowRight className="w-4 h-4" />
             Proceed
           </button>
+        );
+      case 'ongoing':
+        const getTimerColors = () => {
+          if (timeLeft > 20) {
+            return {
+              bg: 'bg-green-50',
+              border: 'border-green-100',
+              text: 'text-green-700',
+              icon: 'text-green-600'
+            };
+          } else if (timeLeft > 10) {
+            return {
+              bg: 'bg-yellow-50',
+              border: 'border-yellow-100',
+              text: 'text-yellow-700',
+              icon: 'text-yellow-600'
+            };
+          } else {
+            return {
+              bg: 'bg-red-50',
+              border: 'border-red-100',
+              text: 'text-red-700',
+              icon: 'text-red-600'
+            };
+          }
+        };
+
+        const colors = getTimerColors();
+
+        return (
+          <div className="mt-4 space-y-2">
+            <div className={`flex items-center justify-between ${colors.bg} border ${colors.border} rounded-lg px-3 py-1.5`}>
+              <Clock className={`w-4 h-4 ${colors.icon}`} />
+              <span className={`text-sm font-medium ${colors.text}`}>{timeLeft}s</span>
+            </div>
+            <div className={`text-center text-xs ${colors.text} ${colors.bg} rounded-lg py-1 px-2`}>
+              You only have {timeLeft} seconds to comply your payments, else it will automatically be cancelled.
+            </div>
+            <button className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors">
+              <ArrowRight className="w-4 h-4" />
+              Proceed
+            </button>
+          </div>
         );
       case 'cancelled':
         return (
@@ -171,12 +168,11 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-48">
         <img src={booking.image} alt={booking.service} className="w-full h-full object-cover" />
-        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
-          booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          booking.status === 'ongoing' ? 'bg-green-100 text-green-800' :
-          'bg-red-100 text-red-800'
-        }`}>
-          {booking.status}
+        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+          status === 'ongoing' ? 'bg-green-100 text-green-800' :
+            'bg-red-100 text-red-800'
+          }`}>
+          {status}
         </div>
       </div>
       <div className="p-4">
@@ -195,6 +191,63 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   );
 };
 
+const dummyBookings = [
+  {
+    id: 1,
+    companyName: "Sisyphus Ventures",
+    service: "Plumbing Services",
+    status: "pending",
+    date: "2024-03-20",
+    price: 8000,
+    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  },
+  {
+    id: 2,
+    companyName: "TechFix Solutions",
+    service: "Electronics Repair",
+    status: "ongoing",
+    date: "2024-03-19",
+    price: 5000,
+    image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  },
+  {
+    id: 3,
+    companyName: "GreenThumb Gardens",
+    service: "Landscaping",
+    status: "cancelled",
+    date: "2024-03-18",
+    price: 12000,
+    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  },
+  {
+    id: 4,
+    companyName: "ElectroFix Pro",
+    service: "Electrical Services",
+    status: "pending",
+    date: "2024-03-17",
+    price: 6500,
+    image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  },
+  {
+    id: 5,
+    companyName: "CleanPro Services",
+    service: "House Cleaning",
+    status: "ongoing",
+    date: "2024-03-16",
+    price: 3500,
+    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  },
+  {
+    id: 6,
+    companyName: "GardenMasters",
+    service: "Garden Maintenance",
+    status: "pending",
+    date: "2024-03-15",
+    price: 4500,
+    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+  }
+];
+
 const FloatingDock: React.FC = () => {
   const location = useLocation();
   const [showModal, setShowModal] = useState(false);
@@ -211,10 +264,9 @@ const FloatingDock: React.FC = () => {
   }, []);
 
   const formattedTime = currentTime.toLocaleTimeString('en-US', {
-    hour12: false,
+    hour12: true,
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
   });
 
   const formattedDate = currentTime.toLocaleDateString('en-US', {
@@ -295,18 +347,18 @@ const FloatingDock: React.FC = () => {
 
       {showModal && (
         <div className="fixed inset-0 z-50">
-          <div 
+          <div
             className="absolute inset-0 backdrop-blur-sm bg-black/30"
             onClick={() => setShowModal(false)}
           />
-          
+
           <div className="absolute inset-0 flex items-start justify-center pt-4 px-4">
             <div className="bg-gray-50 rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto">
               <div className="sticky top-0 bg-gray-50 z-10 px-6 pt-6 pb-4 border-b border-gray-200">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h2 className="text-2xl font-bold">Booking Management</h2>
-                    <div className="flex items-center gap-4 mt-2 text-gray-600">
+                    <div className="flex items-center justify-between gap-4 mt-2 text-gray-600">
+                      <h2 className="text-2xl font-bold text-gray-700 mr-140">Booking Management</h2>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
                         <span>{formattedTime}</span>
@@ -328,7 +380,7 @@ const FloatingDock: React.FC = () => {
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Search bookings by company or service..."
+                    placeholder="Search bookings"
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

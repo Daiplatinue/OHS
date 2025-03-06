@@ -6,7 +6,6 @@ import HeroSection from './sections/HeroSection';
 import Transaction from './sections/Transaction';
 
 import Notification from './sections/Customer_Tabs/Notification';
-import MyBookings from './sections/Customer_Tabs/MyBookings'; 
 
 import Admin from './sections/Admin';
 import Admin_Transaction from './sections/Admin_Tabs/Admin_Transactions';
@@ -27,7 +26,6 @@ const App: React.FC = () => {
         <Route path='/hero' element={<HeroSection />} />
         <Route path='/transaction' element={<Transaction />} />
         <Route path='/notification' element={<Notification />} />
-        <Route path='/customer/my-bookings' element={<MyBookings />} />
 
         {/* Admin Tabs */}
         <Route path='/admin' element={<Admin />} />

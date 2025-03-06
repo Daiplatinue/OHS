@@ -15,7 +15,7 @@ interface Service {
 
 function Bookings() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
-    const [showNotification, setShowNotification] = useState(true);
+    const [showNotification] = useState(true);
 
     const companyDetails = {
         name: "Sisyphus Ventures",
