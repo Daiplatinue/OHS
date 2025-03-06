@@ -6,6 +6,10 @@ import ServiceShowcase from './Styles/ServiceShowcase';
 import WorkersModal from './Styles/WorkersModal';
 import MyFloatingDockCustomer from './Styles/MyFloatingDock-Customer';
 
+import image1 from '../assets/Collaborative Workspace.jpeg';
+import image2 from '../assets/Sleek Black Sports Car on Highway.jpeg';
+import image3 from '../assets/Professional Construction Supervisor.jpeg';
+
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 
 const sellers = {
@@ -131,23 +135,24 @@ const sellers = {
 
 const carouselItems = [
   {
-    brand: "Nike React",
-    title: "Rewriting sport's playbook for billions of athletes",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
-    buttonText: "Read Case Studies"
-  },
-  {
-    brand: "Nike Air Max",
-    title: "Revolutionary cushioning for ultimate comfort",
-    image: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
-    buttonText: "Read Case Studies"
-  },
-  {
-    brand: "Nike Zoom",
-    title: "Speed and agility for the competitive athlete",
-    image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
-    buttonText: "Read Case Studies"
-  }
+    brand: "Rapid Response Team",
+    title: "Dedicated Professionals, Ready to Serve",
+    image: image1,
+    buttonText: "Explore More"
+},
+{
+    brand: "Speed, Precision, Excellence",
+    title: "Luxury Service, Fast Solutions",
+    image: image2,
+    buttonText: "Explore More"
+},
+{
+    brand: "Reliable & Fast Service",
+    title: "Passionate Experts, Committed to Quality",
+    image: image3,
+    buttonText: "Explore More"
+}
+
 ];
 
 const products = [
@@ -327,7 +332,7 @@ function App() {
                 <div className="ml-16 max-w-md">
                   <h3 className="text-white text-xl mb-2">{item.brand}</h3>
                   <h1 className="text-white text-4xl font-bold mb-8">{item.title}</h1>
-                  <button className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-opacity-90 transition-all">
+                  <button className="bg-gradient-to-r from-gray-400 to-white text-gray-900 px-6 py-3 rounded-full font-medium hover:bg-opacity-90 transition-all">
                     {item.buttonText}
                   </button>
                 </div>
