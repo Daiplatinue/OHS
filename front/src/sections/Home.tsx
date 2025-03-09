@@ -11,6 +11,7 @@ import image2 from '../assets/Sleek Black Sports Car on Highway.jpeg';
 import image3 from '../assets/Professional Construction Supervisor.jpeg';
 import PromoBanner from './Styles/PromoBanner';
 import ServiceBanner from './Styles/ServiceBanner';
+import ServicesPromote from './Styles/ServicesPromote';
 
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 
@@ -189,33 +190,6 @@ const products = [
     category: "Pest Control",
     image: "https://cdn.pixabay.com/photo/2023/07/04/10/32/ai-generated-8106005_960_720.jpg",
     description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more."
-  }
-];
-
-const services = [
-  {
-    title: "Less Labor Fee",
-    description: "On bookings over ₱100,000",
-    image: "https://cdn.pixabay.com/photo/2024/10/23/15/40/ai-generated-9143281_1280.jpg",
-    size: "lg"
-  },
-  {
-    title: "Premium Service",
-    description: "24/7 dedicated team",
-    image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&q=80&w=1200",
-    size: "sm"
-  },
-  {
-    title: "New Member Discount",
-    description: "Save up to 15%",
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
-    size: "sm"
-  },
-  {
-    title: "Trade In",
-    description: "Upgrade your homes",
-    image: "https://cdn.pixabay.com/photo/2015/03/07/16/34/home-663226_1280.jpg",
-    size: "lg"
   }
 ];
 
@@ -414,32 +388,8 @@ function App() {
       <ServiceShowcase />
       <PromoBanner />
       <ServiceBanner />
+      <ServicesPromote />
 
-      {/* Services Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-semibold mb-12 text-center scroll-reveal">Our Services</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className={`relative overflow-hidden rounded-2xl scroll-reveal hover-scale ${service.size === 'lg' ? 'md:col-span-2 h-[400px]' : 'h-[300px]'
-                }`}
-            >
-              <img
-                src={service.image}
-                alt={service.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 transition-all duration-300 hover:bg-black/50">
-                <div className="absolute bottom-0 left-0 p-8 text-white">
-                  <h3 className="text-2xl font-semibold mb-2">{service.title}</h3>
-                  <p className="text-lg text-white/90">{service.description}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Featured Products */}
       <div className="bg-white/90 text-black py-16">

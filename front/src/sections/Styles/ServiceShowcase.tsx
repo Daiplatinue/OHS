@@ -37,11 +37,8 @@ function ServiceShowcase() {
                             <img
                                 src={image1}
                                 alt="Premium Headphones"
-                                className="rounded-3xl transform hover:scale-105 transition duration-700"
+                                className="rounded-3xl"
                             />
-                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg rounded-full px-6 py-3 hover-scale">
-                                <p className="text-xl font-medium">From ₱5499 Only!</p>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -5,7 +5,7 @@ function ImprovedPromoBanners() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Left Banner - Phone Cases */}
+        
         <div className="relative overflow-hidden rounded-lg h-[150px] bg-black">
           <div
             className="absolute inset-0"
@@ -30,7 +30,6 @@ function ImprovedPromoBanners() {
           </div>
         </div>
 
-        {/* Right Banner - Electronics */}
         <div className="relative overflow-hidden rounded-lg h-[150px] bg-black">
           <div
             className="absolute inset-0"
@@ -46,7 +45,7 @@ function ImprovedPromoBanners() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-100 my-1">Get 30% OFF</h2>
             <div>
               <a href="#" className="text-white text-sm font-medium hover:underline">
-                Shop now
+                Book now
               </a>
             </div>
           </div>
