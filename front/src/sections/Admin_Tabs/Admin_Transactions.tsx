@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
-import { Bell, Check, ChevronDown, CreditCard, Info, Loader2 } from "lucide-react"
+import { Bell, Check, ChevronDown, CircleAlert, CreditCard, Info, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { AvatarImage } from "@/components/ui/avatar"
@@ -54,7 +54,7 @@ function Admin_Transactions() {
   const [displayBalance, setDisplayBalance] = useState(0)
   const [actualBalance, setActualBalance] = useState(0)
   const [isBalanceAnimating, setIsBalanceAnimating] = useState(false)
-  const [autoReleaseEnabled, setAutoReleaseEnabled] = useState(true)
+  const [autoReleaseEnabled] = useState(true)
   const [timeRemaining, setTimeRemaining] = useState(30)
   const [timerActive, setTimerActive] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -479,12 +479,12 @@ function Admin_Transactions() {
                   <div className="mb-4">
                     <div className="p-3 bg-yellow-50 rounded-lg mb-2">
                       <p className="text-sm text-yellow-700">
-                        This will automatically release the payment if admin will not release manually
+                      "This will automatically process the payment if the admin does not release it manually."
                       </p>
                     </div>
                     <div className="p-3 bg-red-50 rounded-lg flex justify-between items-center">
-                      <p className="text-sm text-red-700">
-                        Warning: You will not get a commission if the timer runs out.
+                      <p className="text-sm text-red-700 flex gap-1">
+                        Warning <span><CircleAlert className="text-red-700" width={15} /></span> - You will not get a commission if the timer runs out.
                       </p>
                       {timerActive && (
                         <div className="font-medium text-red-600">

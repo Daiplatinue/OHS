@@ -18,7 +18,7 @@ function Login() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Clear error when user types
+    setError(''); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

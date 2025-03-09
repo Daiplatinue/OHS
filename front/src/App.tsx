@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './sections/Home';
 import Login from './sections/Login';
-import HeroSection from './sections/HeroSection';
+import LoginAlt from './sections/LoginAlt';
 import Transaction from './sections/Transaction';
 
 import Notification from './sections/Customer_Tabs/Notification';
@@ -23,7 +23,7 @@ const App: React.FC = () => {
         {/* Customer Tabs */}
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/hero' element={<HeroSection />} />
+        <Route path='/login-alt' element={<LoginAlt />} />
         <Route path='/transaction' element={<Transaction />} />
         <Route path='/notification' element={<Notification />} />
 
