@@ -1,4 +1,3 @@
-import { image } from "@heroui/react"
 import image1 from "../../assets/Construction Worker Focused.jpeg";
 
 function ServiceShowcase() {

@@ -9,6 +9,8 @@ import MyFloatingDockCustomer from './Styles/MyFloatingDock-Customer';
 import image1 from '../assets/Collaborative Workspace.jpeg';
 import image2 from '../assets/Sleek Black Sports Car on Highway.jpeg';
 import image3 from '../assets/Professional Construction Supervisor.jpeg';
+import PromoBanner from './Styles/PromoBanner';
+import ServiceBanner from './Styles/ServiceBanner';
 
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 
@@ -139,19 +141,19 @@ const carouselItems = [
     title: "Dedicated Professionals, Ready to Serve",
     image: image1,
     buttonText: "Explore More"
-},
-{
+  },
+  {
     brand: "Speed, Precision, Excellence",
     title: "Luxury Service, Fast Solutions",
     image: image2,
     buttonText: "Explore More"
-},
-{
+  },
+  {
     brand: "Reliable & Fast Service",
     title: "Passionate Experts, Committed to Quality",
     image: image3,
     buttonText: "Explore More"
-}
+  }
 
 ];
 
@@ -410,6 +412,8 @@ function App() {
       </div>
 
       <ServiceShowcase />
+      <PromoBanner />
+      <ServiceBanner />
 
       {/* Services Grid */}
       <div className="max-w-7xl mx-auto px-4 py-16">
