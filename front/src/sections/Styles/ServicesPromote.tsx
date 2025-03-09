@@ -40,7 +40,6 @@ const services: Service[] = [
     },
 ]
 
-// Add more services to fill the bento grid
 const allServices = [
     ...services,
     {
@@ -70,7 +69,6 @@ function ServicesPromote() {
                     Discover our premium offerings designed to transform your home
                 </p>
 
-                {/* Bento Grid Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[minmax(180px,auto)]">
                     {/* Card 1 - Large with button */}
                     <div className="relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2 group">
