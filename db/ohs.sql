@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 26, 2025 at 06:43 PM
+-- Generation Time: Mar 10, 2025 at 04:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,27 @@ INSERT INTO `acc_tb` (`u_id`, `u_username`, `u_email`, `u_password`) VALUES
 (1, '', '123', '123@gmail.com'),
 (2, '', '1@gmail.com', 'asd'),
 (3, 'username', '$2b$10$6y6S7WnPotUG/Evvt8i8Nu94lUgoumfveqC1VDi.Nco', 'email@gmail.com'),
-(4, 'username', 'email@gmail.com', '$2b$10$Fcem9zPSjkZl/pIZPLBRWuOZkIk2K6sPYccz51W4l2SbPeW2yZFze');
+(4, 'username', 'email@gmail.com', '$2b$10$Fcem9zPSjkZl/pIZPLBRWuOZkIk2K6sPYccz51W4l2SbPeW2yZFze'),
+(5, 'bens', '123@gmail.com', '$2b$10$eGj2bqHYEkrHw57e9tzfUuvveDTEZH/sWXCHWvbp74/VgoVErV5pC'),
+(6, 'daiplatinue', 'meghanjones@mail.com', '$2b$10$0LuZ4XmseQvMswLV9BPQUur0cDLesTfdUy1UUALI0ksypInnzU.yK');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `m_id` int(11) NOT NULL,
+  `id` varchar(36) NOT NULL,
+  `text` text NOT NULL,
+  `sender` varchar(250) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) DEFAULT NULL,
+  `room` varchar(250) NOT NULL,
+  `timestamp` datetime(6) NOT NULL,
+  `is_private` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -55,6 +75,12 @@ ALTER TABLE `acc_tb`
   ADD PRIMARY KEY (`u_id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`m_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -62,7 +88,13 @@ ALTER TABLE `acc_tb`
 -- AUTO_INCREMENT for table `acc_tb`
 --
 ALTER TABLE `acc_tb`
-  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `m_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

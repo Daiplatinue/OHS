@@ -5,6 +5,8 @@ import Login from './sections/Login';
 import LoginAlt from './sections/LoginAlt';
 import Transaction from './sections/Transaction';
 
+import ChatRTC from './sections/Styles/ChatRTC';
+
 import Notification from './sections/Customer_Tabs/Notification';
 
 import Admin from './sections/Admin';
@@ -19,6 +21,9 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* Chat */}
+        <Route path='/chat' element={<ChatRTC />} />
         
         {/* Customer Tabs */}
         <Route path='/' element={<Home />} />

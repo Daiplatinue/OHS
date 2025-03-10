@@ -27,7 +27,7 @@ function Login() {
 
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:3000/auth/login', {
+        const response = await axios.post('http://localhost:3006/auth/login', {
           email: formData.email,
           password: formData.password
         });
@@ -35,10 +35,10 @@ function Login() {
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.user));
-          navigate('/');
+          navigate('/chat');
         }
       } else {
-        const response = await axios.post('http://localhost:3000/auth/register', {
+        const response = await axios.post('http://localhost:3006/auth/register', {
           username: formData.username,
           email: formData.email,
           password: formData.password
