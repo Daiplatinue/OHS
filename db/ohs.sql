@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 10, 2025 at 04:43 PM
+-- Generation Time: Mar 12, 2025 at 06:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,9 +39,6 @@ CREATE TABLE `acc_tb` (
 --
 
 INSERT INTO `acc_tb` (`u_id`, `u_username`, `u_email`, `u_password`) VALUES
-(1, '', '123', '123@gmail.com'),
-(2, '', '1@gmail.com', 'asd'),
-(3, 'username', '$2b$10$6y6S7WnPotUG/Evvt8i8Nu94lUgoumfveqC1VDi.Nco', 'email@gmail.com'),
 (4, 'username', 'email@gmail.com', '$2b$10$Fcem9zPSjkZl/pIZPLBRWuOZkIk2K6sPYccz51W4l2SbPeW2yZFze'),
 (5, 'bens', '123@gmail.com', '$2b$10$eGj2bqHYEkrHw57e9tzfUuvveDTEZH/sWXCHWvbp74/VgoVErV5pC'),
 (6, 'daiplatinue', 'meghanjones@mail.com', '$2b$10$0LuZ4XmseQvMswLV9BPQUur0cDLesTfdUy1UUALI0ksypInnzU.yK');
@@ -94,7 +91,7 @@ ALTER TABLE `acc_tb`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `m_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `m_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

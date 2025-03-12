@@ -6,9 +6,9 @@ function FeaturedService() {
                     <div className="flex flex-col md:flex-row items-center gap-12">
                         <div className="flex-1 scroll-reveal">
                             <img
-                                src="https://cdn.pixabay.com/photo/2024/04/17/18/22/ai-generated-8702697_1280.jpg"
+                                src="https://cdn.pixabay.com/photo/2015/09/24/23/36/construction-worker-956496_1280.jpg"
                                 alt="Model with headphones"
-                                className="rounded-2xl shadow-lg hover-scale"
+                                className="rounded-2xl shadow-lg"
                             />
                         </div>
                         <div className="flex-1 space-y-6 scroll-reveal">

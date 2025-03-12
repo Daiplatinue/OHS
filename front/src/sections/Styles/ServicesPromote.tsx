@@ -23,19 +23,19 @@ const services: Service[] = [
     {
         title: "Premium Service",
         description: "24/7 dedicated team",
-        image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&q=80&w=1200",
+        image: "https://cdn.pixabay.com/photo/2020/04/19/18/46/company-5064997_1280.jpg",
         size: "sm",
     },
     {
         title: "New Member Discount",
         description: "Save up to 15%",
-        image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
+        image: "https://cdn.pixabay.com/photo/2018/03/10/09/46/business-3213661_1280.jpg",
         size: "sm",
     },
     {
         title: "Trade In",
         description: "Upgrade your homes",
-        image: "https://cdn.pixabay.com/photo/2015/03/07/16/34/home-663226_1280.jpg",
+        image: "https://cdn.pixabay.com/photo/2016/11/27/21/42/stock-1863880_960_720.jpg",
         size: "lg",
     },
 ]
@@ -43,9 +43,9 @@ const services: Service[] = [
 const allServices = [
     ...services,
     {
-        title: "Expert Consultation",
-        description: "Free design advice",
-        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1200",
+        title: "A Week Of Free Labor",
+        description: "Over 1B+ Members Are Happy",
+        image: "https://cdn.pixabay.com/photo/2020/05/24/02/00/barber-shop-5212059_1280.jpg",
         size: "sm",
         button: {
             text: "Schedule now",
@@ -55,7 +55,7 @@ const allServices = [
     {
         title: "Warranty Coverage",
         description: "5-year protection",
-        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1200",
+        image: "https://cdn.pixabay.com/photo/2016/08/11/00/46/business-lady-1584654_1280.jpg",
         size: "sm",
     },
 ]
@@ -132,7 +132,7 @@ function ServicesPromote() {
                             alt={allServices[3].title}
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-6 flex flex-col justify-end">
+                        <div className="absolute inset-0 p-6 flex flex-col justify-end">
                             <h3 className="text-2xl font-bold text-white mb-1">{allServices[3].title}</h3>
                             <p className="text-white/80">{allServices[3].description}</p>
                         </div>
@@ -173,15 +173,15 @@ function ServicesPromote() {
                     {/* Call to Action Card */}
                     <div className="relative overflow-hidden rounded-2xl md:col-span-2 group">
                         <img
-                            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=1200"
+                            src="https://cdn.pixabay.com/photo/2018/04/29/18/52/people-3360819_1280.jpg"
                             alt="Get Started"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gray-900/80 p-6 flex flex-col justify-center items-center text-center text-white">
-                            <h3 className="text-xl font-bold mb-2">Ready to get started?</h3>
-                            <p className="text-white/70 mb-4">Contact our team for a free consultation</p>
+                            <h3 className="text-xl font-bold mb-2">Ready to Book Now?</h3>
+                            <p className="text-white/70 mb-4">Navigate our system too see the services</p>
                             <button className="px-6 py-2 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                                Contact Us
+                                Redirect to Services
                             </button>
                         </div>
                     </div>

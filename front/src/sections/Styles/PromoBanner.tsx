@@ -1,5 +1,5 @@
-import image1 from '../../assets/Monochrome Architectural Drama.jpeg';
-import image2 from '../../assets/Collaborative Work Setting in Black and White.jpeg';
+// import image1 from '../../assets/Monochrome Architectural Drama.jpeg';
+// import image2 from '../../assets/Collaborative Work Setting in Black and White.jpeg';
 
 function ImprovedPromoBanners() {
   return (
@@ -10,10 +10,10 @@ function ImprovedPromoBanners() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `url(${image1})`,
+              backgroundImage: `url('https://cdn.pixabay.com/photo/2022/11/03/15/24/coffee-7567749_1280.jpg')`,
               backgroundSize: "cover",
               backgroundPosition: "right",
-              opacity: 0.8,
+              opacity: 0.6,
             }}
           />
           <div className="relative z-10 p-6 flex flex-col h-full justify-center">
@@ -34,7 +34,7 @@ function ImprovedPromoBanners() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `url(${image2})`,
+              backgroundImage: `url('https://cdn.pixabay.com/photo/2018/03/10/12/00/teamwork-3213924_1280.jpg')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               opacity: 0.8,

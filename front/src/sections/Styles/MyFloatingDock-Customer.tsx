@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -14,7 +16,6 @@ import {
   Clock,
   X,
   Filter,
-  ArrowRight,
   RotateCcw,
   ChevronDown,
   ChevronUp,
@@ -26,6 +27,7 @@ import {
   ChevronRight,
   Coffee,
 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface DockItemProps {
   icon: React.ReactNode
@@ -120,6 +122,7 @@ interface Booking {
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
+  const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState<number>(30)
   const [status, setStatus] = useState(booking.status)
 
@@ -143,6 +146,21 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
       if (timer) clearInterval(timer)
     }
   }, [status])
+
+  const handleCompletePayment = () => {
+    // Create seller information from the booking data
+    const sellerInfo = {
+      id: booking.id,
+      name: booking.companyName,
+      rating: 4.5, // You can add a rating field to your booking interface if available
+      reviews: 24, // You can add a reviews field to your booking interface if available
+      location: "Local Service Provider", // You can add a location field to your booking interface if available
+      price: booking.price, // Pass the price to the transaction page
+    }
+
+    // Navigate to transaction page with seller info
+    navigate("/transaction", { state: { seller: sellerInfo } })
+  }
 
   const getStatusBadge = () => {
     switch (status) {
@@ -176,10 +194,19 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
     switch (status) {
       case "pending":
         return (
-          <button className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
-            <ArrowRight className="w-4 h-4" />
-            Proceed
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+              <RotateCcw className="w-4 h-4" />
+              Book Again
+            </button>
+            <button
+              className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-rose-100 text-rose-700 rounded-lg hover:bg-rose-200 transition-colors"
+              onClick={() => setStatus("cancelled")}
+            >
+              <X className="w-4 h-4" />
+              Cancel
+            </button>
+          </div>
         )
       case "ongoing":
         return (
@@ -196,7 +223,10 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
               <Clock className="w-4 h-4" />
               <span className="text-sm font-medium">{timeLeft}s</span>
             </div>
-            <button className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors">
+            <button
+              className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+              onClick={handleCompletePayment}
+            >
               <ArrowUpRight className="w-4 h-4" />
               Complete Payment
             </button>
@@ -216,7 +246,7 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 
   return (
     <div className="flex bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
-      <div className="w-1/3 relative">
+      <div className="w-1/3 relative h-[150px]">
         <img src={booking.image || "/placeholder.svg"} alt={booking.service} className="w-full h-full object-cover" />
       </div>
       <div className="w-2/3 p-4">
@@ -306,6 +336,7 @@ const dummyBookings = [
 ]
 
 const FloatingDock: React.FC = () => {
+  const navigate = useNavigate()
   const [showDrawer, setShowDrawer] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAllServices, setShowAllServices] = useState(false)
@@ -407,10 +438,10 @@ const FloatingDock: React.FC = () => {
           <DockItem icon={<User size={20} strokeWidth={1.5} />} label="Profile" to="/profile" isActive={false} />
           <DockItem icon={<Newspaper size={20} strokeWidth={1.5} />} label="News" to="/news" isActive={false} />
           <DockItem
-            icon={<MessageCircleMore size={20} strokeWidth={1.5} />}
+            icon={<MessageCircleMore size={20} strokeWidth={1.5} color="gray" />}
             label="Chats"
-            to="/chats"
-            isActive={false}
+            to="/chat"
+            isActive={location.pathname === "/chat"}
           />
           <DockItem icon={<LogOut size={20} strokeWidth={1.5} />} label="Logout" to="/logout" isActive={false} />
         </motion.div>
@@ -590,3 +621,4 @@ const FloatingDock: React.FC = () => {
 }
 
 export default FloatingDock
+

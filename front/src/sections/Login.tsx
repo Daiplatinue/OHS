@@ -35,7 +35,7 @@ function Login() {
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.user));
-          navigate('/chat');
+          navigate('/');
         }
       } else {
         const response = await axios.post('http://localhost:3006/auth/register', {
@@ -45,8 +45,8 @@ function Login() {
         });
 
         if (response.status === 201) {
-          setIsLogin(true); // Switch to login form
-          setFormData({ ...formData, password: '' }); // Clear password
+          setIsLogin(true); 
+          setFormData({ ...formData, password: '' }); 
           setError('Registration successful! Please login.');
         }
       }

@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import { useState } from "react"
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo"
@@ -70,7 +72,7 @@ function Bookings() {
       description: "Comprehensive cleaning solutions for residential and commercial spaces.",
       hasNotification: true,
       notificationCount: 1,
-      image: "",
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
       chargePerKm: 30,
     },
     {
@@ -89,7 +91,7 @@ function Bookings() {
     location: "United States",
     description:
       "Professional home services and repairs with guaranteed satisfaction. Available 24/7 for all your maintenance needs.",
-    logo: "https://cdn.pixabay.com/photo/2020/01/25/21/55/adult-4793442_1280.jpg",
+    logo: "https://uploads.dailydot.com/2024/07/side-eye-cat.jpg?q=65&auto=format&w=1200&ar=2:1&fit=crop",
     coverPhoto: "https://cdn.pixabay.com/photo/2016/12/05/21/08/cologne-1884931_1280.jpg",
     followers: 34.5,
   }
@@ -138,7 +140,7 @@ function Bookings() {
       modeOfPayment: "Digital Wallet",
       status: "completed",
       price: 4000,
-      image: "",
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
     },
     {
       id: 104,
@@ -183,7 +185,7 @@ function Bookings() {
       modeOfPayment: "Digital Wallet",
       status: "ongoing",
       price: 4000,
-      image: "",
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
     },
   ])
 
@@ -201,7 +203,7 @@ function Bookings() {
       price: service.price,
       image: service.image,
       chargePerKm: service.chargePerKm,
-      description: service.description, 
+      description: service.description,
     })
     setIsEditModalOpen(true)
   }
@@ -435,6 +437,28 @@ function Bookings() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [processingBookingId, setProcessingBookingId] = useState<number | null>(null)
 
+  // Add these state variables to the component, near the other useState declarations
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false)
+  const [declineReason, setDeclineReason] = useState("")
+
+  // Add this function to handle the decline process
+  const handleDeclineBooking = (bookingId: number) => {
+    setIsLoading(true)
+    setProcessingBookingId(bookingId)
+
+    // Simulate API call
+    setTimeout(() => {
+      const updatedBookings = bookings.filter((booking) => booking.id !== bookingId)
+
+      setBookings(updatedBookings)
+      setIsDeclineModalOpen(false)
+      setIsModalOpen(false)
+      setIsLoading(false)
+      setProcessingBookingId(null)
+      setDeclineReason("")
+    }, 2000)
+  }
+
   const handleMarkAsCompleted = (bookingId: number) => {
     if (!ceoMarkedCompleted.includes(bookingId)) {
       setCeoMarkedCompleted([...ceoMarkedCompleted, bookingId])
@@ -446,8 +470,8 @@ function Bookings() {
         setShowSuccess(true)
 
         setTimeout(() => {
-          const updatedBookings = bookings.map((booking): Booking =>
-            booking.id === bookingId ? { ...booking, status: "completed" as "completed" } : booking,
+          const updatedBookings = bookings.map(
+            (booking): Booking => (booking.id === bookingId ? { ...booking, status: "completed" as const } : booking),
           )
 
           setBookings(updatedBookings)
@@ -455,7 +479,6 @@ function Bookings() {
           setShowSuccess(false)
           setProcessingBookingId(null)
           setActiveTab("completed")
-          
         }, 5000)
       }, 10000)
     }
@@ -466,8 +489,8 @@ function Bookings() {
     setProcessingBookingId(bookingId)
 
     setTimeout(() => {
-      const updatedBookings = bookings.map((booking): Booking =>
-        booking.id === bookingId ? { ...booking, status: "ongoing" as "ongoing" } : booking,
+      const updatedBookings = bookings.map(
+        (booking): Booking => (booking.id === bookingId ? { ...booking, status: "ongoing" as const } : booking),
       )
 
       setBookings(updatedBookings)
@@ -475,7 +498,6 @@ function Bookings() {
       setIsLoading(false)
       setProcessingBookingId(null)
       setActiveTab("ongoing")
-
     }, 5000)
   }
 
@@ -750,12 +772,6 @@ function Bookings() {
                       )}
 
                       <div className="flex space-x-3">
-                        <button
-                          onClick={() => setIsModalOpen(false)}
-                          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          Close
-                        </button>
 
                         {selectedBooking && selectedBooking.status === "ongoing" && (
                           <button
@@ -802,43 +818,53 @@ function Bookings() {
                         )}
 
                         {selectedBooking && selectedBooking.status === "pending" && (
-                          <button
-                            onClick={() => handleAcceptBooking(selectedBooking.id)}
-                            disabled={isLoading}
-                            className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${
-                              isLoading && processingBookingId === selectedBooking.id
-                                ? "bg-sky-400 cursor-wait"
-                                : "bg-sky-500 hover:bg-sky-600"
-                            }`}
-                          >
-                            {isLoading && processingBookingId === selectedBooking.id ? (
-                              <span className="flex items-center justify-center">
-                                <svg
-                                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                  ></circle>
-                                  <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  ></path>
-                                </svg>
-                                Processing...
-                              </span>
-                            ) : (
-                              "Accept Booking"
-                            )}
-                          </button>
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={() => {
+                                setIsDeclineModalOpen(true)
+                              }}
+                              className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-[300px]"
+                            >
+                              Decline Booking
+                            </button>
+                            <button
+                              onClick={() => handleAcceptBooking(selectedBooking.id)}
+                              disabled={isLoading}
+                              className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${
+                                isLoading && processingBookingId === selectedBooking.id
+                                  ? "bg-sky-400 cursor-wait"
+                                  : "bg-sky-500 hover:bg-sky-600"
+                              }`}
+                            >
+                              {isLoading && processingBookingId === selectedBooking.id ? (
+                                <span className="flex items-center justify-center">
+                                  <svg
+                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <circle
+                                      className="opacity-25"
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      stroke="currentColor"
+                                      strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                      className="opacity-75"
+                                      fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                  </svg>
+                                  Processing...
+                                </span>
+                              ) : (
+                                "Accept Booking"
+                              )}
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1055,8 +1081,98 @@ function Bookings() {
           </Dialog.Panel>
         </div>
       </Dialog>
+
+      {/* Decline Reason Modal */}
+      <Dialog open={isDeclineModalOpen} onClose={() => setIsDeclineModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-6">
+                <Dialog.Title className="text-xl font-semibold text-gray-900">Decline Booking</Dialog.Title>
+                <button onClick={() => setIsDeclineModalOpen(false)} className="text-gray-400 hover:text-gray-500">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {selectedBooking && (
+                <div>
+                  <p className="text-gray-600 mb-4">
+                    Please provide a reason for declining this booking request from{" "}
+                    <span className="font-semibold">{selectedBooking.customerName}</span>.
+                  </p>
+
+                  <div className="mb-6">
+                    <label htmlFor="declineReason" className="block text-sm font-medium text-gray-700 mb-1">
+                      Reason for Declining
+                    </label>
+                    <textarea
+                      id="declineReason"
+                      value={declineReason}
+                      onChange={(e) => setDeclineReason(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 min-h-[120px]"
+                      placeholder="Please explain why you're declining this booking..."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={() => setIsDeclineModalOpen(false)}
+                      className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleDeclineBooking(selectedBooking.id)}
+                      disabled={!declineReason.trim() || isLoading}
+                      className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${
+                        !declineReason.trim()
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : isLoading && processingBookingId === selectedBooking.id
+                            ? "bg-red-400 cursor-wait"
+                            : "bg-red-500 hover:bg-red-600"
+                      }`}
+                    >
+                      {isLoading && processingBookingId === selectedBooking.id ? (
+                        <span className="flex items-center justify-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   )
 }
 
 export default Bookings
+

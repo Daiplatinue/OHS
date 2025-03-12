@@ -390,7 +390,6 @@ function App() {
       <ServiceBanner />
       <ServicesPromote />
 
-
       {/* Featured Products */}
       <div className="bg-white/90 text-black py-16">
         <div className="max-w-7xl mx-auto px-4">

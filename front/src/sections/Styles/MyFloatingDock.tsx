@@ -75,8 +75,8 @@ const FloatingDock: React.FC = () => {
       <DockItem
         icon={<MessageCircleMore size={20} strokeWidth={1.5} color='gray' />}
         label="Chats"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/chat"
+        isActive={location.pathname === '/chat'}
       />
       <DockItem
         icon={<Mail size={20} strokeWidth={1.5} color='gray' />}

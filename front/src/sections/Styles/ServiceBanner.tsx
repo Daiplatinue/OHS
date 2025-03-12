@@ -8,7 +8,8 @@ export default function ProductShowcase() {
       <div
         className="flex-1 rounded-lg overflow-hidden bg-black p-6 relative min-h-[300px] before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-30 before:z-0"
         style={{
-          backgroundImage: `url(${image1})`,
+          backgroundImage: `url('https://cdn.pixabay.com/photo/2017/04/25/22/28/despaired-2261021_1280.jpg')` ,
+          backgroundPosition: "center",
           backgroundSize: "cover",
           position: "relative",
         }}
@@ -26,7 +27,7 @@ export default function ProductShowcase() {
       <div
         className="flex-1 rounded-lg overflow-hidden bg-black p-6 relative min-h-[300px] before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-40 before:z-0"
         style={{
-          backgroundImage: `url(${image2})`,
+          backgroundImage: `url('https://cdn.pixabay.com/photo/2018/03/27/21/43/startup-3267505_1280.jpg')`,
           backgroundSize: "cover",
           backgroundPosition: "bottom",
           position: "relative",
@@ -42,7 +43,7 @@ export default function ProductShowcase() {
       </div>
 
       <div
-        className="flex-1 rounded-lg overflow-hidden bg-black p-6 relative min-h-[300px] before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-30 before:z-0"
+        className="flex-1 rounded-lg overflow-hidden bg-black p-6 relative min-h-[300px] before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-10 before:z-0"
         style={{
           backgroundImage: `url(${image3})`,
           backgroundSize: "cover",

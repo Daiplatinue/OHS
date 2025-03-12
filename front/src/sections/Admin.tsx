@@ -370,7 +370,7 @@ function Admin() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">Product Performance</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Service Performance</h2>
               <BarChart2 className="h-5 w-5 text-blue-600" />
             </div>
             <div className="h-80">
