@@ -57,8 +57,8 @@ const FloatingDock: React.FC = () => {
       <DockItem
         icon={<User size={20} strokeWidth={1.5} color='gray' />}
         label="Accounts"
-        to="/admin"
-        isActive={location.pathname === '/search'}
+        to="/admin/accounts"
+        isActive={location.pathname === '/admin/accounts'}
       />
       <DockItem
         icon={<CreditCard size={20} strokeWidth={1.5} color='gray' />}
@@ -69,8 +69,8 @@ const FloatingDock: React.FC = () => {
       <DockItem
         icon={<Projector size={20} strokeWidth={1.5} color='gray' />}
         label="Activities"
-        to="/profile"
-        isActive={location.pathname === '/profile'}
+        to="/admin/activities"
+        isActive={location.pathname === '/admin/activities'}
       />
       <DockItem
         icon={<MessageCircleMore size={20} strokeWidth={1.5} color='gray' />}
@@ -81,32 +81,32 @@ const FloatingDock: React.FC = () => {
       <DockItem
         icon={<Mail size={20} strokeWidth={1.5} color='gray' />}
         label="Emails"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/admin/emails"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<Bell size={20} strokeWidth={1.5} color='gray' />}
         label="Notifications"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/admin/notifications"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<CircleUserRound size={20} strokeWidth={1.5} color='gray' />}
         label="Profile"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/admin/my-account"
+        isActive={location.pathname === '/'}
       />
       <DockItem
         icon={<Newspaper size={20} strokeWidth={1.5} color='gray' />}
         label="News"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/admin/news"
+        isActive={location.pathname === '/admin/news'}
       />
       <DockItem
         icon={<PowerOff size={20} strokeWidth={1.5} color='gray' />}
         label="Logout"
-        to="/settings"
-        isActive={location.pathname === '/settings'}
+        to="/login-alt"
+        isActive={location.pathname === '/'}
       />
     </div>
   );
