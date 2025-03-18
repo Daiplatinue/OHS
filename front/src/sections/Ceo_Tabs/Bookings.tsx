@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState } from "react"
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo"
@@ -1175,4 +1173,3 @@ function Bookings() {
 }
 
 export default Bookings
-

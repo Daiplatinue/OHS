@@ -12,25 +12,20 @@ import {
   Trash2,
   Edit,
   Eye,
-  UserCheck,
-  UserX,
   Shield,
   ChevronRight,
   BarChart3,
   PieChart,
   LineChart,
   ArrowRight,
-  Download,
   RefreshCw,
   Clock,
   Calendar,
   Zap,
   Star,
-  Settings,
   Mail,
   Phone,
   MapPin,
-  Globe,
 } from "lucide-react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
 import { Card, CardContent } from "@/components/ui/card"
@@ -52,7 +47,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 function AccountsTab() {
   const [activeTab, setActiveTab] = useState("all")
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [selectedAccount, setSelectedAccount] = useState<{ id: number; name: string; email: string; role: string; status: string; joinDate: string; lastLogin: string; avatar: string; services: number; spent: string; phone: string; location: string; rating: number; recentActivity: string; paymentMethod: string; verificationStatus: string; } | null>(null)
+  const [selectedAccount, setSelectedAccount] = useState<{
+    id: number
+    name: string
+    email: string
+    role: string
+    status: string
+    joinDate: string
+    lastLogin: string
+    avatar: string
+    services: number
+    spent: string
+    phone: string
+    location: string
+    rating: number
+    recentActivity: string
+    paymentMethod: string
+    verificationStatus: string
+  } | null>(null)
 
   // Update time every minute
   useEffect(() => {
@@ -195,6 +207,96 @@ function AccountsTab() {
       paymentMethod: "Credit Card (Expired)",
       verificationStatus: "Verified",
     },
+    {
+      id: 8,
+      name: "Robert Taylor",
+      email: "robert.t@example.com",
+      role: "Customer",
+      status: "Suspended",
+      joinDate: "Apr 2, 2023",
+      lastLogin: "1 month ago",
+      avatar: "/placeholder.svg?height=40&width=40",
+      services: 1,
+      spent: "$85.00",
+      phone: "+1 (555) 789-0123",
+      location: "Denver, USA",
+      rating: 2.1,
+      recentActivity: "Payment Failed",
+      paymentMethod: "Credit Card (Expired)",
+      verificationStatus: "Verified",
+    },
+    {
+      id: 9,
+      name: "Robert Taylor",
+      email: "robert.t@example.com",
+      role: "Customer",
+      status: "Suspended",
+      joinDate: "Apr 2, 2023",
+      lastLogin: "1 month ago",
+      avatar: "/placeholder.svg?height=40&width=40",
+      services: 1,
+      spent: "$85.00",
+      phone: "+1 (555) 789-0123",
+      location: "Denver, USA",
+      rating: 2.1,
+      recentActivity: "Payment Failed",
+      paymentMethod: "Credit Card (Expired)",
+      verificationStatus: "Verified",
+    },
+    {
+      id: 10,
+      name: "Robert Taylor",
+      email: "robert.t@example.com",
+      role: "Customer",
+      status: "Suspended",
+      joinDate: "Apr 2, 2023",
+      lastLogin: "1 month ago",
+      avatar: "/placeholder.svg?height=40&width=40",
+      services: 1,
+      spent: "$85.00",
+      phone: "+1 (555) 789-0123",
+      location: "Denver, USA",
+      rating: 2.1,
+      recentActivity: "Payment Failed",
+      paymentMethod: "Credit Card (Expired)",
+      verificationStatus: "Verified",
+    },
+    {
+      id: 11,
+      name: "Robert Taylor",
+      email: "robert.t@example.com",
+      role: "Customer",
+      status: "Suspended",
+      joinDate: "Apr 2, 2023",
+      lastLogin: "1 month ago",
+      avatar: "/placeholder.svg?height=40&width=40",
+      services: 1,
+      spent: "$85.00",
+      phone: "+1 (555) 789-0123",
+      location: "Denver, USA",
+      rating: 2.1,
+      recentActivity: "Payment Failed",
+      paymentMethod: "Credit Card (Expired)",
+      verificationStatus: "Verified",
+    },
+    {
+      id: 12,
+      name: "Robert Taylor",
+      email: "robert.t@example.com",
+      role: "Customer",
+      status: "Suspended",
+      joinDate: "Apr 2, 2023",
+      lastLogin: "1 month ago",
+      avatar: "/placeholder.svg?height=40&width=40",
+      services: 1,
+      spent: "$85.00",
+      phone: "+1 (555) 789-0123",
+      location: "Denver, USA",
+      rating: 2.1,
+      recentActivity: "Payment Failed",
+      paymentMethod: "Credit Card (Expired)",
+      verificationStatus: "Verified",
+    },
   ]
 
   // Account statistics
@@ -267,7 +369,7 @@ function AccountsTab() {
   })
 
   // Status badge renderer
-  const renderStatusBadge = (status : any) => {
+  const renderStatusBadge = (status: any) => {
     switch (status) {
       case "Active":
         return <Badge className="bg-green-100 text-green-600 hover:bg-green-100">Active</Badge>
@@ -283,7 +385,7 @@ function AccountsTab() {
   }
 
   // Role badge renderer
-  const renderRoleBadge = (role : any) => {
+  const renderRoleBadge = (role: any) => {
     switch (role) {
       case "Customer":
         return <Badge className="bg-blue-100 text-blue-600 hover:bg-blue-100">Customer</Badge>
@@ -297,18 +399,18 @@ function AccountsTab() {
   }
 
   // Handle account selection for details view
-  const handleAccountSelect = (account : any) => {
+  const handleAccountSelect = (account: any) => {
     setSelectedAccount(account === selectedAccount ? null : account)
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F5F5F7] pb-20">
       {/* Floating Dock */}
-      <div className="sticky z-40 flex">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
         <MyFloatingDock />
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
         {/* Header with Time and Date */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -323,7 +425,7 @@ function AccountsTab() {
 
         {/* Account Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-sky-500 to-sky-400 rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
@@ -331,11 +433,11 @@ function AccountsTab() {
                   <p className="text-blue-100">Manage and monitor all registered accounts</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-white text-blue-600 hover:bg-blue-50">
+                  <Button className="bg-gray-100 text-blue-600 hover:bg-gray-200">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button className="bg-blue-700 text-white hover:bg-blue-800">
+                  <Button className="bg-blue-500 text-white hover:bg-blue-600">
                     <UserPlus className="mr-2 h-4 w-4" />
                     Add Account
                   </Button>
@@ -406,8 +508,8 @@ function AccountsTab() {
         {/* Main Content - Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Accounts List - Left Side */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="lg:col-span-2 overflow-auto max-h-[95rem]">
+            <div className="rounded-2xl shadow-sm overflow-hidden">
               <div className="p-6 border-b">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <h2 className="text-lg font-bold text-gray-800">Registered Accounts</h2>
@@ -612,7 +714,7 @@ function AccountsTab() {
                 </Tabs>
               </div>
 
-              <div className="p-4 border-t flex items-center justify-between">
+              <div className="p-4 border-t flex items-center justify-between sticky">
                 <div className="text-sm text-gray-500">
                   Showing <span className="font-medium">{filteredAccounts.length}</span> of{" "}
                   <span className="font-medium">{accounts.length}</span> accounts
@@ -636,7 +738,7 @@ function AccountsTab() {
               <Card className="overflow-hidden">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Account Distribution</h3>
+                    <h3 className="font-semibold text-gray-700">Account Distribution</h3>
                     <PieChart className="h-4 w-4 text-blue-500" />
                   </div>
                 </div>
@@ -801,202 +903,8 @@ function AccountsTab() {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Quick Actions */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Quick Actions</h3>
-                    <Settings className="h-4 w-4 text-amber-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button className="bg-blue-500 hover:bg-blue-600 h-auto py-3 flex flex-col items-center">
-                      <UserPlus className="h-5 w-5 mb-1" />
-                      <span>Add Account</span>
-                    </Button>
-                    <Button className="bg-purple-500 hover:bg-purple-600 h-auto py-3 flex flex-col items-center">
-                      <UserCheck className="h-5 w-5 mb-1" />
-                      <span>Verify Accounts</span>
-                    </Button>
-                    <Button className="bg-amber-500 hover:bg-amber-600 h-auto py-3 flex flex-col items-center">
-                      <Download className="h-5 w-5 mb-1" />
-                      <span>Export Data</span>
-                    </Button>
-                    <Button className="bg-red-500 hover:bg-red-600 h-auto py-3 flex flex-col items-center">
-                      <UserX className="h-5 w-5 mb-1" />
-                      <span>Inactive Cleanup</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
-        </div>
-
-        {/* Growth Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* New Registrations */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-sky-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">New Registrations</h3>
-                <UserPlus className="h-5 w-5 text-blue-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-center mb-4">
-                <div className="relative w-full h-16">
-                  {/* Mini bar chart */}
-                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between h-12 px-2">
-                    {[35, 42, 27, 35, 20, 46, 30, 28, 32, 45, 55, 68].map((height, i) => (
-                      <div key={i} className="w-[6%] bg-blue-500 rounded-t-sm" style={{ height: `${height}%` }}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-2xl font-bold text-gray-800">48</div>
-                  <div className="text-sm text-gray-500">This month</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-green-600">+24%</div>
-                  <div className="text-sm text-gray-500">vs last month</div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex justify-between text-sm">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span>Customers</span>
-                  </div>
-                  <span className="font-medium">32</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                    <span>Service Providers</span>
-                  </div>
-                  <span className="font-medium">16</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Retention Rate */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Retention Rate</h3>
-                <Users className="h-5 w-5 text-green-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-center mb-4">
-                <div className="relative w-32 h-32">
-                  {/* Circular progress */}
-                  <div className="absolute inset-0 rounded-full bg-gray-100"></div>
-                  <div
-                    className="absolute inset-0 rounded-full bg-green-500"
-                    style={{ clipPath: "polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%)" }}
-                  ></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-gray-800">78%</div>
-                      <div className="text-xs text-gray-500">Retention</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">30 Day Retention</span>
-                    <span className="text-sm font-medium">78%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "78%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">60 Day Retention</span>
-                    <span className="text-sm font-medium">65%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "65%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">90 Day Retention</span>
-                    <span className="text-sm font-medium">52%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "52%" }}></div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Geographic Distribution */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-indigo-50 to-violet-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Geographic Distribution</h3>
-                <Globe className="h-5 w-5 text-indigo-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-center mb-4">
-                <div className="relative w-full h-32 bg-indigo-50 rounded-lg overflow-hidden">
-                  {/* Simplified map visualization */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Globe className="h-16 w-16 text-indigo-200" />
-                  </div>
-                  <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-indigo-500 rounded-full"></div>
-                  <div className="absolute top-1/3 left-1/2 w-3 h-3 bg-indigo-500 rounded-full"></div>
-                  <div className="absolute top-1/2 left-1/3 w-2 h-2 bg-indigo-500 rounded-full"></div>
-                  <div className="absolute bottom-1/4 right-1/4 w-2 h-2 bg-indigo-500 rounded-full"></div>
-                  <div className="absolute bottom-1/3 right-1/3 w-1 h-1 bg-indigo-500 rounded-full"></div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">United States</span>
-                  <span className="text-sm font-medium">65%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Europe</span>
-                  <span className="text-sm font-medium">18%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Asia</span>
-                  <span className="text-sm font-medium">12%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Other</span>
-                  <span className="text-sm font-medium">5%</span>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="ghost" className="text-indigo-600 text-xs w-full">
-                  View Detailed Map
-                  <ChevronRight className="ml-1 h-3 w-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
     </div>

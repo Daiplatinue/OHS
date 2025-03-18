@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from "react"
 import {
   Activity,
@@ -15,14 +13,11 @@ import {
   AlertTriangle,
   CheckCircle,
   Download,
-  BarChart3,
   PieChart,
-  LineChart,
   ArrowRight,
   ChevronRight,
   Zap,
   Shield,
-  Eye,
   MapPin,
   Smartphone,
   Laptop,
@@ -195,13 +190,6 @@ function UserActivities() {
     { type: "Feedback", count: 134, percentage: 15 },
   ]
 
-  // Activity by device data
-  const activityByDevice = [
-    { device: "Mobile", count: 452, percentage: 54 },
-    { device: "Desktop", count: 285, percentage: 34 },
-    { device: "Tablet", count: 105, percentage: 12 },
-  ]
-
   // Filter activities based on active tab
   const filteredActivities = activities.filter((activity) => {
     if (activeTab === "all") return true
@@ -305,7 +293,7 @@ function UserActivities() {
 
         {/* Activity Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-sky-500 to-sky-400 rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
@@ -313,11 +301,11 @@ function UserActivities() {
                   <p className="text-sky-100">Real-time user activity monitoring</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-white text-sky-600 hover:bg-sky-50">
+                  <Button className="bg-gray-100 text-blue-600 hover:bg-gray-200">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button className="bg-sky-700 text-white hover:bg-sky-800">
+                  <Button className="bg-blue-500 text-white hover:bg-blue-600">
                     <Download className="mr-2 h-4 w-4" />
                     Export
                   </Button>
@@ -392,7 +380,16 @@ function UserActivities() {
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               <div className="p-6 border-b">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-gray-800">Activity Timeline</h2>
+                  <div className="flex gap-5">
+                    <h2 className="text-lg font-bold text-gray-800">Live Feed Activities</h2>
+                    <div className="flex items-center gap-1">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      </span>
+                      <span className="text-xs text-green-600">Live</span>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-auto">
                       <TabsList className="bg-gray-100">
@@ -420,7 +417,7 @@ function UserActivities() {
                   <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-100"></div>
 
                   <div className="space-y-8">
-                    {filteredActivities.map((activity, index) => (
+                    {filteredActivities.map((activity) => (
                       <div key={activity.id} className="relative pl-12">
                         {/* Timeline dot */}
                         <div className="absolute left-0 top-0 w-8 h-8 flex items-center justify-center">
@@ -526,15 +523,14 @@ function UserActivities() {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-3 h-3 rounded-full ${
-                                index === 0
-                                  ? "bg-blue-500"
-                                  : index === 1
-                                    ? "bg-green-500"
-                                    : index === 2
-                                      ? "bg-purple-500"
-                                      : "bg-amber-500"
-                              }`}
+                              className={`w-3 h-3 rounded-full ${index === 0
+                                ? "bg-blue-500"
+                                : index === 1
+                                  ? "bg-green-500"
+                                  : index === 2
+                                    ? "bg-purple-500"
+                                    : "bg-amber-500"
+                                }`}
                             ></div>
                             <span className="text-sm text-gray-700">{item.type}</span>
                           </div>
@@ -542,15 +538,14 @@ function UserActivities() {
                         </div>
                         <div className="h-2 bg-gray-100 rounded-full">
                           <div
-                            className={`h-full rounded-full ${
-                              index === 0
-                                ? "bg-blue-500"
-                                : index === 1
-                                  ? "bg-green-500"
-                                  : index === 2
-                                    ? "bg-purple-500"
-                                    : "bg-amber-500"
-                            }`}
+                            className={`h-full rounded-full ${index === 0
+                              ? "bg-blue-500"
+                              : index === 1
+                                ? "bg-green-500"
+                                : index === 2
+                                  ? "bg-purple-500"
+                                  : "bg-amber-500"
+                              }`}
                             style={{ width: `${item.percentage}%` }}
                           ></div>
                         </div>
@@ -560,89 +555,110 @@ function UserActivities() {
                 </CardContent>
               </Card>
 
-              {/* Activity by Device */}
+              {/* Security Insights */}
               <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 border-b">
+                <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Activity by Device</h3>
-                    <BarChart3 className="h-4 w-4 text-purple-500" />
+                    <h3 className="font-semibold text-gray-800">Security Insights</h3>
+                    <Shield className="h-5 w-5 text-red-500" />
                   </div>
                 </div>
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="relative w-32 h-32">
-                      {/* Circular chart */}
-                      <div className="absolute inset-0 rounded-full bg-gray-100"></div>
-                      <div
-                        className="absolute inset-0 rounded-full bg-blue-500"
-                        style={{ clipPath: "polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%)" }}
-                      ></div>
-                      <div
-                        className="absolute inset-0 rounded-full bg-purple-500"
-                        style={{ clipPath: "polygon(50% 50%, 100% 0%, 100% 54%, 50% 54%)" }}
-                      ></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
-                          <Smartphone className="h-8 w-8 text-gray-400" />
-                        </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+                      <div className="rounded-full bg-red-100 p-2">
+                        <AlertTriangle className="h-4 w-4 text-red-600" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Failed Login Attempts</div>
+                        <div className="text-xs text-gray-500">12 attempts in the last 24 hours</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
+                      <div className="rounded-full bg-amber-100 p-2">
+                        <MapPin className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Unusual Locations</div>
+                        <div className="text-xs text-gray-500">3 logins from new locations</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="rounded-full bg-green-100 p-2">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Security Status</div>
+                        <div className="text-xs text-gray-500">All systems operating normally</div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    {activityByDevice.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`w-3 h-3 rounded-full ${
-                              index === 0 ? "bg-blue-500" : index === 1 ? "bg-purple-500" : "bg-pink-500"
-                            }`}
-                          ></div>
-                          <span className="text-sm">{item.device}</span>
-                        </div>
-                        <div className="text-sm font-medium">{item.percentage}%</div>
-                      </div>
-                    ))}
+                  <div className="mt-4 pt-4 border-t">
+                    <Button variant="ghost" className="text-red-600 text-xs w-full">
+                      View Security Report
+                      <ChevronRight className="ml-1 h-3 w-3" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Live Activity Feed */}
+              {/* Performance Metrics */}
               <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 border-b">
+                <div className="bg-gradient-to-r from-sky-50 to-indigo-50 p-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Live Feed</h3>
-                    <div className="flex items-center gap-1">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                      </span>
-                      <span className="text-xs text-green-600">Live</span>
-                    </div>
+                    <h3 className="font-semibold text-gray-800">Performance Metrics</h3>
+                    <Zap className="h-5 w-5 text-sky-500" />
                   </div>
                 </div>
-                <CardContent className="p-0">
-                  <div className="divide-y">
-                    {activities.slice(0, 4).map((activity, index) => (
-                      <div key={index} className="p-3 flex items-center gap-3 hover:bg-gray-50">
-                        {renderActionIcon(activity)}
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-medium">{activity.action}</div>
-                          <div className="truncate text-xs text-gray-500">
-                            {activity.user.name} • {activity.timeAgo}
-                          </div>
-                        </div>
-                        <div>
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          </Button>
-                        </div>
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Response Time</span>
+                        <span className="text-sm font-medium">245ms</span>
                       </div>
-                    ))}
+                      <div className="h-2 bg-gray-100 rounded-full">
+                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "15%" }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Server Load</span>
+                        <span className="text-sm font-medium">42%</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full">
+                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "42%" }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Memory Usage</span>
+                        <span className="text-sm font-medium">68%</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full">
+                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "68%" }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">API Requests</span>
+                        <span className="text-sm font-medium">1,245/hr</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full">
+                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "85%" }}></div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-3 text-center">
+
+                  <div className="mt-4 pt-4 border-t">
                     <Button variant="ghost" className="text-sky-600 text-xs w-full">
-                      View All Activities
+                      View Performance Dashboard
                       <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>
                   </div>
@@ -651,174 +667,9 @@ function UserActivities() {
             </div>
           </div>
         </div>
-
-        {/* Activity Insights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Security Insights */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Security Insights</h3>
-                <Shield className="h-5 w-5 text-red-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-                  <div className="rounded-full bg-red-100 p-2">
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Failed Login Attempts</div>
-                    <div className="text-xs text-gray-500">12 attempts in the last 24 hours</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                  <div className="rounded-full bg-amber-100 p-2">
-                    <MapPin className="h-4 w-4 text-amber-600" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Unusual Locations</div>
-                    <div className="text-xs text-gray-500">3 logins from new locations</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                  <div className="rounded-full bg-green-100 p-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Security Status</div>
-                    <div className="text-xs text-gray-500">All systems operating normally</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="ghost" className="text-red-600 text-xs w-full">
-                  View Security Report
-                  <ChevronRight className="ml-1 h-3 w-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Performance Metrics */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-sky-50 to-indigo-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Performance Metrics</h3>
-                <Zap className="h-5 w-5 text-sky-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">Response Time</span>
-                    <span className="text-sm font-medium">245ms</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-sky-500 rounded-full" style={{ width: "15%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">Server Load</span>
-                    <span className="text-sm font-medium">42%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-sky-500 rounded-full" style={{ width: "42%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">Memory Usage</span>
-                    <span className="text-sm font-medium">68%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-sky-500 rounded-full" style={{ width: "68%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">API Requests</span>
-                    <span className="text-sm font-medium">1,245/hr</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-sky-500 rounded-full" style={{ width: "85%" }}></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="ghost" className="text-sky-600 text-xs w-full">
-                  View Performance Dashboard
-                  <ChevronRight className="ml-1 h-3 w-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* User Engagement */}
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">User Engagement</h3>
-                <LineChart className="h-5 w-5 text-purple-500" />
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <div className="text-xs text-gray-500">Active Now</div>
-                  <div className="text-xl font-bold text-gray-800">86</div>
-                  <div className="text-xs text-green-600">+12%</div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <div className="text-xs text-gray-500">Avg. Session</div>
-                  <div className="text-xl font-bold text-gray-800">18m</div>
-                  <div className="text-xs text-green-600">+5%</div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <div className="text-xs text-gray-500">Bounce Rate</div>
-                  <div className="text-xl font-bold text-gray-800">24%</div>
-                  <div className="text-xs text-red-600">+2%</div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <div className="text-xs text-gray-500">Retention</div>
-                  <div className="text-xl font-bold text-gray-800">76%</div>
-                  <div className="text-xs text-green-600">+8%</div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-full bg-purple-100 p-2">
-                    <User className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div className="text-sm font-medium">Most Active User</div>
-                </div>
-                <div className="text-sm">John Smith</div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="ghost" className="text-purple-600 text-xs w-full">
-                  View Engagement Report
-                  <ChevronRight className="ml-1 h-3 w-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </main>
     </div>
   )
 }
 
 export default UserActivities
-

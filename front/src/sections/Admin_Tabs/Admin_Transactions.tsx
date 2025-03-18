@@ -25,6 +25,7 @@ import {
   Shield,
   Eye,
   Settings,
+  CircleDollarSign,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -109,7 +110,7 @@ function AdminTransactions() {
       amount: 125000,
       paymentMethod: "Visa",
       paymentIcon: <CreditCard className="h-4 w-4 text-white" />,
-      paymentIconBg: "bg-blue-600",
+      paymentIconBg: "bg-sky-500",
       accountNumber: "•••• •••• 5432",
       serviceProvider: {
         name: "Plumbling Services",
@@ -118,7 +119,49 @@ function AdminTransactions() {
         status: "waiting",
       },
       customer: {
-        name: "Watishewawewaewew",
+        name: "yawwwwww",
+        avatar: "https://assets.tiltify.com/uploads/media_type/image/203025/blob-09636982-a21a-494b-bbe4-3692c2720ae3.jpeg",
+        initials: "WW",
+        status: "waiting",
+      },
+      isReleased: false,
+    },
+    {
+      id: "2",
+      amount: 750000,
+      paymentMethod: "Coins.ph",
+      paymentIcon: <CircleDollarSign className="h-4 w-4 text-white" />,
+      paymentIconBg: "bg-sky-500",
+      accountNumber: "•••• •••• 2845",
+      serviceProvider: {
+        name: "Cleaning Services",
+        avatar: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
+        initials: "PS",
+        status: "waiting",
+      },
+      customer: {
+        name: "watwat",
+        avatar: "https://cdn.pixabay.com/photo/2020/05/04/11/21/automobile-5128760_1280.jpg",
+        initials: "WW",
+        status: "waiting",
+      },
+      isReleased: false,
+    },
+    {
+      id: "3",
+      amount: 2500000,
+      paymentMethod: "GCash",
+      paymentIcon: <Wallet className="h-4 w-4 text-white" />,
+      paymentIconBg: "bg-sky-500",
+      accountNumber: "•••• •••• 2055",
+      serviceProvider: {
+        name: "Wifi Installment Services",
+        avatar: "https://cdn.pixabay.com/photo/2018/04/11/10/55/child-3310208_1280.jpg",
+        initials: "PS",
+        status: "waiting",
+      },
+      customer: {
+        name: "sammmmmm",
         avatar: "https://cdn.pixabay.com/photo/2024/01/27/07/27/ice-cream-8535463_960_720.png",
         initials: "WW",
         status: "waiting",
@@ -427,14 +470,14 @@ function AdminTransactions() {
             <p className="text-gray-500 text-sm">Monitor and manage all payment transactions</p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-col items-end">
-            <div className="text-2xl font-bold text-emerald-500">{timeString}</div>
+            <div className="text-2xl font-bold text-sky-500">{timeString}</div>
             <div className="text-sm text-gray-500">{dateString}</div>
           </div>
         </div>
 
         {/* Transaction Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-sky-500 to-sky-400 rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
@@ -442,13 +485,13 @@ function AdminTransactions() {
                   <p className="text-emerald-100">Monitor payment flows and commission earnings</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-white text-emerald-600 hover:bg-emerald-50">
+                  <Button className="bg-gray-100 text-blue-600 hover:bg-gray-200">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
                   <Button
-                    className="bg-emerald-700 text-white hover:bg-emerald-800"
-                    onClick={() => simulateConfirmations("1")}
+                    className="bg-blue-500 text-white hover:bg-blue-600"
+                    onClick={() => simulateConfirmations("3")}
                   >
                     <Activity className="mr-2 h-4 w-4" />
                     Simulate
@@ -465,7 +508,7 @@ function AdminTransactions() {
                     <span className="text-sm font-medium">Total Balance</span>
                   </div>
                   <div
-                    className={`text-3xl font-bold transition-all duration-1000 ${isBalanceAnimating ? "text-yellow-300 scale-110" : ""}`}
+                    className={`text-3xl font-bold transition-all duration-1000 ${isBalanceAnimating ? "text-green-500 scale-110" : ""}`}
                   >
                     ₱{displayBalance.toLocaleString()}
                   </div>
@@ -568,7 +611,7 @@ function AdminTransactions() {
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-sm font-medium text-gray-500">Service Provider</div>
                           {booking.serviceProvider.status === "waiting" ? (
-                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Waiting</Badge>
+                            <Badge className="bg-gray-200 text-gray-700">Waiting</Badge>
                           ) : (
                             <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confirmed</Badge>
                           )}
@@ -586,7 +629,7 @@ function AdminTransactions() {
                             <div className="font-medium">{booking.serviceProvider.name}</div>
                             <div className="text-sm text-gray-500">
                               {booking.serviceProvider.status === "waiting" ? (
-                                <div className="flex items-center text-amber-600">
+                                <div className="flex items-center text-gray-500">
                                   <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                   Waiting for confirmation
                                 </div>
@@ -606,7 +649,7 @@ function AdminTransactions() {
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-sm font-medium text-gray-500">Customer</div>
                           {booking.customer.status === "waiting" ? (
-                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Waiting</Badge>
+                            <Badge className="bg-gray-200 text-gray-700">Waiting</Badge>
                           ) : (
                             <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confirmed</Badge>
                           )}
@@ -624,7 +667,7 @@ function AdminTransactions() {
                             <div className="font-medium">{booking.customer.name}</div>
                             <div className="text-sm text-gray-500">
                               {booking.customer.status === "waiting" ? (
-                                <div className="flex items-center text-amber-600">
+                                <div className="flex items-center text-gray-500">
                                   <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                   Waiting for confirmation
                                 </div>
@@ -642,16 +685,6 @@ function AdminTransactions() {
 
                     {isReleaseEnabled(booking) && autoReleaseEnabled && (
                       <div className="mb-6">
-                        <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-xl p-4 mb-3">
-                          <div className="flex items-center gap-2 text-amber-700 mb-1">
-                            <AlertCircle className="h-4 w-4" />
-                            <span className="font-medium">Auto-Release Notice</span>
-                          </div>
-                          <p className="text-sm text-amber-600">
-                            This payment will be automatically processed if not released manually.
-                          </p>
-                        </div>
-
                         <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-4 flex justify-between items-center">
                           <div>
                             <div className="flex items-center gap-2 text-red-700 mb-1">
@@ -688,7 +721,7 @@ function AdminTransactions() {
                             Both parties have confirmed. You can release the payment now.
                           </div>
                         ) : (
-                          <div className="flex items-center text-amber-600">
+                          <div className="flex items-center text-red-500">
                             <Clock className="h-4 w-4 mr-1" />
                             Waiting for both parties to confirm before releasing payment.
                           </div>
@@ -702,12 +735,10 @@ function AdminTransactions() {
                       >
                         {booking.isReleased ? (
                           <div className="flex items-center">
-                            <CheckCircle className="h-4 w-4 mr-2" />
                             Payment Released
                           </div>
                         ) : (
                           <div className="flex items-center">
-                            <DollarSign className="h-4 w-4 mr-2" />
                             Release Payment
                           </div>
                         )}
@@ -878,36 +909,6 @@ function AdminTransactions() {
                         <div className="h-full bg-red-500 rounded-full" style={{ width: "1%" }}></div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Quick Actions */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Quick Actions</h3>
-                    <Settings className="h-4 w-4 text-purple-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button className="bg-blue-500 hover:bg-blue-600 h-auto py-3 flex flex-col items-center">
-                      <Download className="h-5 w-5 mb-1" />
-                      <span>Export Report</span>
-                    </Button>
-                    <Button className="bg-emerald-500 hover:bg-emerald-600 h-auto py-3 flex flex-col items-center">
-                      <FileText className="h-5 w-5 mb-1" />
-                      <span>Transaction Log</span>
-                    </Button>
-                    <Button className="bg-amber-500 hover:bg-amber-600 h-auto py-3 flex flex-col items-center">
-                      <History className="h-5 w-5 mb-1" />
-                      <span>Payment History</span>
-                    </Button>
-                    <Button className="bg-purple-500 hover:bg-purple-600 h-auto py-3 flex flex-col items-center">
-                      <Shield className="h-5 w-5 mb-1" />
-                      <span>Security Settings</span>
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
