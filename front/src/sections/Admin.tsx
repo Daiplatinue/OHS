@@ -21,25 +21,25 @@ function Admin() {
       icon: <Home className="h-5 w-5 text-white" />,
       label: "Services",
       value: "421",
-      bgColor: "bg-sky-500",
+      bgColor: "bg-[#0A84FF]",
     },
     {
       icon: <DollarSign className="h-5 w-5 text-white" />,
       label: "Revenue",
       value: "$ 8.2k",
-      bgColor: "bg-sky-500",
+      bgColor: "bg-[#0A84FF]",
     },
     {
       icon: <Users className="h-5 w-5 text-white" />,
       label: "Customers",
       value: "325",
-      bgColor: "bg-sky-500",
+      bgColor: "bg-[#0A84FF]",
     },
     {
       icon: <Clock className="h-5 w-5 text-white" />,
       label: "Pending",
       value: "18",
-      bgColor: "bg-sky-500",
+      bgColor: "bg-[#0A84FF]",
     },
   ]
 
@@ -78,12 +78,12 @@ function Admin() {
         colorStops: [
           {
             offset: 0,
-            color: "#0ea5e9",
+            color: "#0A84FF",
             opacity: 0.8,
           },
           {
             offset: 100,
-            color: "#0ea5e9",
+            color: "#0A84FF",
             opacity: 0.2,
           },
         ],
@@ -125,7 +125,7 @@ function Admin() {
         },
       },
     },
-    colors: ["#0ea5e9"],
+    colors: ["#0A84FF"],
     tooltip: {
       theme: "light",
     },
@@ -151,7 +151,7 @@ function Admin() {
     plotOptions: {
       bar: {
         columnWidth: "50%",
-        borderRadius: 2,
+        borderRadius: 4,
       },
     },
     dataLabels: {
@@ -193,7 +193,7 @@ function Admin() {
         },
       },
     },
-    colors: ["#0ea5e9"],
+    colors: ["#0A84FF"],
     tooltip: {
       theme: "light",
     },
@@ -247,7 +247,7 @@ function Admin() {
   ]
 
   return (
-    <div className="min-h-screen w-full bg-[#F5F5F7]">
+    <div className="min-h-screen w-full bg-[#F5F5F7] font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
       <div className="sticky z-40 flex">
         <MyFloatingDock />
@@ -257,19 +257,22 @@ function Admin() {
         {/* Main Dashboard */}
         <div className="overflow-hidden max-w-7xl mx-auto">
           {/* Header */}
-          <div className="p-6 pb-0">
+          <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl p-6 mb-8 text-white shadow-sm">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">{greeting}, Admin</h1>
-                <p className="text-gray-500 text-sm">Manage your home service business from one dashboard</p>
+                <h1 className="text-2xl font-semibold">{greeting}, Admin</h1>
+                <p className="text-white/90 font-light">Manage your home service business from one dashboard</p>
               </div>
               <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
                 {metrics.map((metric, index) => (
-                  <div key={index} className="flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500 text-white">
-                    <div className="rounded-full bg-sky-600 p-1">{metric.icon}</div>
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm"
+                  >
+                    <div className="rounded-full bg-white/20 p-1">{metric.icon}</div>
                     <div>
-                      <span className="font-bold">{metric.value}</span>
-                      <span className="text-xs ml-1">{metric.label}</span>
+                      <span className="font-medium">{metric.value}</span>
+                      <span className="text-xs ml-1 font-light">{metric.label}</span>
                     </div>
                   </div>
                 ))}
@@ -277,16 +280,18 @@ function Admin() {
             </div>
 
             {/* Service Categories */}
-            <div className="flex overflow-x-auto pb-2 mb-6">
-              <div className="inline-flex rounded-2xl p-1.5 bg-gray-100">
+            <div className="flex overflow-x-auto pb-2 mt-6">
+              <div className="inline-flex rounded-xl p-1 bg-white/20 backdrop-blur-sm">
                 {serviceCategories.map((category, index) => (
                   <div
                     key={index}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl ${
-                      category.active ? "bg-sky-500 text-white shadow-md" : "bg-white text-gray-700 hover:bg-gray-50"
+                    className={`flex items-center gap-2 px-5 py-2 rounded-xl ${
+                      category.active
+                        ? "bg-white text-[#0A84FF] shadow-sm"
+                        : "bg-transparent text-white hover:bg-white/10"
                     } cursor-pointer transition-colors mx-1 first:ml-0 last:mr-0`}
                   >
-                    <div className={`${category.active ? "text-white" : "text-gray-600"}`}>{category.icon}</div>
+                    <div className={`${category.active ? "text-[#0A84FF]" : "text-white"}`}>{category.icon}</div>
                     <span className="font-medium">{category.label}</span>
                   </div>
                 ))}
@@ -295,11 +300,11 @@ function Admin() {
           </div>
 
           {/* Dashboard Content */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Booking Trends */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-gray-800">Booking Trends</h3>
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
+                <h3 className="text-lg font-medium mb-3 text-gray-800">Booking Trends</h3>
                 <div className="h-[200px]">
                   <ReactApexChart options={salesChartOptions} series={salesChartSeries} type="area" height="100%" />
                 </div>
@@ -307,46 +312,46 @@ function Admin() {
             </Card>
 
             {/* Monthly Target */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-gray-800">Monthly Target</h3>
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
+                <h3 className="text-lg font-medium mb-3 text-gray-800">Monthly Target</h3>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">75.5%</span>
-                  <span className="text-gray-700">24.5%</span>
+                  <span className="text-gray-700 text-sm font-light">75.5%</span>
+                  <span className="text-gray-700 text-sm font-light">24.5%</span>
                 </div>
                 <div className="flex gap-2 mb-4">
-                  <div className="h-2 bg-gray-100 rounded-full flex-grow">
-                    <div className="h-full bg-sky-500 rounded-full" style={{ width: "75.5%" }}></div>
+                  <div className="h-1.5 bg-[#F2F2F7] rounded-full flex-grow">
+                    <div className="h-full bg-[#0A84FF] rounded-full" style={{ width: "75.5%" }}></div>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full w-1/4"></div>
+                  <div className="h-1.5 bg-[#F2F2F7] rounded-full w-1/4"></div>
                 </div>
 
-                <div className="flex justify-between text-xs text-gray-500 mb-4">
+                <div className="flex justify-between text-xs text-gray-500 mb-4 font-light">
                   <span>320 services</span>
                   <span>425 target</span>
                 </div>
-                <div className="text-xs text-gray-500 mb-4">This Month</div>
+                <div className="text-xs text-gray-500 mb-4 font-light">This Month</div>
 
                 <div className="flex justify-between items-center">
                   <div>
-                    <div className="text-xl font-bold text-gray-800">$8.2k</div>
-                    <div className="text-xs text-gray-500 flex items-center">
+                    <div className="text-xl font-medium text-gray-800">$8.2k</div>
+                    <div className="text-xs text-gray-500 flex items-center font-light">
                       Revenue
-                      <span className="text-green-500 ml-1">↑</span>
+                      <span className="text-[#30D158] ml-1">↑</span>
                     </div>
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-gray-800">128</div>
-                    <div className="text-xs text-gray-500 flex items-center">
+                    <div className="text-xl font-medium text-gray-800">128</div>
+                    <div className="text-xs text-gray-500 flex items-center font-light">
                       New Bookings
-                      <span className="text-green-500 ml-1">↑</span>
+                      <span className="text-[#30D158] ml-1">↑</span>
                     </div>
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-gray-800">96%</div>
-                    <div className="text-xs text-gray-500 flex items-center">
+                    <div className="text-xl font-medium text-gray-800">96%</div>
+                    <div className="text-xs text-gray-500 flex items-center font-light">
                       Satisfaction
-                      <span className="text-green-500 ml-1">↑</span>
+                      <span className="text-[#30D158] ml-1">↑</span>
                     </div>
                   </div>
                 </div>
@@ -354,12 +359,12 @@ function Admin() {
             </Card>
 
             {/* Service Performance */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-semibold text-gray-800">Service Performance</h3>
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-medium text-gray-800">Service Performance</h3>
                   <Tabs defaultValue="week" className="w-auto">
-                    <TabsList className="bg-gray-100">
+                    <TabsList className="bg-[#F2F2F7]">
                       <TabsTrigger value="week" className="text-xs data-[state=active]:bg-white">
                         Week
                       </TabsTrigger>
@@ -380,14 +385,14 @@ function Admin() {
           </div>
 
           {/* Tables Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Recent Service Requests */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Recent Service Requests</h3>
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
+                <h3 className="text-lg font-medium mb-4 text-gray-800">Recent Service Requests</h3>
                 <table className="w-full">
                   <thead>
-                    <tr className="text-gray-500 text-xs">
+                    <tr className="text-gray-500 text-xs font-light">
                       <th className="text-left pb-2">Request ID</th>
                       <th className="text-left pb-2">Service</th>
                       <th className="text-left pb-2">Location</th>
@@ -397,17 +402,17 @@ function Admin() {
                   <tbody>
                     {recentRequests.map((request, index) => (
                       <tr key={index} className="border-t border-gray-100">
-                        <td className="py-3 text-sm">{request.id}</td>
-                        <td className="py-3 text-sm">{request.service}</td>
-                        <td className="py-3 text-sm">{request.location}</td>
+                        <td className="py-3 text-sm font-medium">{request.id}</td>
+                        <td className="py-3 text-sm font-light">{request.service}</td>
+                        <td className="py-3 text-sm font-light">{request.location}</td>
                         <td className="py-3 text-sm">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs ${
+                            className={`px-2 py-0.5 rounded-full text-xs font-light ${
                               request.status === "Pending"
-                                ? "bg-orange-100 text-orange-600"
+                                ? "bg-[#FFF8E6] text-[#FF9500]"
                                 : request.status === "In Progress"
-                                  ? "bg-blue-100 text-blue-600"
-                                  : "bg-green-100 text-green-600"
+                                  ? "bg-[#E9F6FF] text-[#0A84FF]"
+                                  : "bg-[#E8F8EF] text-[#30D158]"
                             }`}
                           >
                             {request.status}
@@ -421,29 +426,29 @@ function Admin() {
             </Card>
 
             {/* Customer Feedback */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800">Customer Feedback</h3>
-                  <span className="text-xs text-sky-600">View all</span>
+                  <h3 className="text-lg font-medium text-gray-800">Customer Feedback</h3>
+                  <span className="text-xs text-[#0A84FF] font-medium">View all</span>
                 </div>
                 <div className="space-y-4">
                   {customerFeedback.map((feedback, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="rounded-full bg-sky-500 p-2 mt-1">{feedback.icon}</div>
+                      <div className="rounded-full bg-[#0A84FF] p-2 mt-1">{feedback.icon}</div>
                       <div className="flex-1">
                         <h4 className="font-medium text-sm text-gray-800">{feedback.type}</h4>
-                        <p className="text-xs text-gray-500">Customer: {feedback.customer}</p>
+                        <p className="text-xs text-gray-500 font-light">Customer: {feedback.customer}</p>
                         <div className="flex mt-1">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`h-3 w-3 ${i < feedback.rating ? "text-amber-400 fill-amber-400" : "text-gray-300"}`}
+                              className={`h-3 w-3 ${i < feedback.rating ? "text-[#FF9500] fill-[#FF9500]" : "text-gray-300"}`}
                             />
                           ))}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500">{feedback.time}</div>
+                      <div className="text-xs text-gray-500 font-light">{feedback.time}</div>
                     </div>
                   ))}
                 </div>
@@ -451,54 +456,54 @@ function Admin() {
             </Card>
 
             {/* Service Analytics */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-4">
+            <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+              <CardContent className="p-5">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800">Service Analytics</h3>
-                  <span className="text-xs text-gray-500">This Month</span>
+                  <h3 className="text-lg font-medium text-gray-800">Service Analytics</h3>
+                  <span className="text-xs text-gray-500 font-light">This Month</span>
                 </div>
                 <div className="flex justify-center">
                   <div className="relative w-40 h-40">
                     {/* Circular progress chart */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-32 h-32 rounded-full bg-[#F2F2F7] flex items-center justify-center">
                         <div className="w-24 h-24 rounded-full bg-white flex flex-col items-center justify-center">
-                          <span className="text-2xl font-bold text-gray-800">320</span>
-                          <span className="text-xs text-gray-500">Services</span>
+                          <span className="text-2xl font-medium text-gray-800">320</span>
+                          <span className="text-xs text-gray-500 font-light">Services</span>
                         </div>
                       </div>
                       {/* Overlay colored segments */}
-                      <div className="absolute top-0 right-0 w-16 h-16 rounded-tr-full bg-sky-400"></div>
-                      <div className="absolute bottom-0 right-0 w-16 h-16 rounded-br-full bg-sky-600"></div>
+                      <div className="absolute top-0 right-0 w-16 h-16 rounded-tr-full bg-[#0A84FF]"></div>
+                      <div className="absolute bottom-0 right-0 w-16 h-16 rounded-br-full bg-[#5AC8FA]"></div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-sky-500 mr-2"></div>
-                      <span className="text-sm text-gray-700">Plumbing</span>
+                      <div className="w-3 h-3 rounded-full bg-[#0A84FF] mr-2"></div>
+                      <span className="text-sm text-gray-700 font-light">Plumbing</span>
                     </div>
                     <span className="text-sm font-medium">32%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-sky-700 mr-2"></div>
-                      <span className="text-sm text-gray-700">Electrical</span>
+                      <div className="w-3 h-3 rounded-full bg-[#5AC8FA] mr-2"></div>
+                      <span className="text-sm text-gray-700 font-light">Electrical</span>
                     </div>
                     <span className="text-sm font-medium">28%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-sky-300 mr-2"></div>
-                      <span className="text-sm text-gray-700">Cleaning</span>
+                      <div className="w-3 h-3 rounded-full bg-[#64D2FF] mr-2"></div>
+                      <span className="text-sm text-gray-700 font-light">Cleaning</span>
                     </div>
                     <span className="text-sm font-medium">24%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
-                      <span className="text-sm text-gray-700">Others</span>
+                      <div className="w-3 h-3 rounded-full bg-[#8E8E93] mr-2"></div>
+                      <span className="text-sm text-gray-700 font-light">Others</span>
                     </div>
                     <span className="text-sm font-medium">16%</span>
                   </div>
@@ -513,3 +518,4 @@ function Admin() {
 }
 
 export default Admin
+

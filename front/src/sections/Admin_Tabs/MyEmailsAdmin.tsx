@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
 import {
@@ -10,7 +8,6 @@ import {
   RefreshCw,
   ChevronRight,
   BarChart3,
-  LineChart,
   AlertCircle,
   Trash2,
   Eye,
@@ -19,8 +16,6 @@ import {
   Send,
   Inbox,
   FileText,
-  Settings,
-  Users,
   Paperclip,
   Reply,
   Forward,
@@ -435,40 +430,40 @@ function MyEmailsAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="sticky z-40 flex">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
         <MyFloatingDock />
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
         {/* Header with Time and Date */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Email Management</h1>
-            <p className="text-gray-500 text-sm">Manage all email communications in one place</p>
+            <h1 className="text-2xl font-semibold text-gray-800">Email Management</h1>
+            <p className="text-gray-500 text-sm font-light">Manage all email communications in one place</p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-col items-end">
-            <div className="text-2xl font-bold text-indigo-500">{timeString}</div>
-            <div className="text-sm text-gray-500">{dateString}</div>
+            <div className="text-2xl font-medium text-[#0A84FF]">{timeString}</div>
+            <div className="text-sm text-gray-500 font-light">{dateString}</div>
           </div>
         </div>
 
         {/* Email Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Email Overview</h2>
-                  <p className="text-indigo-100">Monitor and manage all email communications</p>
+                  <h2 className="text-xl font-semibold">Email Overview</h2>
+                  <p className="text-white/90 font-light">Monitor and manage all email communications</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-white text-indigo-600 hover:bg-indigo-50">
+                  <Button className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button className="bg-indigo-700 text-white hover:bg-indigo-800">
+                  <Button className="bg-white text-[#0A84FF] hover:bg-white/90 border-0">
                     <Send className="mr-2 h-4 w-4" />
                     Compose
                   </Button>
@@ -476,57 +471,57 @@ function MyEmailsAdmin() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Mail className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Total Emails</span>
                   </div>
-                  <div className="text-3xl font-bold">{emailMetrics.totalEmails}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{emailMetrics.totalEmails}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+12% this month</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <AlertCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Unread</span>
                   </div>
-                  <div className="text-3xl font-bold">{emailMetrics.unreadEmails}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{emailMetrics.unreadEmails}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>-5% since yesterday</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Send className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Sent Today</span>
                   </div>
-                  <div className="text-3xl font-bold">{emailMetrics.sentToday}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{emailMetrics.sentToday}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+3 since morning</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Eye className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Open Rate</span>
                   </div>
-                  <div className="text-3xl font-bold">{emailMetrics.openRate}%</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{emailMetrics.openRate}%</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+4% this week</span>
                   </div>
@@ -541,7 +536,7 @@ function MyEmailsAdmin() {
           {/* Email List and Detail - Left Side */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="p-4 border-b">
+              <div className="p-4 border-b border-gray-100">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="flex items-center">
                     <Checkbox
@@ -588,7 +583,7 @@ function MyEmailsAdmin() {
                         </>
                       ) : (
                         <Select defaultValue="all" onValueChange={setFilterCategory}>
-                          <SelectTrigger className="w-[180px] h-8 text-xs">
+                          <SelectTrigger className="w-[180px] h-8 text-xs bg-[#F2F2F7] border-0">
                             <SelectValue placeholder="Filter by category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -607,7 +602,7 @@ function MyEmailsAdmin() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       placeholder="Search emails..."
-                      className="pl-9 bg-gray-50 border-0"
+                      className="pl-9 bg-[#F2F2F7] border-0"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -615,41 +610,41 @@ function MyEmailsAdmin() {
                 </div>
               </div>
 
-              <div className="flex border-b">
+              <div className="flex border-b border-gray-100">
                 <Tabs defaultValue="inbox" onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="w-full justify-start bg-gray-50 p-0 h-auto">
+                  <TabsList className="w-full justify-start bg-[#F2F2F7] p-0 h-auto">
                     <TabsTrigger
                       value="inbox"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Inbox className="h-4 w-4" />
-                      <span>Inbox</span>
+                      <Inbox className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Inbox</span>
                       {emailMetrics.unreadEmails > 0 && (
-                        <Badge className="ml-1 bg-indigo-100 text-indigo-600 hover:bg-indigo-100">
+                        <Badge className="ml-1 bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">
                           {emailMetrics.unreadEmails}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="starred"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Star className="h-4 w-4" />
-                      <span>Starred</span>
+                      <Star className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Starred</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="sent"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Send className="h-4 w-4" />
-                      <span>Sent</span>
+                      <Send className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Sent</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="drafts"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <FileText className="h-4 w-4" />
-                      <span>Drafts</span>
+                      <FileText className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Drafts</span>
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -658,11 +653,11 @@ function MyEmailsAdmin() {
               <div className="divide-y max-h-[600px] overflow-y-auto">
                 {filteredEmails.length === 0 ? (
                   <div className="p-8 text-center">
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F2F2F7] mb-4">
                       <Mail className="h-6 w-6 text-gray-500" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-1">No emails found</h3>
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 font-light">
                       {searchQuery ? "Try a different search term" : "Your selected folder is empty"}
                     </p>
                   </div>
@@ -670,7 +665,7 @@ function MyEmailsAdmin() {
                   filteredEmails.map((email) => (
                     <div
                       key={email.id}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${selectedEmail?.id === email.id ? "bg-indigo-50" : ""} ${email.status === "unread" ? "bg-gray-50" : ""}`}
+                      className={`p-4 hover:bg-[#F2F2F7]/50 cursor-pointer transition-colors ${selectedEmail?.id === email.id ? "bg-[#E9F6FF]/50" : ""} ${email.status === "unread" ? "bg-[#F2F2F7]/50" : ""}`}
                       onClick={() => handleEmailSelect(email)}
                     >
                       <div className="flex items-start gap-3">
@@ -683,7 +678,7 @@ function MyEmailsAdmin() {
                             onClick={(e) => e.stopPropagation()}
                           />
                           {email.status === "starred" ? (
-                            <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                            <Star className="h-4 w-4 text-[#FF9500] fill-[#FF9500]" />
                           ) : (
                             <button
                               className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -692,7 +687,7 @@ function MyEmailsAdmin() {
                                 // Handle star action
                               }}
                             >
-                              <Star className="h-4 w-4 text-gray-300 hover:text-amber-400" />
+                              <Star className="h-4 w-4 text-gray-300 hover:text-[#FF9500]" />
                             </button>
                           )}
                         </div>
@@ -702,7 +697,9 @@ function MyEmailsAdmin() {
                             <div className="flex items-center">
                               <Avatar className="h-6 w-6 mr-2">
                                 <AvatarImage src={email.sender.avatar} />
-                                <AvatarFallback>{email.sender.initials}</AvatarFallback>
+                                <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                                  {email.sender.initials}
+                                </AvatarFallback>
                               </Avatar>
                               <span
                                 className={`font-medium ${email.status === "unread" ? "text-gray-900" : "text-gray-700"}`}
@@ -710,7 +707,7 @@ function MyEmailsAdmin() {
                                 {email.sender.name}
                               </span>
                             </div>
-                            <div className="text-xs text-gray-500">{email.timeAgo}</div>
+                            <div className="text-xs text-gray-500 font-light">{email.timeAgo}</div>
                           </div>
 
                           <h3
@@ -719,22 +716,22 @@ function MyEmailsAdmin() {
                             {email.subject}
                           </h3>
 
-                          <p className="text-xs text-gray-500 line-clamp-2">{email.preview}</p>
+                          <p className="text-xs text-gray-500 font-light line-clamp-2">{email.preview}</p>
 
                           <div className="flex items-center mt-2">
                             {email.priority === "high" && (
-                              <Badge className="mr-2 bg-red-100 text-red-700 hover:bg-red-100">High</Badge>
+                              <Badge className="mr-2 bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">High</Badge>
                             )}
 
                             {email.hasAttachments && (
-                              <Badge className="mr-2 bg-gray-100 text-gray-700 hover:bg-gray-100">
+                              <Badge className="mr-2 bg-[#F2F2F7] text-gray-700 hover:bg-[#F2F2F7]">
                                 <Paperclip className="h-3 w-3 mr-1" />
                                 {email.attachments?.length}
                               </Badge>
                             )}
 
                             {email.labels?.map((label, index) => (
-                              <Badge key={index} className="mr-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
+                              <Badge key={index} className="mr-2 bg-[#E9F6FF] text-[#0A84FF] hover:bg-[#E9F6FF]">
                                 {label}
                               </Badge>
                             ))}
@@ -747,9 +744,9 @@ function MyEmailsAdmin() {
               </div>
 
               {selectedEmail && (
-                <div className="border-t p-6">
+                <div className="border-t border-gray-100 p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-xl font-bold text-gray-800">{selectedEmail.subject}</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">{selectedEmail.subject}</h2>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <Archive className="h-4 w-4" />
@@ -766,15 +763,17 @@ function MyEmailsAdmin() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
                     <div className="flex items-center">
-                      <Avatar className="h-10 w-10 mr-3">
+                      <Avatar className="h-10 w-10 mr-3 border-2 border-white shadow-sm">
                         <AvatarImage src={selectedEmail.sender.avatar} />
-                        <AvatarFallback>{selectedEmail.sender.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                          {selectedEmail.sender.initials}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">{selectedEmail.sender.name}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 font-light">
                           <span>{selectedEmail.sender.email}</span>
                           <span className="mx-1">•</span>
                           <span>{selectedEmail.timeAgo}</span>
@@ -782,23 +781,23 @@ function MyEmailsAdmin() {
                       </div>
                     </div>
 
-                    <div className="text-sm text-gray-500">To: {selectedEmail.recipients.join(", ")}</div>
+                    <div className="text-sm text-gray-500 font-light">To: {selectedEmail.recipients.join(", ")}</div>
                   </div>
 
-                  <div className="mb-6 whitespace-pre-line text-gray-700">{selectedEmail.content}</div>
+                  <div className="mb-6 whitespace-pre-line text-gray-700 font-light">{selectedEmail.content}</div>
 
                   {selectedEmail.hasAttachments && (
                     <div className="mb-6">
                       <h3 className="text-sm font-medium mb-2">Attachments ({selectedEmail.attachments?.length})</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {selectedEmail.attachments?.map((attachment, index) => (
-                          <div key={index} className="flex items-center p-3 border rounded-lg bg-gray-50">
-                            <div className="h-10 w-10 bg-indigo-100 rounded flex items-center justify-center mr-3">
-                              <FileText className="h-5 w-5 text-indigo-600" />
+                          <div key={index} className="flex items-center p-3 border rounded-lg bg-[#F2F2F7]/50">
+                            <div className="h-10 w-10 bg-[#E9F6FF] rounded flex items-center justify-center mr-3">
+                              <FileText className="h-5 w-5 text-[#0A84FF]" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-sm truncate">{attachment.name}</div>
-                              <div className="text-xs text-gray-500">{attachment.size}</div>
+                              <div className="text-xs text-gray-500 font-light">{attachment.size}</div>
                             </div>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                               <Download className="h-4 w-4" />
@@ -810,7 +809,7 @@ function MyEmailsAdmin() {
                   )}
 
                   <div className="flex justify-end">
-                    <Button className="bg-indigo-500 hover:bg-indigo-600 text-white">
+                    <Button className="bg-[#0A84FF] hover:bg-[#0A84FF]/90 text-white border-0">
                       <Reply className="mr-2 h-4 w-4" />
                       Reply
                     </Button>
@@ -824,33 +823,31 @@ function MyEmailsAdmin() {
           <div>
             <div className="space-y-6">
               {/* Email Templates */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E9F6FF] to-[#F2EBFF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Email Templates</h3>
-                    <FileText className="h-4 w-4 text-indigo-500" />
+                    <h3 className="font-medium text-gray-800">Email Templates</h3>
+                    <FileText className="h-4 w-4 text-[#0A84FF]" />
                   </div>
                 </div>
                 <CardContent className="p-0">
                   <div className="divide-y">
                     {emailTemplates.slice(0, 3).map((template) => (
-                      <div key={template.id} className="p-4 hover:bg-gray-50">
+                      <div key={template.id} className="p-4 hover:bg-[#F2F2F7]/50">
                         <div className="flex justify-between items-start mb-1">
                           <h4 className="font-medium text-gray-800">{template.name}</h4>
-                          <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
-                            {template.category}
-                          </Badge>
+                          <Badge className="bg-[#E9F6FF] text-[#0A84FF] hover:bg-[#E9F6FF]">{template.category}</Badge>
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">{template.subject}</p>
-                        <div className="flex justify-between items-center text-xs text-gray-500">
+                        <p className="text-sm text-gray-500 font-light mb-2">{template.subject}</p>
+                        <div className="flex justify-between items-center text-xs text-gray-500 font-light">
                           <span>Used {template.usage} times</span>
                           <span>Last used: {template.lastUsed}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="p-3 text-center border-t">
-                    <Button variant="ghost" className="text-indigo-600 text-xs w-full">
+                  <div className="p-3 text-center border-t border-gray-100">
+                    <Button variant="ghost" className="text-[#0A84FF] text-xs w-full font-medium">
                       View All Templates
                       <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>
@@ -859,155 +856,62 @@ function MyEmailsAdmin() {
               </Card>
 
               {/* Email Campaigns */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#F2EBFF] to-[#FFE5E7]/30 p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Email Campaigns</h3>
-                    <BarChart3 className="h-4 w-4 text-purple-500" />
+                    <h3 className="font-medium text-gray-800">Email Campaigns</h3>
+                    <BarChart3 className="h-4 w-4 text-[#5E5CE6]" />
                   </div>
                 </div>
                 <CardContent className="p-0">
                   <div className="divide-y">
                     {emailCampaigns.map((campaign) => (
-                      <div key={campaign.id} className="p-4 hover:bg-gray-50">
+                      <div key={campaign.id} className="p-4 hover:bg-[#F2F2F7]/50">
                         <div className="flex justify-between items-start mb-1">
                           <h4 className="font-medium text-gray-800">{campaign.name}</h4>
                           {campaign.status === "active" && (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Active</Badge>
+                            <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Active</Badge>
                           )}
                           {campaign.status === "scheduled" && (
-                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Scheduled</Badge>
+                            <Badge className="bg-[#E9F6FF] text-[#0A84FF] hover:bg-[#E9F6FF]">Scheduled</Badge>
                           )}
                           {campaign.status === "completed" && (
-                            <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">Completed</Badge>
+                            <Badge className="bg-[#F2F2F7] text-gray-700 hover:bg-[#F2F2F7]">Completed</Badge>
                           )}
                           {campaign.status === "draft" && (
-                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Draft</Badge>
+                            <Badge className="bg-[#FFF8E6] text-[#FF9500] hover:bg-[#FFF8E6]">Draft</Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">{campaign.subject}</p>
+                        <p className="text-sm text-gray-500 font-light mb-2">{campaign.subject}</p>
 
                         {campaign.status !== "scheduled" && campaign.status !== "draft" && (
                           <div className="grid grid-cols-3 gap-2 mb-2">
-                            <div className="bg-gray-50 rounded p-2 text-center">
-                              <div className="text-xs text-gray-500">Sent</div>
+                            <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                              <div className="text-xs text-gray-500 font-light">Sent</div>
                               <div className="font-medium">{campaign.sentCount.toLocaleString()}</div>
                             </div>
-                            <div className="bg-gray-50 rounded p-2 text-center">
-                              <div className="text-xs text-gray-500">Open Rate</div>
+                            <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                              <div className="text-xs text-gray-500 font-light">Open Rate</div>
                               <div className="font-medium">{campaign.openRate}%</div>
                             </div>
-                            <div className="bg-gray-50 rounded p-2 text-center">
-                              <div className="text-xs text-gray-500">Click Rate</div>
+                            <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                              <div className="text-xs text-gray-500 font-light">Click Rate</div>
                               <div className="font-medium">{campaign.clickRate}%</div>
                             </div>
                           </div>
                         )}
 
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 font-light">
                           {campaign.status === "scheduled" ? "Scheduled for: " : "Sent: "}
                           {campaign.sentDate}
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="p-3 text-center border-t">
-                    <Button variant="ghost" className="text-purple-600 text-xs w-full">
+                  <div className="p-3 text-center border-t border-gray-100">
+                    <Button variant="ghost" className="text-[#5E5CE6] text-xs w-full font-medium">
                       View All Campaigns
                       <ChevronRight className="ml-1 h-3 w-3" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Email Performance */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Email Performance</h3>
-                    <LineChart className="h-4 w-4 text-blue-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="relative w-full h-16">
-                      {/* Mini line chart */}
-                      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between h-12 px-2">
-                        {[35, 42, 27, 35, 20, 46, 30, 28, 32, 45, 55, 68].map((height, i) => (
-                          <div
-                            key={i}
-                            className="w-[6%] bg-blue-500 rounded-t-sm"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Avg. Open Rate</div>
-                      <div className="text-xl font-bold text-gray-800">42%</div>
-                      <div className="text-xs text-green-600">+5%</div>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Avg. Click Rate</div>
-                      <div className="text-xl font-bold text-gray-800">18%</div>
-                      <div className="text-xs text-green-600">+2%</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span>Delivered</span>
-                      </div>
-                      <span className="font-medium">98.5%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span>Bounced</span>
-                      </div>
-                      <span className="font-medium">1.5%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                        <span>Spam Reports</span>
-                      </div>
-                      <span className="font-medium">0.2%</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Quick Actions */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Quick Actions</h3>
-                    <Settings className="h-4 w-4 text-amber-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button className="bg-indigo-500 hover:bg-indigo-600 h-auto py-3 flex flex-col items-center">
-                      <Send className="h-5 w-5 mb-1" />
-                      <span>New Email</span>
-                    </Button>
-                    <Button className="bg-purple-500 hover:bg-purple-600 h-auto py-3 flex flex-col items-center">
-                      <FileText className="h-5 w-5 mb-1" />
-                      <span>New Template</span>
-                    </Button>
-                    <Button className="bg-blue-500 hover:bg-blue-600 h-auto py-3 flex flex-col items-center">
-                      <Users className="h-5 w-5 mb-1" />
-                      <span>Contacts</span>
-                    </Button>
-                    <Button className="bg-amber-500 hover:bg-amber-600 h-auto py-3 flex flex-col items-center">
-                      <BarChart3 className="h-5 w-5 mb-1" />
-                      <span>Analytics</span>
                     </Button>
                   </div>
                 </CardContent>
@@ -1021,4 +925,3 @@ function MyEmailsAdmin() {
 }
 
 export default MyEmailsAdmin
-

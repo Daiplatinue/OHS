@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
 import {
@@ -8,17 +6,12 @@ import {
   ArrowRight,
   RefreshCw,
   ChevronRight,
-  LineChart,
   AlertCircle,
   Trash2,
   Star,
   Archive,
-  Settings,
-  Users,
-  Filter,
   CheckCircle,
   MessageSquare,
-  Calendar,
   Plus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -404,40 +397,40 @@ function MyNotificationsAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="sticky z-40 flex">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
         <MyFloatingDock />
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
         {/* Header with Time and Date */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Notification Management</h1>
-            <p className="text-gray-500 text-sm">Manage all system and user notifications in one place</p>
+            <h1 className="text-2xl font-semibold text-gray-800">Notification Management</h1>
+            <p className="text-gray-500 text-sm font-light">Manage all system and user notifications in one place</p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-col items-end">
-            <div className="text-2xl font-bold text-indigo-500">{timeString}</div>
-            <div className="text-sm text-gray-500">{dateString}</div>
+            <div className="text-2xl font-medium text-[#0A84FF]">{timeString}</div>
+            <div className="text-sm text-gray-500 font-light">{dateString}</div>
           </div>
         </div>
 
         {/* Notification Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Notification Overview</h2>
-                  <p className="text-indigo-100">Monitor and manage all system notifications</p>
+                  <h2 className="text-xl font-semibold">Notification Overview</h2>
+                  <p className="text-white/90 font-light">Monitor and manage all system notifications</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-white text-indigo-600 hover:bg-indigo-50">
+                  <Button className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button className="bg-indigo-700 text-white hover:bg-indigo-800">
+                  <Button className="bg-white text-[#0A84FF] hover:bg-white/90 border-0">
                     <Plus className="mr-2 h-4 w-4" />
                     Create
                   </Button>
@@ -445,57 +438,57 @@ function MyNotificationsAdmin() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Bell className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Total Notifications</span>
                   </div>
-                  <div className="text-3xl font-bold">{notificationMetrics.totalNotifications}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{notificationMetrics.totalNotifications}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+8% this month</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <AlertCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Unread</span>
                   </div>
-                  <div className="text-3xl font-bold">{notificationMetrics.unreadNotifications}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{notificationMetrics.unreadNotifications}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>-3% since yesterday</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <AlertCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">High Priority</span>
                   </div>
-                  <div className="text-3xl font-bold">{notificationMetrics.highPriority}</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{notificationMetrics.highPriority}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+2 since morning</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <CheckCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Delivery Rate</span>
                   </div>
-                  <div className="text-3xl font-bold">{notificationMetrics.deliveryRate}%</div>
-                  <div className="text-indigo-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{notificationMetrics.deliveryRate}%</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+1% this week</span>
                   </div>
@@ -510,7 +503,7 @@ function MyNotificationsAdmin() {
           {/* Notification List and Detail - Left Side */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="p-4 border-b">
+              <div className="p-4 border-b border-gray-100">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="flex items-center">
                     <Checkbox
@@ -560,7 +553,7 @@ function MyNotificationsAdmin() {
                         </>
                       ) : (
                         <Select defaultValue="all" onValueChange={setFilterCategory}>
-                          <SelectTrigger className="w-[180px] h-8 text-xs">
+                          <SelectTrigger className="w-[180px] h-8 text-xs bg-[#F2F2F7] border-0">
                             <SelectValue placeholder="Filter by category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -579,7 +572,7 @@ function MyNotificationsAdmin() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       placeholder="Search notifications..."
-                      className="pl-9 bg-gray-50 border-0"
+                      className="pl-9 bg-[#F2F2F7] border-0"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -587,46 +580,46 @@ function MyNotificationsAdmin() {
                 </div>
               </div>
 
-              <div className="flex border-b">
+              <div className="flex border-b border-gray-100">
                 <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="w-full justify-start bg-gray-50 p-0 h-auto">
+                  <TabsList className="w-full justify-start bg-[#F2F2F7] p-0 h-auto">
                     <TabsTrigger
                       value="all"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Bell className="h-4 w-4" />
-                      <span>All</span>
+                      <Bell className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">All</span>
                       {notificationMetrics.totalNotifications > 0 && (
-                        <Badge className="ml-1 bg-indigo-100 text-indigo-600 hover:bg-indigo-100">
+                        <Badge className="ml-1 bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">
                           {notificationMetrics.totalNotifications}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="unread"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <AlertCircle className="h-4 w-4" />
-                      <span>Unread</span>
+                      <AlertCircle className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Unread</span>
                       {notificationMetrics.unreadNotifications > 0 && (
-                        <Badge className="ml-1 bg-indigo-100 text-indigo-600 hover:bg-indigo-100">
+                        <Badge className="ml-1 bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">
                           {notificationMetrics.unreadNotifications}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="starred"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Star className="h-4 w-4" />
-                      <span>Starred</span>
+                      <Star className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Starred</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="archived"
-                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500"
+                      className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white rounded-2x1 border-transparent data-[state=active]:border-gray-400"
                     >
-                      <Archive className="h-4 w-4" />
-                      <span>Archived</span>
+                      <Archive className="h-4 w-4 text-gray-700" />
+                      <span className="text-gray-700">Archived</span>
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -635,11 +628,11 @@ function MyNotificationsAdmin() {
               <div className="divide-y max-h-[600px] overflow-y-auto">
                 {filteredNotifications.length === 0 ? (
                   <div className="p-8 text-center">
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F2F2F7] mb-4">
                       <Bell className="h-6 w-6 text-gray-500" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-1">No notifications found</h3>
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 font-light">
                       {searchQuery ? "Try a different search term" : "Your selected folder is empty"}
                     </p>
                   </div>
@@ -647,7 +640,7 @@ function MyNotificationsAdmin() {
                   filteredNotifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${selectedNotification?.id === notification.id ? "bg-indigo-50" : ""} ${notification.status === "unread" ? "bg-gray-50" : ""}`}
+                      className={`p-4 hover:bg-[#F2F2F7]/50 cursor-pointer transition-colors ${selectedNotification?.id === notification.id ? "bg-[#E9F6FF]/50" : ""} ${notification.status === "unread" ? "bg-[#F2F2F7]/50" : ""}`}
                       onClick={() => handleNotificationSelect(notification)}
                     >
                       <div className="flex items-start gap-3">
@@ -660,7 +653,7 @@ function MyNotificationsAdmin() {
                             onClick={(e) => e.stopPropagation()}
                           />
                           {notification.status === "starred" ? (
-                            <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                            <Star className="h-4 w-4 text-[#FF9500] fill-[#FF9500]" />
                           ) : (
                             <button
                               className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -669,7 +662,7 @@ function MyNotificationsAdmin() {
                                 // Handle star action
                               }}
                             >
-                              <Star className="h-4 w-4 text-gray-300 hover:text-amber-400" />
+                              <Star className="h-4 w-4 text-gray-300 hover:text-[#FF9500]" />
                             </button>
                           )}
                         </div>
@@ -679,7 +672,9 @@ function MyNotificationsAdmin() {
                             <div className="flex items-center">
                               <Avatar className="h-6 w-6 mr-2">
                                 <AvatarImage src={notification.sender.avatar} />
-                                <AvatarFallback>{notification.sender.initials}</AvatarFallback>
+                                <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                                  {notification.sender.initials}
+                                </AvatarFallback>
                               </Avatar>
                               <span
                                 className={`font-medium ${notification.status === "unread" ? "text-gray-900" : "text-gray-700"}`}
@@ -687,7 +682,7 @@ function MyNotificationsAdmin() {
                                 {notification.sender.name}
                               </span>
                             </div>
-                            <div className="text-xs text-gray-500">{notification.timeAgo}</div>
+                            <div className="text-xs text-gray-500 font-light">{notification.timeAgo}</div>
                           </div>
 
                           <h3
@@ -696,15 +691,15 @@ function MyNotificationsAdmin() {
                             {notification.title}
                           </h3>
 
-                          <p className="text-xs text-gray-500 line-clamp-2">{notification.preview}</p>
+                          <p className="text-xs text-gray-500 font-light line-clamp-2">{notification.preview}</p>
 
                           <div className="flex items-center mt-2">
                             {notification.priority === "high" && (
-                              <Badge className="mr-2 bg-red-100 text-red-700 hover:bg-red-100">High</Badge>
+                              <Badge className="mr-2 bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">High</Badge>
                             )}
 
                             {notification.labels?.map((label, index) => (
-                              <Badge key={index} className="mr-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
+                              <Badge key={index} className="mr-2 bg-[#E9F6FF] text-[#0A84FF] hover:bg-[#E9F6FF]">
                                 {label}
                               </Badge>
                             ))}
@@ -717,9 +712,9 @@ function MyNotificationsAdmin() {
               </div>
 
               {selectedNotification && (
-                <div className="border-t p-6">
+                <div className="border-t border-gray-100 p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-xl font-bold text-gray-800">{selectedNotification.title}</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">{selectedNotification.title}</h2>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <Archive className="h-4 w-4" />
@@ -728,20 +723,31 @@ function MyNotificationsAdmin() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Archive className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <CheckCircle className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <Star className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
                     <div className="flex items-center">
-                      <Avatar className="h-10 w-10 mr-3">
+                      <Avatar className="h-10 w-10 mr-3 border-2 border-white shadow-sm">
                         <AvatarImage src={selectedNotification.sender.avatar} />
-                        <AvatarFallback>{selectedNotification.sender.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                          {selectedNotification.sender.initials}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">{selectedNotification.sender.name}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 font-light">
                           <span>{selectedNotification.timeAgo}</span>
                         </div>
                       </div>
@@ -749,25 +755,27 @@ function MyNotificationsAdmin() {
 
                     <div className="flex items-center">
                       {selectedNotification.priority === "high" && (
-                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100 mr-2">High Priority</Badge>
+                        <Badge className="bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7] mr-2">High Priority</Badge>
                       )}
                       {selectedNotification.priority === "medium" && (
-                        <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 mr-2">Medium Priority</Badge>
+                        <Badge className="bg-[#FFF8E6] text-[#FF9500] hover:bg-[#FFF8E6] mr-2">Medium Priority</Badge>
                       )}
                       {selectedNotification.priority === "low" && (
-                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 mr-2">Low Priority</Badge>
+                        <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF] mr-2">Low Priority</Badge>
                       )}
                     </div>
                   </div>
 
-                  <div className="mb-6 whitespace-pre-line text-gray-700">{selectedNotification.content}</div>
+                  <div className="mb-6 whitespace-pre-line text-gray-700 font-light">
+                    {selectedNotification.content}
+                  </div>
 
                   {selectedNotification.actions && selectedNotification.actions.length > 0 && (
                     <div className="flex gap-2 justify-end">
                       {selectedNotification.actions.map((action, index) => (
                         <Button
                           key={index}
-                          className="bg-indigo-500 hover:bg-indigo-600 text-white"
+                          className="bg-[#0A84FF] hover:bg-[#0A84FF]/90 text-white border-0"
                           onClick={() => handleNotificationAction(action.action)}
                         >
                           {action.label}
@@ -784,32 +792,30 @@ function MyNotificationsAdmin() {
           <div>
             <div className="space-y-6">
               {/* Notification Templates */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E9F6FF] to-[#F2EBFF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Notification Templates</h3>
-                    <Bell className="h-4 w-4 text-indigo-500" />
+                    <h3 className="font-medium text-gray-800">Notification Templates</h3>
+                    <Bell className="h-4 w-4 text-[#0A84FF]" />
                   </div>
                 </div>
                 <CardContent className="p-0">
                   <div className="divide-y">
                     {notificationTemplates.slice(0, 3).map((template) => (
-                      <div key={template.id} className="p-4 hover:bg-gray-50">
+                      <div key={template.id} className="p-4 hover:bg-[#F2F2F7]/50">
                         <div className="flex justify-between items-start mb-1">
                           <h4 className="font-medium text-gray-800">{template.name}</h4>
-                          <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
-                            {template.category}
-                          </Badge>
+                          <Badge className="bg-[#E9F6FF] text-[#0A84FF] hover:bg-[#E9F6FF]">{template.category}</Badge>
                         </div>
-                        <div className="flex justify-between items-center text-xs text-gray-500">
+                        <div className="flex justify-between items-center text-xs text-gray-500 font-light">
                           <span>Used {template.usage} times</span>
                           <span>Last used: {template.lastUsed}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="p-3 text-center border-t">
-                    <Button variant="ghost" className="text-indigo-600 text-xs w-full">
+                  <div className="p-3 text-center border-t border-gray-100">
+                    <Button variant="ghost" className="text-[#0A84FF] text-xs w-full font-medium">
                       View All Templates
                       <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>
@@ -818,135 +824,42 @@ function MyNotificationsAdmin() {
               </Card>
 
               {/* Notification Channels */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#F2EBFF] to-[#FFE5E7]/30 p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Notification Channels</h3>
-                    <MessageSquare className="h-4 w-4 text-purple-500" />
+                    <h3 className="font-medium text-gray-800">Notification Channels</h3>
+                    <MessageSquare className="h-4 w-4 text-[#5E5CE6]" />
                   </div>
                 </div>
                 <CardContent className="p-0">
                   <div className="divide-y">
                     {notificationChannels.map((channel) => (
-                      <div key={channel.id} className="p-4 hover:bg-gray-50">
+                      <div key={channel.id} className="p-4 hover:bg-[#F2F2F7]/50">
                         <div className="flex justify-between items-start mb-1">
                           <h4 className="font-medium text-gray-800">{channel.name}</h4>
                           {channel.status === "active" ? (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Active</Badge>
+                            <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Active</Badge>
                           ) : (
-                            <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">Inactive</Badge>
+                            <Badge className="bg-[#F2F2F7] text-gray-700 hover:bg-[#F2F2F7]">Inactive</Badge>
                           )}
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 mb-2">
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-xs text-gray-500">Sent</div>
+                          <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                            <div className="text-xs text-gray-500 font-light">Sent</div>
                             <div className="font-medium">{channel.notificationCount.toLocaleString()}</div>
                           </div>
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-xs text-gray-500">Delivery</div>
+                          <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                            <div className="text-xs text-gray-500 font-light">Delivery</div>
                             <div className="font-medium">{channel.deliveryRate}%</div>
                           </div>
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-xs text-gray-500">Open Rate</div>
+                          <div className="bg-[#F2F2F7] rounded p-2 text-center">
+                            <div className="text-xs text-gray-500 font-light">Open Rate</div>
                             <div className="font-medium">{channel.openRate}%</div>
                           </div>
                         </div>
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Notification Performance */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Notification Performance</h3>
-                    <LineChart className="h-4 w-4 text-blue-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="relative w-full h-16">
-                      {/* Mini line chart */}
-                      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between h-12 px-2">
-                        {[35, 42, 27, 35, 20, 46, 30, 28, 32, 45, 55, 68].map((height, i) => (
-                          <div
-                            key={i}
-                            className="w-[6%] bg-blue-500 rounded-t-sm"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Avg. Open Rate</div>
-                      <div className="text-xl font-bold text-gray-800">61%</div>
-                      <div className="text-xs text-green-600">+3%</div>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Avg. Response Rate</div>
-                      <div className="text-xl font-bold text-gray-800">24%</div>
-                      <div className="text-xs text-green-600">+5%</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span>Delivered</span>
-                      </div>
-                      <span className="font-medium">97.5%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span>Failed</span>
-                      </div>
-                      <span className="font-medium">2.5%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                        <span>Dismissed</span>
-                      </div>
-                      <span className="font-medium">15.2%</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Quick Actions */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Quick Actions</h3>
-                    <Settings className="h-4 w-4 text-amber-500" />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button className="bg-indigo-500 hover:bg-indigo-600 h-auto py-3 flex flex-col items-center">
-                      <Bell className="h-5 w-5 mb-1" />
-                      <span>Send Notification</span>
-                    </Button>
-                    <Button className="bg-purple-500 hover:bg-purple-600 h-auto py-3 flex flex-col items-center">
-                      <Filter className="h-5 w-5 mb-1" />
-                      <span>Manage Filters</span>
-                    </Button>
-                    <Button className="bg-blue-500 hover:bg-blue-600 h-auto py-3 flex flex-col items-center">
-                      <Users className="h-5 w-5 mb-1" />
-                      <span>User Groups</span>
-                    </Button>
-                    <Button className="bg-amber-500 hover:bg-amber-600 h-auto py-3 flex flex-col items-center">
-                      <Calendar className="h-5 w-5 mb-1" />
-                      <span>Schedule</span>
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -959,4 +872,3 @@ function MyNotificationsAdmin() {
 }
 
 export default MyNotificationsAdmin
-

@@ -1,238 +1,395 @@
-import { useState } from 'react';
-import { Area, AreaChart, BarChart as RechartsBarChart, Bar, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Activity, Users, Mail, TrendingUp, DollarSign } from 'lucide-react';
+import {
+  ChevronRight,
+  Briefcase,
+  BarChart2,
+  Settings,
+  Activity,
+  Star,
+  Zap,
+  Calendar,
+  UserPlus,
+  FolderPlus,
+} from "lucide-react"
 
-import MyFloatingDockCeo from './Styles/MyFloatingDock-Ceo';
+import MyFloatingDockCeo from "./Styles/MyFloatingDock-Ceo"
 
-const chartData = [
-  { time: '10 AM', value: 15000, users: 150 },
-  { time: '1 PM', value: 25000, users: 220 },
-  { time: '4 PM', value: 18000, users: 180 },
-  { time: '7 PM', value: 28000, users: 280 },
-  { time: '10 PM', value: 20000, users: 200 },
-  { time: '1 AM', value: 32000, users: 320 },
-  { time: '4 AM', value: 24000, users: 240 },
-  { time: '7 AM', value: 30000, users: 300 },
-  { time: '10 AM', value: 28000, users: 280 },
-];
-
-const timeRanges = ['24H', '1W', '1M', '1Y', 'ALL'];
-
-function Dashboard() {
-  const [selectedRange, setSelectedRange] = useState('24H');
-
+export default function SolarProjectDashboard() {
   return (
-    <div className="space-y-8 p-8">
-
-      {/* Floating Dock - Now at the top */}
-      <div className="sticky z-40 flex">
+    <div className="min-h-screen bg-[#f5f5f7] font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
+      {/* Floating Dock */}
+      <div className="sticky top-0 z-40 flex">
         <MyFloatingDockCeo />
       </div>
 
-      {/* Top Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Total Revenue Card */}
-        <div className="bg-gray-200/70 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
-              <h2 className="text-3xl font-semibold mt-2 text-gray-900">$150,000.00</h2>
-            </div>
-            <div className="bg-blue-500/10 p-3 rounded-2xl">
-              <DollarSign className="text-blue-600" size={24} />
-            </div>
-          </div>
-          <div className="flex items-center text-sm">
-            <TrendingUp className="text-green-600 mr-2" size={16} />
-            <span className="text-green-600">+12.5%</span>
-            <span className="text-gray-500 ml-2">vs last month</span>
-          </div>
-        </div>
-
-        {/* Active Users Card */}
-        <div className="bg-gray-200/70 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium">Active Users</p>
-              <h2 className="text-3xl font-semibold mt-2 text-gray-900">2,453</h2>
-            </div>
-            <div className="bg-sky-500/10 p-3 rounded-2xl">
-              <Users className="text-sky-600" size={24} />
-            </div>
-          </div>
-          <div className="flex items-center text-sm">
-            <Activity className="text-sky-600 mr-2" size={16} />
-            <span className="text-sky-600">+8.2%</span>
-            <span className="text-gray-500 ml-2">vs last week</span>
-          </div>
-        </div>
-
-        {/* Engagement Rate Card */}
-        <div className="bg-gray-200/70 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium">Engagement Rate</p>
-              <h2 className="text-3xl font-semibold mt-2 text-gray-900">64.8%</h2>
-            </div>
-            <div className="bg-green-500/10 p-3 rounded-2xl">
-              <Mail className="text-green-600" size={24} />
-            </div>
-          </div>
-          <div className="flex items-center text-sm">
-            <TrendingUp className="text-green-600 mr-2" size={16} />
-            <span className="text-green-600">+5.7%</span>
-            <span className="text-gray-500 ml-2">vs last month</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Upgrade Card */}
-      <div className="bg-gradient-to-r from-green-500 to-lime-400 rounded-2xl p-8 text-white shadow-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-2xl font-semibold mb-3">
-              Upgrade to Premium
-            </h3>
-            <p className="text-white/90 mb-4 max-w-md">
-              Get unlimited access to advanced analytics and premium features
-            </p>
-            <button className="bg-white text-gray-900 px-6 py-3 rounded-full font-medium hover:bg-opacity-90 transition-all">
-              Upgrade Now
-            </button>
-          </div>
-          <div className="w-40 h-40 relative">
-            <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
-            <div className="absolute inset-4 bg-white/30 rounded-full animate-pulse delay-75"></div>
-            <div className="absolute inset-8 bg-white/40 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Portfolio Performance Chart */}
-        <div className="bg-gray-200/70 rounded-2xl p-8 lg:col-span-2 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <h3 className="text-xl font-semibold text-gray-900">Portfolio Performance</h3>
-              <div className="flex gap-2 text-sm">
-                <span className="text-gray-500">Statistic</span>
-                <span className="text-green-600">Transactions</span>
+      {/* Main content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Welcome section */}
+        <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl p-6 text-white mb-8 shadow-sm">
+          <h2 className="text-2xl font-semibold mb-2">Dashboard Overview</h2>
+          <p className="text-white/90 mb-4 font-light">
+            Here's what's happening with your home services business today.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+              <p className="text-white/90 text-sm font-light">Total Revenue</p>
+              <div className="flex items-center">
+                <h3 className="text-2xl font-medium">$245,680</h3>
+                <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs font-light">+12.5%</span>
               </div>
             </div>
-            <div className="flex gap-2">
-              {timeRanges.map((range) => (
-                <button
-                  key={range}
-                  onClick={() => setSelectedRange(range)}
-                  className={`px-4 py-2 rounded-full text-sm transition-all ${selectedRange === range
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                    }`}
-                >
-                  {range}
-                </button>
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+              <p className="text-white/90 text-sm font-light">Active Providers</p>
+              <div className="flex items-center">
+                <h3 className="text-2xl font-medium">2,723</h3>
+                <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs font-light">+5.3%</span>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+              <p className="text-white/90 text-sm font-light">Total Services</p>
+              <div className="flex items-center">
+                <h3 className="text-2xl font-medium">728</h3>
+                <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs font-light">+8.2%</span>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+              <p className="text-white/90 text-sm font-light">Customer Satisfaction</p>
+              <div className="flex items-center">
+                <h3 className="text-2xl font-medium">4.8/5.0</h3>
+                <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs font-light">+0.2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Business insights */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Service distribution */}
+          <div className="bg-white rounded-2xl p-6 h-full shadow-sm">
+            <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+              <Briefcase className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Service Distribution
+            </h3>
+            <div className="space-y-3">
+              <ServiceDistributionBar name="Cleaning" percentage={35} color="bg-[#0A84FF]" />
+              <ServiceDistributionBar name="Plumbing" percentage={20} color="bg-[#5AC8FA]" />
+              <ServiceDistributionBar name="Electrical" percentage={18} color="bg-[#30B0C7]" />
+              <ServiceDistributionBar name="Gardening" percentage={12} color="bg-[#64D2FF]" />
+              <ServiceDistributionBar name="Painting" percentage={10} color="bg-[#0071E3]" />
+              <ServiceDistributionBar name="Other" percentage={5} color="bg-[#8E8E93]" />
+            </div>
+          </div>
+
+          {/* Recent activity */}
+          <div className="bg-white rounded-2xl p-6 h-full shadow-sm">
+            <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+              <Activity className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Recent Activity
+            </h3>
+            <div className="space-y-4">
+              <ActivityItem
+                title="New service provider joined"
+                description="John Smith registered as a Plumbing expert"
+                time="2 hours ago"
+              />
+              <ActivityItem
+                title="Customer complaint resolved"
+                description="Issue with cleaning service at 123 Main St resolved"
+                time="4 hours ago"
+              />
+              <ActivityItem
+                title="New service category added"
+                description="Home Security Systems added to service offerings"
+                time="Yesterday"
+              />
+            </div>
+            <button className="mt-4 text-[#0A84FF] text-sm font-medium flex items-center group">
+              View all activity
+              <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+
+          {/* Top performers */}
+          <div className="bg-white rounded-2xl p-6 h-full shadow-sm">
+            <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+              <Star className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Top Performers
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-[#E9F6FF] rounded-full flex items-center justify-center text-[#0A84FF] font-medium mr-3">
+                    JS
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">John Smith</p>
+                    <p className="text-xs text-gray-500 font-light">Plumbing • 142 jobs</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-[#FF9500] fill-current" />
+                  <span className="text-sm font-medium ml-1">4.9</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-[#E9F6FF] rounded-full flex items-center justify-center text-[#5AC8FA] font-medium mr-3">
+                    MG
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Maria Garcia</p>
+                    <p className="text-xs text-gray-500 font-light">Cleaning • 118 jobs</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-[#FF9500] fill-current" />
+                  <span className="text-sm font-medium ml-1">4.8</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-[#E9F6FF] rounded-full flex items-center justify-center text-[#30B0C7] font-medium mr-3">
+                    DC
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">David Chen</p>
+                    <p className="text-xs text-gray-500 font-light">Electrical • 105 jobs</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-[#FF9500] fill-current" />
+                  <span className="text-sm font-medium ml-1">4.9</span>
+                </div>
+              </div>
+            </div>
+            <button className="mt-4 text-[#0A84FF] text-sm font-medium flex items-center group">
+              View all providers
+              <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+        </div>
+
+        {/* Quick actions */}
+        <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+          <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+            <Zap className="h-5 w-5 mr-2 text-[#0A84FF]" />
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <QuickActionButton
+              icon={<UserPlus className="h-5 w-5 text-[#0A84FF]" />}
+              label="Add Provider"
+              bgColor="bg-[#F2F2F7]"
+            />
+            <QuickActionButton
+              icon={<FolderPlus className="h-5 w-5 text-[#5AC8FA]" />}
+              label="Add Service"
+              bgColor="bg-[#F2F2F7]"
+            />
+            <QuickActionButton
+              icon={<BarChart2 className="h-5 w-5 text-[#30B0C7]" />}
+              label="View Reports"
+              bgColor="bg-[#F2F2F7]"
+            />
+            <QuickActionButton
+              icon={<Settings className="h-5 w-5 text-[#8E8E93]" />}
+              label="Settings"
+              bgColor="bg-[#F2F2F7]"
+            />
+          </div>
+        </div>
+
+        {/* Upcoming services */}
+        <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-medium text-gray-800 flex items-center">
+              <Calendar className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Upcoming Services
+            </h3>
+            <button className="text-[#0A84FF] text-sm font-medium flex items-center group">
+              View calendar
+              <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-xl overflow-hidden">
+              <thead className="bg-[#F2F2F7]">
+                <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Service</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Provider</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <ServiceRequestRow
+                  customer="Michael Brown"
+                  service="Plumbing Repair"
+                  date="Today, 1:15 PM"
+                  provider="John Smith"
+                  status="In Progress"
+                />
+                <ServiceRequestRow
+                  customer="Sophia Martinez"
+                  service="Electrical Wiring"
+                  date="Today, 3:45 PM"
+                  provider="David Chen"
+                  status="Scheduled"
+                />
+                <ServiceRequestRow
+                  customer="James Taylor"
+                  service="Lawn Mowing"
+                  date="Tomorrow, 9:00 AM"
+                  provider="Sarah Johnson"
+                  status="Scheduled"
+                />
+                <ServiceRequestRow
+                  customer="Emily Wilson"
+                  service="House Cleaning"
+                  date="Tomorrow, 2:30 PM"
+                  provider="Maria Garcia"
+                  status="Scheduled"
+                />
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Business stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+              <BarChart2 className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Monthly Revenue
+            </h3>
+            <div className="h-64 flex items-end space-x-2">
+              {[65, 40, 70, 85, 60, 55, 75, 80, 90, 75, 60, 70].map((height, index) => (
+                <div key={index} className="flex-1 flex flex-col items-center">
+                  <div
+                    className="w-full bg-gradient-to-t from-[#0A84FF] to-[#5AC8FA] rounded-t-lg"
+                    style={{ height: `${height}%` }}
+                  ></div>
+                  <div className="text-xs text-gray-500 mt-2 font-light">
+                    {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][index]}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="time"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#4B5563' }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#4B5563' }}
-                  tickFormatter={(value) => `$${value.toLocaleString()}`}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    border: 'none',
-                    borderRadius: '16px',
-                    padding: '12px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  }}
-                  itemStyle={{ color: '#22C55E' }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Value']}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#22C55E"
-                  fillOpacity={1}
-                  fill="url(#colorValue)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
 
-        {/* User Activity Chart */}
-        <div className="bg-gray-200/70 p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-semibold text-gray-900">User Activity</h3>
-            <select className="bg-white border-none rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-              <option>This Month</option>
-              <option>Last Month</option>
-              <option>This Year</option>
-            </select>
-          </div>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RechartsBarChart data={chartData}>
-                <XAxis
-                  dataKey="time"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#4B5563' }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#4B5563' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    border: 'none',
-                    borderRadius: '16px',
-                    padding: '12px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  }}
-                  cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
-                />
-                <Bar
-                  dataKey="users"
-                  fill="url(#barGradient)"
-                  radius={[8, 8, 0, 0]}
-                >
-                  <defs>
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#22C55E" />
-                      <stop offset="100%" stopColor="#16A34A" />
-                    </linearGradient>
-                  </defs>
-                </Bar>
-              </RechartsBarChart>
-            </ResponsiveContainer>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 className="text-xl font-medium text-gray-800 mb-4 flex items-center">
+              <Activity className="h-5 w-5 mr-2 text-[#0A84FF]" />
+              Service Requests
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-[#F2F2F7] rounded-xl p-4">
+                <p className="text-gray-500 text-sm font-light">Pending</p>
+                <div className="flex items-center mt-2">
+                  <h3 className="text-2xl font-medium text-gray-800">24</h3>
+                  <span className="ml-2 px-2 py-0.5 bg-[#FFF8E6] text-[#FF9500] rounded-full text-xs font-light">
+                    +3 today
+                  </span>
+                </div>
+              </div>
+              <div className="bg-[#F2F2F7] rounded-xl p-4">
+                <p className="text-gray-500 text-sm font-light">In Progress</p>
+                <div className="flex items-center mt-2">
+                  <h3 className="text-2xl font-medium text-gray-800">18</h3>
+                  <span className="ml-2 px-2 py-0.5 bg-[#E9F6FF] text-[#0A84FF] rounded-full text-xs font-light">
+                    +2 today
+                  </span>
+                </div>
+              </div>
+              <div className="bg-[#F2F2F7] rounded-xl p-4">
+                <p className="text-gray-500 text-sm font-light">Completed</p>
+                <div className="flex items-center mt-2">
+                  <h3 className="text-2xl font-medium text-gray-800">156</h3>
+                  <span className="ml-2 px-2 py-0.5 bg-[#E8F8EF] text-[#30D158] rounded-full text-xs font-light">
+                    +12 today
+                  </span>
+                </div>
+              </div>
+              <div className="bg-[#F2F2F7] rounded-xl p-4">
+                <p className="text-gray-500 text-sm font-light">Cancelled</p>
+                <div className="flex items-center mt-2">
+                  <h3 className="text-2xl font-medium text-gray-800">7</h3>
+                  <span className="ml-2 px-2 py-0.5 bg-[#FFE5E7] text-[#FF453A] rounded-full text-xs font-light">
+                    +1 today
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Dashboard;
+function ActivityItem({ title, description, time } : any) {
+  return (
+    <div className="border-l-2 border-[#0A84FF] pl-4 py-2">
+      <h4 className="text-sm font-medium text-gray-800">{title}</h4>
+      <p className="text-xs text-gray-500 font-light">{description}</p>
+      <p className="text-xs text-gray-400 mt-1 font-light">{time}</p>
+    </div>
+  )
+}
+
+function QuickActionButton({ icon, label, bgColor } : any) {
+  return (
+    <button
+      className={`flex flex-col items-center justify-center ${bgColor} hover:bg-opacity-80 rounded-xl p-4 transition-all shadow-sm`}
+    >
+      <div className="mb-2">{icon}</div>
+      <span className="text-sm text-gray-700 font-light">{label}</span>
+    </button>
+  )
+}
+
+function ServiceDistributionBar({ name, percentage, color } : any) {
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-sm text-gray-700 font-light">{name}</span>
+        <span className="text-sm font-medium text-gray-900">{percentage}%</span>
+      </div>
+      <div className="w-full bg-[#F2F2F7] rounded-full h-1.5">
+        <div className={`${color} h-1.5 rounded-full`} style={{ width: `${percentage}%` }}></div>
+      </div>
+    </div>
+  )
+}
+
+function ServiceRequestRow({ customer, service, date, status, provider } : any) {
+  return (
+    <tr className="hover:bg-[#F2F2F7]/50">
+      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800">{customer}</td>
+      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 font-light">{service}</td>
+      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 font-light">{date}</td>
+      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 font-light">{provider}</td>
+      <td className="px-4 py-3 whitespace-nowrap">
+        <span
+          className={`px-2 py-0.5 text-xs font-light rounded-full ${
+            status === "Completed"
+              ? "bg-[#E8F8EF] text-[#30D158]"
+              : status === "In Progress"
+                ? "bg-[#E9F6FF] text-[#0A84FF]"
+                : "bg-[#FFF8E6] text-[#FF9500]"
+          }`}
+        >
+          {status}
+        </span>
+      </td>
+      <td className="px-4 py-3 whitespace-nowrap">
+        <button className="text-[#0A84FF] hover:text-[#0071E3] flex items-center gap-1 group text-sm">
+          Details
+          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </button>
+      </td>
+    </tr>
+  )
+}
+

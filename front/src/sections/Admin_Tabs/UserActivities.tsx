@@ -1,4 +1,11 @@
-import { useState, useEffect, JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from "react"
+import {
+  useState,
+  useEffect,
+  type JSXElementConstructor,
+  type ReactElement,
+  type ReactNode,
+  type ReactPortal,
+} from "react"
 import {
   Activity,
   Search,
@@ -201,50 +208,83 @@ function UserActivities() {
   })
 
   // Status badge renderer
-  const renderStatusBadge = (status: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined) => {
+  const renderStatusBadge = (
+    status:
+      | string
+      | number
+      | bigint
+      | boolean
+      | ReactElement<unknown, string | JSXElementConstructor<any>>
+      | Iterable<ReactNode>
+      | Promise<
+          | string
+          | number
+          | bigint
+          | boolean
+          | ReactPortal
+          | ReactElement<unknown, string | JSXElementConstructor<any>>
+          | Iterable<ReactNode>
+          | null
+          | undefined
+        >
+      | null
+      | undefined,
+  ) => {
     switch (status) {
       case "Success":
-        return <Badge className="bg-green-100 text-green-600 hover:bg-green-100">Success</Badge>
+        return <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Success</Badge>
       case "Failed":
-        return <Badge className="bg-red-100 text-red-600 hover:bg-red-100">Failed</Badge>
+        return <Badge className="bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">Failed</Badge>
       case "Warning":
-        return <Badge className="bg-amber-100 text-amber-600 hover:bg-amber-100">Warning</Badge>
+        return <Badge className="bg-[#FFF8E6] text-[#FF9500] hover:bg-[#FFF8E6]">Warning</Badge>
       default:
-        return <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100">{status}</Badge>
+        return <Badge className="bg-[#F2F2F7] text-[#8E8E93] hover:bg-[#F2F2F7]">{status}</Badge>
     }
   }
 
   // Icon renderer with appropriate background color
-  const renderActionIcon = (activity: { id?: string; user?: { name: string; email: string; avatar: string }; action?: string; type: any; timestamp?: string; timeAgo?: string; device?: string; location?: string; ip?: string; status: any; icon: any }) => {
-    let bgColor = "bg-sky-100"
-    let textColor = "text-sky-600"
+  const renderActionIcon = (activity: {
+    id?: string
+    user?: { name: string; email: string; avatar: string }
+    action?: string
+    type: any
+    timestamp?: string
+    timeAgo?: string
+    device?: string
+    location?: string
+    ip?: string
+    status: any
+    icon: any
+  }) => {
+    let bgColor = "bg-[#E9F6FF]"
+    let textColor = "text-[#0A84FF]"
 
     switch (activity.type) {
       case "Authentication":
-        bgColor = "bg-blue-100"
-        textColor = "text-blue-600"
+        bgColor = "bg-[#E9F6FF]"
+        textColor = "text-[#0A84FF]"
         break
       case "Transaction":
-        bgColor = "bg-green-100"
-        textColor = "text-green-600"
+        bgColor = "bg-[#E8F8EF]"
+        textColor = "text-[#30D158]"
         break
       case "Account":
-        bgColor = "bg-purple-100"
-        textColor = "text-purple-600"
+        bgColor = "bg-[#F2EBFF]"
+        textColor = "text-[#5E5CE6]"
         break
       case "Security":
-        bgColor = "bg-red-100"
-        textColor = "text-red-600"
+        bgColor = "bg-[#FFE5E7]"
+        textColor = "text-[#FF453A]"
         break
       case "Feedback":
-        bgColor = "bg-amber-100"
-        textColor = "text-amber-600"
+        bgColor = "bg-[#FFF8E6]"
+        textColor = "text-[#FF9500]"
         break
     }
 
     if (activity.status === "Failed" || activity.status === "Warning") {
-      bgColor = "bg-red-100"
-      textColor = "text-red-600"
+      bgColor = "bg-[#FFE5E7]"
+      textColor = "text-[#FF453A]"
     }
 
     return (
@@ -272,40 +312,40 @@ function UserActivities() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="sticky z-40 flex">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
         <MyFloatingDock />
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
         {/* Header with Time and Date */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">User Activities</h1>
-            <p className="text-gray-500 text-sm">Real-time monitoring dashboard</p>
+            <h1 className="text-2xl font-semibold text-gray-800">User Activities</h1>
+            <p className="text-gray-500 text-sm font-light">Real-time monitoring dashboard</p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-col items-end">
-            <div className="text-2xl font-bold text-sky-500">{timeString}</div>
-            <div className="text-sm text-gray-500">{dateString}</div>
+            <div className="text-2xl font-medium text-[#0A84FF]">{timeString}</div>
+            <div className="text-sm text-gray-500 font-light">{dateString}</div>
           </div>
         </div>
 
         {/* Activity Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-sky-500 to-sky-400 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Activity Overview</h2>
-                  <p className="text-sky-100">Real-time user activity monitoring</p>
+                  <h2 className="text-xl font-semibold">Activity Overview</h2>
+                  <p className="text-white/90 font-light">Real-time user activity monitoring</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-gray-100 text-blue-600 hover:bg-gray-200">
+                  <Button className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button className="bg-blue-500 text-white hover:bg-blue-600">
+                  <Button className="bg-white text-[#0A84FF] hover:bg-white/90 border-0">
                     <Download className="mr-2 h-4 w-4" />
                     Export
                   </Button>
@@ -313,57 +353,57 @@ function UserActivities() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Activity className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Today's Activities</span>
                   </div>
-                  <div className="text-3xl font-bold">{activityMetrics.totalToday}</div>
-                  <div className="text-sky-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{activityMetrics.totalToday}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>12% increase</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <User className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Active Users</span>
                   </div>
-                  <div className="text-3xl font-bold">{activityMetrics.activeUsers}</div>
-                  <div className="text-sky-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{activityMetrics.activeUsers}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>8% increase</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <CheckCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Success Rate</span>
                   </div>
-                  <div className="text-3xl font-bold">{activityMetrics.successRate}%</div>
-                  <div className="text-sky-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{activityMetrics.successRate}%</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>2% increase</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Clock className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Avg. Session</span>
                   </div>
-                  <div className="text-3xl font-bold">{activityMetrics.avgSessionTime}</div>
-                  <div className="text-sky-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{activityMetrics.avgSessionTime}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>5% increase</span>
                   </div>
@@ -378,10 +418,10 @@ function UserActivities() {
           {/* Activity Timeline - Left Side */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b">
+              <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-center">
                   <div className="flex gap-5">
-                    <h2 className="text-lg font-bold text-gray-800">Live Feed Activities</h2>
+                    <h2 className="text-lg font-medium text-gray-800">Live Feed Activities</h2>
                     <div className="flex items-center gap-1">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -392,7 +432,7 @@ function UserActivities() {
                   </div>
                   <div className="flex gap-2">
                     <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-auto">
-                      <TabsList className="bg-gray-100">
+                      <TabsList className="bg-[#F2F2F7]">
                         <TabsTrigger value="all" className="text-xs data-[state=active]:bg-white">
                           All
                         </TabsTrigger>
@@ -424,30 +464,30 @@ function UserActivities() {
                           {renderActionIcon(activity)}
                         </div>
 
-                        <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
+                        <div className="bg-[#F2F2F7]/50 rounded-xl p-4 hover:bg-[#F2F2F7] transition-colors">
                           <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-gray-800">{activity.action}</span>
                               {renderStatusBadge(activity.status)}
                             </div>
-                            <span className="text-xs text-gray-500">{activity.timeAgo}</span>
+                            <span className="text-xs text-gray-500 font-light">{activity.timeAgo}</span>
                           </div>
 
                           <div className="flex items-center gap-3 mb-3">
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="h-8 w-8 border-2 border-white shadow-sm">
                               <AvatarImage src={activity.user.avatar} alt={activity.user.name} />
-                              <AvatarFallback>
+                              <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
                                 {activity.user.name.charAt(0)}
                                 {activity.user.name.split(" ")[1]?.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <div className="font-medium text-sm">{activity.user.name}</div>
-                              <div className="text-xs text-gray-500">{activity.user.email}</div>
+                              <div className="text-xs text-gray-500 font-light">{activity.user.email}</div>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-600">
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-600 font-light">
                             <div className="flex items-center gap-1">
                               <MapPin className="h-3 w-3 text-gray-400" />
                               <span>{activity.location}</span>
@@ -466,7 +506,7 @@ function UserActivities() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-sky-600 hover:text-sky-700 hover:bg-sky-50 text-xs"
+                              className="text-[#0A84FF] hover:text-[#0A84FF] hover:bg-[#E9F6FF] text-xs"
                             >
                               View Details
                               <ChevronRight className="ml-1 h-3 w-3" />
@@ -488,11 +528,11 @@ function UserActivities() {
               <div className="bg-white rounded-2xl shadow-sm p-4">
                 <div className="relative mb-4">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input placeholder="Search activities..." className="pl-9 bg-gray-50 border-0" />
+                  <Input placeholder="Search activities..." className="pl-9 bg-[#F2F2F7] border-0" />
                 </div>
                 <div className="flex gap-2">
                   <Select defaultValue="today">
-                    <SelectTrigger className="w-full bg-gray-50 border-0">
+                    <SelectTrigger className="w-full bg-[#F2F2F7] border-0">
                       <SelectValue placeholder="Time period" />
                     </SelectTrigger>
                     <SelectContent>
@@ -502,18 +542,18 @@ function UserActivities() {
                       <SelectItem value="month">This Month</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button variant="outline" className="bg-gray-50 border-0">
+                  <Button variant="outline" className="bg-[#F2F2F7] border-0">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
               {/* Activity by Type */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-sky-50 to-blue-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E9F6FF] to-[#F2EBFF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Activity by Type</h3>
-                    <PieChart className="h-4 w-4 text-sky-500" />
+                    <h3 className="font-medium text-gray-800">Activity by Type</h3>
+                    <PieChart className="h-4 w-4 text-[#0A84FF]" />
                   </div>
                 </div>
                 <CardContent className="p-4">
@@ -523,29 +563,31 @@ function UserActivities() {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-3 h-3 rounded-full ${index === 0
-                                ? "bg-blue-500"
-                                : index === 1
-                                  ? "bg-green-500"
-                                  : index === 2
-                                    ? "bg-purple-500"
-                                    : "bg-amber-500"
-                                }`}
+                              className={`w-3 h-3 rounded-full ${
+                                index === 0
+                                  ? "bg-[#0A84FF]"
+                                  : index === 1
+                                    ? "bg-[#30D158]"
+                                    : index === 2
+                                      ? "bg-[#5E5CE6]"
+                                      : "bg-[#FF9500]"
+                              }`}
                             ></div>
-                            <span className="text-sm text-gray-700">{item.type}</span>
+                            <span className="text-sm text-gray-700 font-light">{item.type}</span>
                           </div>
                           <div className="text-sm font-medium">{item.count}</div>
                         </div>
-                        <div className="h-2 bg-gray-100 rounded-full">
+                        <div className="h-1.5 bg-[#F2F2F7] rounded-full">
                           <div
-                            className={`h-full rounded-full ${index === 0
-                              ? "bg-blue-500"
-                              : index === 1
-                                ? "bg-green-500"
-                                : index === 2
-                                  ? "bg-purple-500"
-                                  : "bg-amber-500"
-                              }`}
+                            className={`h-full rounded-full ${
+                              index === 0
+                                ? "bg-[#0A84FF]"
+                                : index === 1
+                                  ? "bg-[#30D158]"
+                                  : index === 2
+                                    ? "bg-[#5E5CE6]"
+                                    : "bg-[#FF9500]"
+                            }`}
                             style={{ width: `${item.percentage}%` }}
                           ></div>
                         </div>
@@ -556,48 +598,48 @@ function UserActivities() {
               </Card>
 
               {/* Security Insights */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#FFE5E7] to-[#FFF8E6] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Security Insights</h3>
-                    <Shield className="h-5 w-5 text-red-500" />
+                    <h3 className="font-medium text-gray-800">Security Insights</h3>
+                    <Shield className="h-5 w-5 text-[#FF453A]" />
                   </div>
                 </div>
                 <CardContent className="p-4">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-                      <div className="rounded-full bg-red-100 p-2">
-                        <AlertTriangle className="h-4 w-4 text-red-600" />
+                    <div className="flex items-center gap-3 p-3 bg-[#FFE5E7]/50 rounded-lg">
+                      <div className="rounded-full bg-[#FFE5E7] p-2">
+                        <AlertTriangle className="h-4 w-4 text-[#FF453A]" />
                       </div>
                       <div>
                         <div className="text-sm font-medium">Failed Login Attempts</div>
-                        <div className="text-xs text-gray-500">12 attempts in the last 24 hours</div>
+                        <div className="text-xs text-gray-500 font-light">12 attempts in the last 24 hours</div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                      <div className="rounded-full bg-amber-100 p-2">
-                        <MapPin className="h-4 w-4 text-amber-600" />
+                    <div className="flex items-center gap-3 p-3 bg-[#FFF8E6]/50 rounded-lg">
+                      <div className="rounded-full bg-[#FFF8E6] p-2">
+                        <MapPin className="h-4 w-4 text-[#FF9500]" />
                       </div>
                       <div>
                         <div className="text-sm font-medium">Unusual Locations</div>
-                        <div className="text-xs text-gray-500">3 logins from new locations</div>
+                        <div className="text-xs text-gray-500 font-light">3 logins from new locations</div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <div className="rounded-full bg-green-100 p-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-3 p-3 bg-[#E8F8EF]/50 rounded-lg">
+                      <div className="rounded-full bg-[#E8F8EF] p-2">
+                        <CheckCircle className="h-4 w-4 text-[#30D158]" />
                       </div>
                       <div>
                         <div className="text-sm font-medium">Security Status</div>
-                        <div className="text-xs text-gray-500">All systems operating normally</div>
+                        <div className="text-xs text-gray-500 font-light">All systems operating normally</div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t">
-                    <Button variant="ghost" className="text-red-600 text-xs w-full">
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Button variant="ghost" className="text-[#FF453A] text-xs w-full font-medium">
                       View Security Report
                       <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>
@@ -606,58 +648,58 @@ function UserActivities() {
               </Card>
 
               {/* Performance Metrics */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-sky-50 to-indigo-50 p-4">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E9F6FF] to-[#F2EBFF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Performance Metrics</h3>
-                    <Zap className="h-5 w-5 text-sky-500" />
+                    <h3 className="font-medium text-gray-800">Performance Metrics</h3>
+                    <Zap className="h-5 w-5 text-[#0A84FF]" />
                   </div>
                 </div>
                 <CardContent className="p-4">
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm text-gray-600">Response Time</span>
+                        <span className="text-sm text-gray-600 font-light">Response Time</span>
                         <span className="text-sm font-medium">245ms</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full">
-                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "15%" }}></div>
+                      <div className="h-2 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#0A84FF] rounded-full" style={{ width: "15%" }}></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm text-gray-600">Server Load</span>
+                        <span className="text-sm text-gray-600 font-light">Server Load</span>
                         <span className="text-sm font-medium">42%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full">
-                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "42%" }}></div>
+                      <div className="h-2 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#0A84FF] rounded-full" style={{ width: "42%" }}></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm text-gray-600">Memory Usage</span>
+                        <span className="text-sm text-gray-600 font-light">Memory Usage</span>
                         <span className="text-sm font-medium">68%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full">
-                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "68%" }}></div>
+                      <div className="h-2 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#0A84FF] rounded-full" style={{ width: "68%" }}></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm text-gray-600">API Requests</span>
+                        <span className="text-sm text-gray-600 font-light">API Requests</span>
                         <span className="text-sm font-medium">1,245/hr</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full">
-                        <div className="h-full bg-sky-500 rounded-full" style={{ width: "85%" }}></div>
+                      <div className="h-2 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#0A84FF] rounded-full" style={{ width: "85%" }}></div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t">
-                    <Button variant="ghost" className="text-sky-600 text-xs w-full">
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Button variant="ghost" className="text-[#0A84FF] text-xs w-full font-medium">
                       View Performance Dashboard
                       <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>

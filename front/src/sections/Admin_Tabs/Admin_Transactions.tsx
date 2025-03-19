@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState, useRef } from "react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
 import {
@@ -9,22 +11,16 @@ import {
   Loader2,
   Clock,
   ArrowRight,
-  Download,
   RefreshCw,
   Filter,
   Search,
   BarChart3,
   PieChart,
-  AlertCircle,
   CheckCircle,
   DollarSign,
   Activity,
   TrendingUp,
-  History,
-  FileText,
-  Shield,
   Eye,
-  Settings,
   CircleDollarSign,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -110,7 +106,7 @@ function AdminTransactions() {
       amount: 125000,
       paymentMethod: "Visa",
       paymentIcon: <CreditCard className="h-4 w-4 text-white" />,
-      paymentIconBg: "bg-sky-500",
+      paymentIconBg: "bg-[#0A84FF]",
       accountNumber: "•••• •••• 5432",
       serviceProvider: {
         name: "Plumbling Services",
@@ -119,9 +115,10 @@ function AdminTransactions() {
         status: "waiting",
       },
       customer: {
-        name: "yawwwwww",
-        avatar: "https://assets.tiltify.com/uploads/media_type/image/203025/blob-09636982-a21a-494b-bbe4-3692c2720ae3.jpeg",
-        initials: "WW",
+        name: "John Smith",
+        avatar:
+          "https://assets.tiltify.com/uploads/media_type/image/203025/blob-09636982-a21a-494b-bbe4-3692c2720ae3.jpeg",
+        initials: "JS",
         status: "waiting",
       },
       isReleased: false,
@@ -131,18 +128,18 @@ function AdminTransactions() {
       amount: 750000,
       paymentMethod: "Coins.ph",
       paymentIcon: <CircleDollarSign className="h-4 w-4 text-white" />,
-      paymentIconBg: "bg-sky-500",
+      paymentIconBg: "bg-[#0A84FF]",
       accountNumber: "•••• •••• 2845",
       serviceProvider: {
         name: "Cleaning Services",
         avatar: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
-        initials: "PS",
+        initials: "CS",
         status: "waiting",
       },
       customer: {
-        name: "watwat",
+        name: "Sarah Johnson",
         avatar: "https://cdn.pixabay.com/photo/2020/05/04/11/21/automobile-5128760_1280.jpg",
-        initials: "WW",
+        initials: "SJ",
         status: "waiting",
       },
       isReleased: false,
@@ -152,18 +149,18 @@ function AdminTransactions() {
       amount: 2500000,
       paymentMethod: "GCash",
       paymentIcon: <Wallet className="h-4 w-4 text-white" />,
-      paymentIconBg: "bg-sky-500",
+      paymentIconBg: "bg-[#0A84FF]",
       accountNumber: "•••• •••• 2055",
       serviceProvider: {
         name: "Wifi Installment Services",
         avatar: "https://cdn.pixabay.com/photo/2018/04/11/10/55/child-3310208_1280.jpg",
-        initials: "PS",
+        initials: "WS",
         status: "waiting",
       },
       customer: {
-        name: "sammmmmm",
+        name: "Michael Brown",
         avatar: "https://cdn.pixabay.com/photo/2024/01/27/07/27/ice-cream-8535463_960_720.png",
-        initials: "WW",
+        initials: "MB",
         status: "waiting",
       },
       isReleased: false,
@@ -177,13 +174,13 @@ function AdminTransactions() {
       accountNumber: "•••• •••• 6799",
       paymentMethod: "Credit Card",
       icon: <CreditCard className="h-4 w-4 text-white" />,
-      iconBg: "bg-blue-600",
+      iconBg: "bg-[#0A84FF]",
       date: "Feb 17, 2025",
       status: "pending",
       amount: 45000,
       recipient: {
         name: "Adam Barba",
-        avatar: "https://cdn.pixabay.com/photo/2025/02/26/09/58/bird-9432600_1280.jpg",
+        avatar: "/placeholder.svg?height=40&width=40",
         initials: "AB",
       },
     },
@@ -193,13 +190,13 @@ function AdminTransactions() {
       accountNumber: "•••• 4532",
       paymentMethod: "GCash",
       icon: <Wallet className="h-4 w-4 text-white" />,
-      iconBg: "bg-purple-600",
+      iconBg: "bg-[#5E5CE6]",
       date: "Feb 15, 2025",
       status: "success",
       amount: 15000,
       recipient: {
         name: "Jane Doe",
-        avatar: "https://cdn.pixabay.com/photo/2025/02/26/09/58/bird-9432600_1280.jpg",
+        avatar: "/placeholder.svg?height=40&width=40",
         initials: "JD",
       },
     },
@@ -209,13 +206,13 @@ function AdminTransactions() {
       accountNumber: "•••• 8765",
       paymentMethod: "PayPal",
       icon: <PayPalIcon className="h-4 w-4 text-white" />,
-      iconBg: "bg-blue-400",
+      iconBg: "bg-[#5AC8FA]",
       date: "Feb 14, 2025",
       status: "canceled",
       amount: 22000,
       recipient: {
         name: "Robert Johnson",
-        avatar: "https://cdn.pixabay.com/photo/2025/02/26/09/58/bird-9432600_1280.jpg",
+        avatar: "/placeholder.svg?height=40&width=40",
         initials: "RJ",
       },
     },
@@ -225,13 +222,13 @@ function AdminTransactions() {
       accountNumber: "•••• 3421",
       paymentMethod: "Maya",
       icon: <Wallet className="h-4 w-4 text-white" />,
-      iconBg: "bg-green-600",
+      iconBg: "bg-[#30D158]",
       date: "Feb 12, 2025",
       status: "success",
       amount: 18500,
       recipient: {
         name: "Maria Santos",
-        avatar: "https://cdn.pixabay.com/photo/2025/02/26/09/58/bird-9432600_1280.jpg",
+        avatar: "/placeholder.svg?height=40&width=40",
         initials: "MS",
       },
     },
@@ -241,13 +238,13 @@ function AdminTransactions() {
       accountNumber: "•••• 9876",
       paymentMethod: "Coins.ph",
       icon: <Coins className="h-4 w-4 text-white" />,
-      iconBg: "bg-yellow-500",
+      iconBg: "bg-[#FF9500]",
       date: "Feb 10, 2025",
       status: "success",
       amount: 12750,
       recipient: {
         name: "Alex Lee",
-        avatar: "https://cdn.pixabay.com/photo/2025/02/26/09/58/bird-9432600_1280.jpg",
+        avatar: "/placeholder.svg?height=40&width=40",
         initials: "AL",
       },
     },
@@ -456,9 +453,9 @@ function AdminTransactions() {
   })
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F5F5F7] font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="sticky z-40 flex">
+      <div className="sticky top-0 z-40 flex">
         <MyFloatingDock />
       </div>
 
@@ -466,31 +463,31 @@ function AdminTransactions() {
         {/* Header with Time and Date */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Transaction Management</h1>
-            <p className="text-gray-500 text-sm">Monitor and manage all payment transactions</p>
+            <h1 className="text-2xl font-semibold text-gray-800">Transaction Management</h1>
+            <p className="text-gray-500 text-sm font-light">Monitor and manage all payment transactions</p>
           </div>
           <div className="mt-4 md:mt-0 flex flex-col items-end">
-            <div className="text-2xl font-bold text-sky-500">{timeString}</div>
-            <div className="text-sm text-gray-500">{dateString}</div>
+            <div className="text-2xl font-medium text-[#0A84FF]">{timeString}</div>
+            <div className="text-sm text-gray-500 font-light">{dateString}</div>
           </div>
         </div>
 
         {/* Transaction Overview */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-sky-500 to-sky-400 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0A84FF] to-[#5AC8FA] rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Transaction Overview</h2>
-                  <p className="text-emerald-100">Monitor payment flows and commission earnings</p>
+                  <h2 className="text-xl font-semibold">Transaction Overview</h2>
+                  <p className="text-white/90 font-light">Monitor payment flows and commission earnings</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-gray-100 text-blue-600 hover:bg-gray-200">
+                  <Button className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
                   <Button
-                    className="bg-blue-500 text-white hover:bg-blue-600"
+                    className="bg-white text-[#0A84FF] hover:bg-white/90 border-0"
                     onClick={() => simulateConfirmations("3")}
                   >
                     <Activity className="mr-2 h-4 w-4" />
@@ -500,7 +497,7 @@ function AdminTransactions() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <DollarSign className="h-5 w-5 text-white" />
@@ -508,53 +505,53 @@ function AdminTransactions() {
                     <span className="text-sm font-medium">Total Balance</span>
                   </div>
                   <div
-                    className={`text-3xl font-bold transition-all duration-1000 ${isBalanceAnimating ? "text-green-500 scale-110" : ""}`}
+                    className={`text-3xl font-medium transition-all duration-1000 ${isBalanceAnimating ? "text-[#30D158] scale-110" : ""}`}
                   >
                     ₱{displayBalance.toLocaleString()}
                   </div>
-                  <div className="text-emerald-100 text-sm mt-1 flex items-center">
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+15% this month</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <Activity className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Transactions</span>
                   </div>
-                  <div className="text-3xl font-bold">{transactionMetrics.totalTransactions}</div>
-                  <div className="text-emerald-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{transactionMetrics.totalTransactions}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+8% this month</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <CheckCircle className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Success Rate</span>
                   </div>
-                  <div className="text-3xl font-bold">{transactionMetrics.successRate}%</div>
-                  <div className="text-emerald-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">{transactionMetrics.successRate}%</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+2% this month</span>
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-white/20 rounded-full p-2">
                       <TrendingUp className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-sm font-medium">Commission</span>
                   </div>
-                  <div className="text-3xl font-bold">₱{transactionMetrics.totalCommission.toLocaleString()}</div>
-                  <div className="text-emerald-100 text-sm mt-1 flex items-center">
+                  <div className="text-3xl font-medium">₱{transactionMetrics.totalCommission.toLocaleString()}</div>
+                  <div className="text-white/90 text-sm mt-1 flex items-center font-light">
                     <ArrowRight className="h-3 w-3 mr-1" />
                     <span>+12% this month</span>
                   </div>
@@ -569,10 +566,10 @@ function AdminTransactions() {
           {/* Ongoing Bookings - Left Side */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b">
+              <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-gray-800">Ongoing Bookings</h2>
-                  <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                  <h2 className="text-lg font-medium text-gray-800">Ongoing Bookings</h2>
+                  <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">
                     {ongoingBookings.length} Active
                   </Badge>
                 </div>
@@ -580,13 +577,13 @@ function AdminTransactions() {
 
               <div className="p-6">
                 {ongoingBookings.map((booking) => (
-                  <div key={booking.id} className="bg-gray-50 rounded-xl p-5 mb-4 last:mb-0">
+                  <div key={booking.id} className="bg-[#F2F2F7]/50 rounded-xl p-5 mb-4 last:mb-0">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-gray-200">
                       <div>
-                        <div className="text-sm text-gray-500">Total Payment</div>
-                        <div className="text-2xl font-bold text-gray-800">
+                        <div className="text-sm text-gray-500 font-light">Total Payment</div>
+                        <div className="text-2xl font-medium text-gray-800">
                           ₱{booking.amount.toLocaleString()}
-                          <span className="text-emerald-500 ml-2 text-sm">
+                          <span className="text-[#30D158] ml-2 text-sm font-light">
                             +₱{calculateCommission(booking.amount).toLocaleString()} commission
                           </span>
                         </div>
@@ -600,7 +597,7 @@ function AdminTransactions() {
                         </div>
                         <div>
                           <div className="font-medium">{booking.paymentMethod}</div>
-                          <div className="text-xs text-gray-500">{booking.accountNumber}</div>
+                          <div className="text-xs text-gray-500 font-light">{booking.accountNumber}</div>
                         </div>
                       </div>
                     </div>
@@ -611,30 +608,30 @@ function AdminTransactions() {
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-sm font-medium text-gray-500">Service Provider</div>
                           {booking.serviceProvider.status === "waiting" ? (
-                            <Badge className="bg-gray-200 text-gray-700">Waiting</Badge>
+                            <Badge className="bg-[#F2F2F7] text-[#8E8E93] hover:bg-[#F2F2F7]">Waiting</Badge>
                           ) : (
-                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confirmed</Badge>
+                            <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Confirmed</Badge>
                           )}
                         </div>
 
                         <div className="flex items-center gap-3">
                           <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
                             <AvatarImage src={booking.serviceProvider.avatar} />
-                            <AvatarFallback className="bg-emerald-100 text-emerald-600">
+                            <AvatarFallback className="bg-[#E8F8EF] text-[#30D158]">
                               {booking.serviceProvider.initials}
                             </AvatarFallback>
                           </Avatar>
 
                           <div>
                             <div className="font-medium">{booking.serviceProvider.name}</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 font-light">
                               {booking.serviceProvider.status === "waiting" ? (
                                 <div className="flex items-center text-gray-500">
                                   <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                   Waiting for confirmation
                                 </div>
                               ) : (
-                                <div className="flex items-center text-emerald-600">
+                                <div className="flex items-center text-[#30D158]">
                                   <Check className="h-3 w-3 mr-1" />
                                   Confirmed service
                                 </div>
@@ -649,30 +646,30 @@ function AdminTransactions() {
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-sm font-medium text-gray-500">Customer</div>
                           {booking.customer.status === "waiting" ? (
-                            <Badge className="bg-gray-200 text-gray-700">Waiting</Badge>
+                            <Badge className="bg-[#F2F2F7] text-[#8E8E93] hover:bg-[#F2F2F7]">Waiting</Badge>
                           ) : (
-                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confirmed</Badge>
+                            <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Confirmed</Badge>
                           )}
                         </div>
 
                         <div className="flex items-center gap-3">
                           <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
                             <AvatarImage src={booking.customer.avatar} />
-                            <AvatarFallback className="bg-blue-100 text-blue-600">
+                            <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
                               {booking.customer.initials}
                             </AvatarFallback>
                           </Avatar>
 
                           <div>
                             <div className="font-medium">{booking.customer.name}</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 font-light">
                               {booking.customer.status === "waiting" ? (
                                 <div className="flex items-center text-gray-500">
                                   <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                   Waiting for confirmation
                                 </div>
                               ) : (
-                                <div className="flex items-center text-emerald-600">
+                                <div className="flex items-center text-[#30D158]">
                                   <Check className="h-3 w-3 mr-1" />
                                   Confirmed service
                                 </div>
@@ -685,21 +682,21 @@ function AdminTransactions() {
 
                     {isReleaseEnabled(booking) && autoReleaseEnabled && (
                       <div className="mb-6">
-                        <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-4 flex justify-between items-center">
+                        <div className="bg-gradient-to-r from-[#FFE5E7] to-[#FFE5E7]/50 rounded-xl p-4 flex justify-between items-center">
                           <div>
-                            <div className="flex items-center gap-2 text-red-700 mb-1">
+                            <div className="flex items-center gap-2 text-[#FF453A] mb-1">
                               <CircleAlert className="h-4 w-4" />
                               <span className="font-medium">Commission Warning</span>
                             </div>
-                            <p className="text-sm text-red-600">
+                            <p className="text-sm text-[#FF453A] font-light">
                               You will not receive commission if the timer expires.
                             </p>
                           </div>
 
                           {timerActive && (
                             <div className="flex items-center gap-2">
-                              <Clock className="h-5 w-5 text-red-500" />
-                              <div className="text-xl font-bold text-red-500">
+                              <Clock className="h-5 w-5 text-[#FF453A]" />
+                              <div className="text-xl font-medium text-[#FF453A]">
                                 {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, "0")}
                               </div>
                             </div>
@@ -709,19 +706,19 @@ function AdminTransactions() {
                     )}
 
                     <div className="flex flex-col md:flex-row items-center justify-between pt-4 border-t border-gray-200">
-                      <div className="text-sm text-gray-600 mb-4 md:mb-0 text-center md:text-left">
+                      <div className="text-sm text-gray-600 mb-4 md:mb-0 text-center md:text-left font-light">
                         {booking.isReleased ? (
-                          <div className="flex items-center text-emerald-600">
+                          <div className="flex items-center text-[#30D158]">
                             <CheckCircle className="h-4 w-4 mr-1" />
                             Payment has been released successfully.
                           </div>
                         ) : isReleaseEnabled(booking) ? (
-                          <div className="flex items-center text-blue-600">
+                          <div className="flex items-center text-[#0A84FF]">
                             <Info className="h-4 w-4 mr-1" />
                             Both parties have confirmed. You can release the payment now.
                           </div>
                         ) : (
-                          <div className="flex items-center text-red-500">
+                          <div className="flex items-center text-[#FF453A]">
                             <Clock className="h-4 w-4 mr-1" />
                             Waiting for both parties to confirm before releasing payment.
                           </div>
@@ -729,18 +726,14 @@ function AdminTransactions() {
                       </div>
 
                       <Button
-                        className={`${booking.isReleased ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-500 hover:bg-blue-600"} text-white px-6`}
+                        className={`${booking.isReleased ? "bg-[#30D158] hover:bg-[#30D158]/90" : "bg-[#0A84FF] hover:bg-[#0A84FF]/90"} text-white px-6`}
                         disabled={!isReleaseEnabled(booking) || booking.isReleased}
                         onClick={() => handleReleasePayment(booking.id)}
                       >
                         {booking.isReleased ? (
-                          <div className="flex items-center">
-                            Payment Released
-                          </div>
+                          <div className="flex items-center">Payment Released</div>
                         ) : (
-                          <div className="flex items-center">
-                            Release Payment
-                          </div>
+                          <div className="flex items-center">Release Payment</div>
                         )}
                       </Button>
                     </div>
@@ -754,21 +747,21 @@ function AdminTransactions() {
           <div>
             <div className="space-y-6">
               {/* Search and Filter */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#F2F2F7] to-[#F2F2F7] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Transaction Search</h3>
+                    <h3 className="font-medium text-gray-800">Transaction Search</h3>
                     <Search className="h-4 w-4 text-gray-500" />
                   </div>
                 </div>
                 <CardContent className="p-4">
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input placeholder="Search transactions..." className="pl-9 bg-gray-50 border-0" />
+                    <Input placeholder="Search transactions..." className="pl-9 bg-[#F2F2F7] border-0" />
                   </div>
                   <div className="flex gap-2">
                     <Select defaultValue="all">
-                      <SelectTrigger className="w-full bg-gray-50 border-0">
+                      <SelectTrigger className="w-full bg-[#F2F2F7] border-0">
                         <SelectValue placeholder="Time period" />
                       </SelectTrigger>
                       <SelectContent>
@@ -778,7 +771,7 @@ function AdminTransactions() {
                         <SelectItem value="month">This Month</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button variant="outline" className="bg-gray-50 border-0">
+                    <Button variant="outline" className="bg-[#F2F2F7] border-0">
                       <Filter className="h-4 w-4" />
                     </Button>
                   </div>
@@ -786,37 +779,37 @@ function AdminTransactions() {
               </Card>
 
               {/* Payment Methods */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E9F6FF] to-[#F2EBFF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Payment Methods</h3>
-                    <PieChart className="h-4 w-4 text-blue-500" />
+                    <h3 className="font-medium text-gray-800">Payment Methods</h3>
+                    <PieChart className="h-4 w-4 text-[#0A84FF]" />
                   </div>
                 </div>
-                <CardContent className="p-4">
+                <CardContent className="p-5">
                   <div className="flex items-center justify-center mb-6">
                     <div className="relative w-36 h-36">
                       {/* Circular chart */}
-                      <div className="absolute inset-0 rounded-full bg-gray-100"></div>
+                      <div className="absolute inset-0 rounded-full bg-[#F2F2F7]"></div>
                       <div
-                        className="absolute inset-0 rounded-full bg-blue-500"
+                        className="absolute inset-0 rounded-full bg-[#0A84FF]"
                         style={{ clipPath: "polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%)" }}
                       ></div>
                       <div
-                        className="absolute inset-0 rounded-full bg-purple-500"
+                        className="absolute inset-0 rounded-full bg-[#5E5CE6]"
                         style={{ clipPath: "polygon(50% 50%, 100% 0%, 100% 24%, 50% 24%)" }}
                       ></div>
                       <div
-                        className="absolute inset-0 rounded-full bg-green-500"
+                        className="absolute inset-0 rounded-full bg-[#30D158]"
                         style={{ clipPath: "polygon(50% 50%, 100% 24%, 100% 32%, 50% 32%)" }}
                       ></div>
                       <div
-                        className="absolute inset-0 rounded-full bg-yellow-500"
+                        className="absolute inset-0 rounded-full bg-[#FF9500]"
                         style={{ clipPath: "polygon(50% 50%, 100% 32%, 100% 36%, 50% 36%)" }}
                       ></div>
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center">
-                          <CreditCard className="h-10 w-10 text-blue-400" />
+                          <CreditCard className="h-10 w-10 text-[#0A84FF]" />
                         </div>
                       </div>
                     </div>
@@ -825,29 +818,29 @@ function AdminTransactions() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-gray-700">Credit Card</span>
+                        <div className="w-3 h-3 rounded-full bg-[#0A84FF]"></div>
+                        <span className="text-sm text-gray-700 font-light">Credit Card</span>
                       </div>
                       <span className="text-sm font-medium">45%</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                        <span className="text-sm text-gray-700">Digital Wallets</span>
+                        <div className="w-3 h-3 rounded-full bg-[#5E5CE6]"></div>
+                        <span className="text-sm text-gray-700 font-light">Digital Wallets</span>
                       </div>
                       <span className="text-sm font-medium">32%</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                        <span className="text-sm text-gray-700">Bank Transfer</span>
+                        <div className="w-3 h-3 rounded-full bg-[#30D158]"></div>
+                        <span className="text-sm text-gray-700 font-light">Bank Transfer</span>
                       </div>
                       <span className="text-sm font-medium">18%</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <span className="text-sm text-gray-700">Crypto</span>
+                        <div className="w-3 h-3 rounded-full bg-[#FF9500]"></div>
+                        <span className="text-sm text-gray-700 font-light">Crypto</span>
                       </div>
                       <span className="text-sm font-medium">5%</span>
                     </div>
@@ -856,57 +849,57 @@ function AdminTransactions() {
               </Card>
 
               {/* Transaction Status */}
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 border-b">
+              <Card className="border-none rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[#E8F8EF] to-[#E9F6FF] p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Transaction Status</h3>
-                    <BarChart3 className="h-4 w-4 text-emerald-500" />
+                    <h3 className="font-medium text-gray-800">Transaction Status</h3>
+                    <BarChart3 className="h-4 w-4 text-[#30D158]" />
                   </div>
                 </div>
-                <CardContent className="p-4">
+                <CardContent className="p-5">
                   <div className="grid grid-cols-3 gap-3 mb-4">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Success</div>
-                      <div className="text-lg font-bold text-emerald-600">94%</div>
+                    <div className="bg-[#F2F2F7] rounded-xl p-3 text-center">
+                      <div className="text-xs text-gray-500 font-light">Success</div>
+                      <div className="text-lg font-medium text-[#30D158]">94%</div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Pending</div>
-                      <div className="text-lg font-bold text-amber-600">5%</div>
+                    <div className="bg-[#F2F2F7] rounded-xl p-3 text-center">
+                      <div className="text-xs text-gray-500 font-light">Pending</div>
+                      <div className="text-lg font-medium text-[#FF9500]">5%</div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500">Canceled</div>
-                      <div className="text-lg font-bold text-red-600">1%</div>
+                    <div className="bg-[#F2F2F7] rounded-xl p-3 text-center">
+                      <div className="text-xs text-gray-500 font-light">Canceled</div>
+                      <div className="text-lg font-medium text-[#FF453A]">1%</div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Success</span>
-                        <span className="text-sm font-medium text-emerald-600">94%</span>
+                        <span className="text-sm text-gray-600 font-light">Success</span>
+                        <span className="text-sm font-medium text-[#30D158]">94%</span>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full">
-                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: "94%" }}></div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Pending</span>
-                        <span className="text-sm font-medium text-amber-600">5%</span>
-                      </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full">
-                        <div className="h-full bg-amber-500 rounded-full" style={{ width: "5%" }}></div>
+                      <div className="h-1.5 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#30D158] rounded-full" style={{ width: "94%" }}></div>
                       </div>
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Canceled</span>
-                        <span className="text-sm font-medium text-red-600">1%</span>
+                        <span className="text-sm text-gray-600 font-light">Pending</span>
+                        <span className="text-sm font-medium text-[#FF9500]">5%</span>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full">
-                        <div className="h-full bg-red-500 rounded-full" style={{ width: "1%" }}></div>
+                      <div className="h-1.5 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#FF9500] rounded-full" style={{ width: "5%" }}></div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600 font-light">Canceled</span>
+                        <span className="text-sm font-medium text-[#FF453A]">1%</span>
+                      </div>
+                      <div className="h-1.5 bg-[#F2F2F7] rounded-full">
+                        <div className="h-full bg-[#FF453A] rounded-full" style={{ width: "1%" }}></div>
                       </div>
                     </div>
                   </div>
@@ -918,12 +911,12 @@ function AdminTransactions() {
 
         {/* Transaction Activity */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="p-6 border-b">
+          <div className="p-6 border-b border-gray-100">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-800">Transaction Activity</h2>
+              <h2 className="text-lg font-medium text-gray-800">Transaction Activity</h2>
               <div className="flex gap-2">
                 <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-auto">
-                  <TabsList className="bg-gray-100">
+                  <TabsList className="bg-[#F2F2F7]">
                     <TabsTrigger value="all" className="text-xs data-[state=active]:bg-white">
                       All
                     </TabsTrigger>
@@ -945,7 +938,7 @@ function AdminTransactions() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b text-xs text-gray-500">
+                <tr className="bg-[#F2F2F7] border-b text-xs text-gray-500">
                   <th className="text-left py-3 px-4 font-medium">ACCOUNT</th>
                   <th className="text-left py-3 px-4 font-medium">PAYMENT METHOD</th>
                   <th className="text-left py-3 px-4 font-medium">
@@ -965,7 +958,7 @@ function AdminTransactions() {
               </thead>
               <tbody>
                 {filteredTransactions.map((transaction) => (
-                  <tr key={transaction.id} className="border-b hover:bg-gray-50">
+                  <tr key={transaction.id} className="border-b hover:bg-[#F2F2F7]/50">
                     <td className="py-3 px-4">
                       <div className="flex items-center">
                         <div
@@ -973,35 +966,37 @@ function AdminTransactions() {
                         >
                           {transaction.icon}
                         </div>
-                        <span className="text-sm">{transaction.accountNumber}</span>
+                        <span className="text-sm font-light">{transaction.accountNumber}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm">{transaction.paymentMethod}</td>
-                    <td className="py-3 px-4 text-sm text-gray-600">{transaction.date}</td>
+                    <td className="py-3 px-4 text-sm font-light">{transaction.paymentMethod}</td>
+                    <td className="py-3 px-4 text-sm text-gray-600 font-light">{transaction.date}</td>
                     <td className="py-3 px-4">
                       {transaction.status === "pending" && (
-                        <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Pending</Badge>
+                        <Badge className="bg-[#FFF8E6] text-[#FF9500] hover:bg-[#FFF8E6]">Pending</Badge>
                       )}
                       {transaction.status === "success" && (
-                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Success</Badge>
+                        <Badge className="bg-[#E8F8EF] text-[#30D158] hover:bg-[#E8F8EF]">Success</Badge>
                       )}
                       {transaction.status === "canceled" && (
-                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Canceled</Badge>
+                        <Badge className="bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">Canceled</Badge>
                       )}
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center">
                         <Avatar className="h-6 w-6 mr-2">
                           <AvatarImage src={transaction.recipient.avatar} />
-                          <AvatarFallback>{transaction.recipient.initials}</AvatarFallback>
+                          <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                            {transaction.recipient.initials}
+                          </AvatarFallback>
                         </Avatar>
-                        <span className="text-sm">{transaction.recipient.name}</span>
+                        <span className="text-sm font-light">{transaction.recipient.name}</span>
                       </div>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="font-medium">₱{transaction.amount.toLocaleString()}</div>
                       {transaction.status === "success" && (
-                        <div className="text-xs text-emerald-500">
+                        <div className="text-xs text-[#30D158] font-light">
                           +₱{calculateCommission(transaction.amount).toLocaleString()}
                         </div>
                       )}
@@ -1017,16 +1012,16 @@ function AdminTransactions() {
             </table>
           </div>
 
-          <div className="p-4 border-t flex items-center justify-between">
-            <div className="text-sm text-gray-500">
+          <div className="p-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="text-sm text-gray-500 font-light">
               Showing <span className="font-medium">{filteredTransactions.length}</span> of{" "}
               <span className="font-medium">{transactions.length}</span> transactions
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="bg-white">
+              <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700">
                 Previous
               </Button>
-              <Button variant="outline" size="sm" className="bg-white">
+              <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700">
                 Next
               </Button>
             </div>
@@ -1038,3 +1033,4 @@ function AdminTransactions() {
 }
 
 export default AdminTransactions
+
