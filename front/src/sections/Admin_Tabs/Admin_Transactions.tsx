@@ -32,6 +32,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import type { JSX } from "react/jsx-runtime"
+import Footer from "../Styles/Footer"
 
 type ConfirmationStatus = "waiting" | "confirmed"
 
@@ -1028,6 +1029,7 @@ function AdminTransactions() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

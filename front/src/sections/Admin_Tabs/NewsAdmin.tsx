@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef, useState, useEffect } from "react"
 import MyFloatingDock from "../Styles/MyFloatingDock"
 import {
@@ -30,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import Footer from "../Styles/Footer"
 
 // Add these type definitions at the top of the file
 interface PostReaction {
@@ -67,7 +66,7 @@ interface NewPostData {
 
 interface PostProps {
   post: Post
-  onReact: (postId: number, reactionType: keyof PostReaction) => void
+  onReact: (postId: number, reactionType: keyof PostReaction, change: number) => void
   onComment: (postId: number, comment: string) => void
   onReport: (postId: number) => void
 }
@@ -125,6 +124,9 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
   const [showReactions, setShowReactions] = useState(false)
   const [longPressActive, setLongPressActive] = useState(false)
   const longPressTimer = useRef<NodeJS.Timeout | null>(null)
+  const [userReaction, setUserReaction] = useState<keyof PostReaction | null>(null)
+  const [menuLongPressActive, setMenuLongPressActive] = useState(false)
+  const menuLongPressTimer = useRef<NodeJS.Timeout | null>(null)
 
   // Calculate total reactions
   const totalReactions = Object.values(post.reactions).reduce((sum, count) => sum + count, 0)
@@ -137,7 +139,18 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
 
   // Handle reaction selection
   const handleReact = (reaction: keyof PostReaction) => {
-    onReact(post.id, reaction)
+    if (userReaction === reaction) {
+      // User is clicking the same reaction again, do nothing
+      return
+    }
+
+    // If user already reacted with something else, remove the previous reaction
+    if (userReaction) {
+      onReact(post.id, userReaction, -1) // Decrease previous reaction count
+    }
+
+    onReact(post.id, reaction, 1) // Add new reaction
+    setUserReaction(reaction) // Track what the user reacted with
     setShowReactions(false)
   }
 
@@ -178,6 +191,9 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
     return () => {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current)
+      }
+      if (menuLongPressTimer.current) {
+        clearTimeout(menuLongPressTimer.current)
       }
     }
   }, [])
@@ -238,6 +254,22 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
     }
   }
 
+  // Handle menu long press start
+  const handleMenuLongPressStart = () => {
+    menuLongPressTimer.current = setTimeout(() => {
+      setMenuLongPressActive(true)
+    }, 500) // 500ms for long press
+  }
+
+  // Handle menu long press end
+  const handleMenuLongPressEnd = () => {
+    if (menuLongPressTimer.current) {
+      clearTimeout(menuLongPressTimer.current)
+      menuLongPressTimer.current = null
+    }
+    setMenuLongPressActive(false)
+  }
+
   return (
     <div className="bg-[#F2F2F7]/50 rounded-xl p-4 mb-4 hover:bg-[#F2F2F7] transition-colors">
       <div className="flex items-center mb-3">
@@ -252,9 +284,18 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
           <p className="font-medium">{post.author}</p>
           <p className="text-sm text-gray-500 font-light">{post.time}</p>
         </div>
-        <DropdownMenu>
+        <DropdownMenu open={menuLongPressActive} onOpenChange={setMenuLongPressActive}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="ml-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto"
+              onMouseDown={handleMenuLongPressStart}
+              onMouseUp={handleMenuLongPressEnd}
+              onMouseLeave={handleMenuLongPressEnd}
+              onTouchStart={handleMenuLongPressStart}
+              onTouchEnd={handleMenuLongPressEnd}
+            >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -310,17 +351,16 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
                       count > 0 ? (
                         <div
                           key={type}
-                          className={`h-5 w-5 rounded-full ${
-                            type === "thumbsUp"
-                              ? "bg-[#E9F6FF]"
-                              : type === "heart"
-                                ? "bg-[#FFE5E7]"
-                                : type === "laugh"
-                                  ? "bg-[#FFF8E6]"
-                                  : type === "angry"
-                                    ? "bg-[#FFE5E7]"
-                                    : "bg-[#E9F6FF]"
-                          } flex items-center justify-center`}
+                          className={`h-5 w-5 rounded-full ${type === "thumbsUp"
+                            ? "bg-[#E9F6FF]"
+                            : type === "heart"
+                              ? "bg-[#FFE5E7]"
+                              : type === "laugh"
+                                ? "bg-[#FFF8E6]"
+                                : type === "angry"
+                                  ? "bg-[#FFE5E7]"
+                                  : "bg-[#E9F6FF]"
+                            } flex items-center justify-center`}
                         >
                           {renderReactionIcon(type)}
                         </div>
@@ -430,8 +470,26 @@ function Post({ post, onReact, onComment, onReport }: PostProps) {
                 }
               }}
             >
-              {renderReactionIcon(dominantReaction)}
-              <span className="ml-2">React</span>
+              {userReaction ? renderReactionIcon(userReaction) : renderReactionIcon(dominantReaction)}
+              <span className="ml-2">
+                {userReaction ? (
+                  <>
+                    You{" "}
+                    {userReaction === "thumbsUp"
+                      ? "liked"
+                      : userReaction === "heart"
+                        ? "loved"
+                        : userReaction === "laugh"
+                          ? "laughed at"
+                          : userReaction === "angry"
+                            ? "are angry with"
+                            : "are sad about"}{" "}
+                    this
+                  </>
+                ) : (
+                  "React"
+                )}
+              </span>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-1 w-auto" align="start">
@@ -643,6 +701,37 @@ function NewsAdmin() {
   const [activeTab, setActiveTab] = useState("pending")
   const [currentTime, setCurrentTime] = useState(new Date())
   const [posts, setPosts] = useState<Post[]>(samplePosts)
+  const [pendingPosts, setPendingPosts] = useState([
+    {
+      id: 1,
+      author: "Michael Johnson",
+      avatar: "/placeholder.svg?height=40&width=40",
+      time: "2 hours ago",
+      content:
+        "We're excited to announce our upcoming product launch! This new offering will revolutionize how our customers interact with our platform. The team has been working tirelessly for months to perfect every detail. Stay tuned for more information in the coming weeks!",
+      type: "text",
+    },
+    {
+      id: 2,
+      author: "Sarah Williams",
+      avatar: "/placeholder.svg?height=40&width=40",
+      time: "4 hours ago",
+      content:
+        "Check out our office renovation progress! The new space is designed to foster collaboration and creativity.",
+      type: "image",
+      mediaUrl: "https://cdn.pixabay.com/photo/2021/09/06/20/12/cat-6602447_1280.jpg",
+    },
+    {
+      id: 3,
+      author: "David Chen",
+      avatar: "/placeholder.svg?height=40&width=40",
+      time: "Yesterday",
+      content:
+        "I'm thrilled to share our latest customer success story. This case study demonstrates how our solution helped increase efficiency by 45%.",
+      type: "text",
+    },
+  ])
+  const [expandedPostId, setExpandedPostId] = useState<number | null>(null)
 
   // Update time every minute
   useEffect(() => {
@@ -660,14 +749,14 @@ function NewsAdmin() {
   // Simplified metrics
   const newsfeedMetrics = {
     totalPosts: posts.length,
-    pendingPosts: 3,
+    pendingPosts: pendingPosts.length,
     publishedPosts: posts.length,
     reportedPosts: 3,
     suspendedUsers: 3,
   }
 
   // Handle post reactions
-  const handleReact = (postId: number, reactionType: keyof PostReaction) => {
+  const handleReact = (postId: number, reactionType: keyof PostReaction, change: number) => {
     setPosts(
       posts.map((post) => {
         if (post.id === postId) {
@@ -675,7 +764,7 @@ function NewsAdmin() {
             ...post,
             reactions: {
               ...post.reactions,
-              [reactionType]: post.reactions[reactionType] + 1,
+              [reactionType]: post.reactions[reactionType] + change,
             },
           }
         }
@@ -733,10 +822,36 @@ function NewsAdmin() {
     setPosts([newPost, ...posts])
   }
 
+  const handleApprovePost = (postId: number) => {
+    const approvedPost = pendingPosts.find((post) => post.id === postId)
+    if (approvedPost) {
+      setPosts([
+        {
+          ...approvedPost,
+          type: approvedPost.type as "text" | "image" | "video",
+          reactions: { thumbsUp: 0, heart: 0, laugh: 0, angry: 0, sad: 0 },
+          comments: [],
+        },
+        ...posts,
+      ])
+      setPendingPosts(pendingPosts.filter((post) => post.id !== postId))
+      setExpandedPostId(null)
+    }
+  }
+
+  const handleDeclinePost = (postId: number) => {
+    setPendingPosts(pendingPosts.filter((post) => post.id !== postId))
+    setExpandedPostId(null)
+  }
+
+  const toggleExpandPost = (postId: number) => {
+    setExpandedPostId(expandedPostId === postId ? null : postId)
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+      <div className="sticky z-40 flex">
         <MyFloatingDock />
       </div>
 
@@ -910,29 +1025,129 @@ function NewsAdmin() {
                           </p>
                         </div>
                         <div className="space-y-4">
-                          {[1, 2, 3].map((item) => (
-                            <div
-                              key={item}
-                              className="p-4 bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors flex justify-between items-center"
-                            >
-                              <div>
-                                <p className="font-medium">Post #{item}</p>
-                                <p className="text-sm text-gray-500 font-light">Submitted 2 hours ago</p>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border-[#FF453A]/20 text-[#FF453A] hover:bg-[#FFE5E7]"
+                          {pendingPosts.map((pendingPost) => {
+                            const isExpanded = expandedPostId === pendingPost.id
+
+                            return (
+                              <div
+                                key={pendingPost.id}
+                                className={`bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors overflow-hidden ${isExpanded ? "p-4" : ""}`}
+                              >
+                                <div
+                                  className={`${isExpanded ? "" : "p-4"} cursor-pointer`}
+                                  onClick={() => toggleExpandPost(pendingPost.id)}
                                 >
-                                  Reject
-                                </Button>
-                                <Button size="sm" className="bg-[#30D158] hover:bg-[#30D158]/90">
-                                  Approve
-                                </Button>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                      <Avatar className="h-8 w-8 mr-3 border-2 border-white shadow-sm">
+                                        <AvatarImage src={pendingPost.avatar} alt={pendingPost.author} />
+                                        <AvatarFallback className="bg-[#E9F6FF] text-[#0A84FF]">
+                                          {pendingPost.author.charAt(0)}
+                                          {pendingPost.author.split(" ")[1]?.charAt(0)}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div>
+                                        <p className="font-medium">{pendingPost.author}</p>
+                                        <p className="text-xs text-gray-500 font-light">{pendingPost.time}</p>
+                                      </div>
+                                    </div>
+                                    <Badge className="bg-[#FFF8E6] text-[#FF9500] hover:bg-[#FFF8E6]">Pending</Badge>
+                                  </div>
+
+                                  {!isExpanded && (
+                                    <div className="mt-2">
+                                      <p className="text-sm font-light line-clamp-1">{pendingPost.content}</p>
+                                      <div className="flex items-center mt-2 text-xs text-[#0A84FF]">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          className="mr-1"
+                                        >
+                                          <polyline points="15 3 21 3 21 9" />
+                                          <polyline points="9 21 3 21 3 15" />
+                                          <line x1="21" x2="14" y1="3" y2="10" />
+                                          <line x1="3" x2="10" y1="21" y2="14" />
+                                        </svg>
+                                        Click to expand
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {isExpanded && (
+                                  <>
+                                    <div className="mt-3 mb-4">
+                                      <p className="text-sm font-light">{pendingPost.content}</p>
+                                    </div>
+
+                                    {pendingPost.type === "image" && (
+                                      <div className="mb-4 rounded-lg overflow-hidden">
+                                        <img
+                                          src={pendingPost.mediaUrl || "/placeholder.svg"}
+                                          alt="Pending post image"
+                                          className="w-full h-195 object-cover"
+                                        />
+                                      </div>
+                                    )}
+
+                                    <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-[#FF453A]/20 text-[#FF453A] hover:bg-[#FFE5E7]"
+                                        onClick={() => handleDeclinePost(pendingPost.id)}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          className="mr-1"
+                                        >
+                                          <path d="M18 6 6 18" />
+                                          <path d="m6 6 12 12" />
+                                        </svg>
+                                        Decline
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        className="bg-[#30D158] hover:bg-[#30D158]/90"
+                                        onClick={() => handleApprovePost(pendingPost.id)}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          className="mr-1"
+                                        >
+                                          <path d="M20 6 9 17l-5-5" />
+                                        </svg>
+                                        Approve
+                                      </Button>
+                                    </div>
+                                  </>
+                                )}
                               </div>
-                            </div>
-                          ))}
+                            )
+                          })}
                         </div>
                       </div>
                     </TabsContent>
@@ -949,15 +1164,64 @@ function NewsAdmin() {
                           </p>
                         </div>
                         <div className="space-y-4">
-                          {posts.map((post) => (
-                            <Post
-                              key={post.id}
-                              post={post}
-                              onReact={handleReact}
-                              onComment={handleComment}
-                              onReport={handleReport}
-                            />
-                          ))}
+                          {posts.length > 0 ? (
+                            posts.map((post) => (
+                              <Post
+                                key={post.id}
+                                post={post}
+                                onReact={handleReact}
+                                onComment={handleComment}
+                                onReport={handleReport}
+                              />
+                            ))
+                          ) : (
+                            <div className="p-8 text-center bg-[#F2F2F7] rounded-xl">
+                              <div className="flex flex-col items-center justify-center py-6">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="48"
+                                  height="48"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="text-gray-400 mb-4"
+                                >
+                                  <rect width="18" height="18" x="3" y="3" rx="2" />
+                                  <path d="M7 7h10" />
+                                  <path d="M7 12h10" />
+                                  <path d="M7 17h10" />
+                                </svg>
+                                <p className="text-gray-600 font-medium text-lg">Stay tuned for more posts!</p>
+                                <p className="text-sm text-gray-500 mt-2">New content is coming soon.</p>
+                              </div>
+                            </div>
+                          )}
+                          {posts.length > 0 && (
+                            <div className="p-6 text-center bg-[#F2F2F7] rounded-xl mt-4">
+                              <div className="flex flex-col items-center justify-center py-3">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="text-gray-400 mb-2"
+                                >
+                                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                                  <path d="m9 12 2 2 4-4" />
+                                </svg>
+                                <p className="text-gray-600 font-medium">This is the end of all the posts</p>
+                                <p className="text-sm text-gray-500 mt-1">Stay tuned for more updates!</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </TabsContent>
@@ -980,28 +1244,121 @@ function NewsAdmin() {
                           </p>
                         </div>
                         <div className="space-y-4">
-                          {[1, 2, 3].map((item) => (
+                          {[
+                            {
+                              id: 101,
+                              author: "Thomas Wilson",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              time: "3 hours ago",
+                              content: "This content contains misleading information about our company policies.",
+                              reason: "Misinformation",
+                              reportCount: 5,
+                            },
+                            {
+                              id: 102,
+                              author: "Emma Johnson",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              time: "Yesterday",
+                              content: "Check out this amazing offer! Limited time only at www.suspicious-link.com",
+                              reason: "Spam/Scam",
+                              reportCount: 12,
+                              type: "image",
+                              mediaUrl: "https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455_1280.jpg",
+                            },
+                            {
+                              id: 103,
+                              author: "Alex Rodriguez",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              time: "2 days ago",
+                              content: "This post contains language that violates our community guidelines.",
+                              reason: "Inappropriate content",
+                              reportCount: 8,
+                            },
+                          ].map((report) => (
                             <div
-                              key={item}
-                              className="p-4 bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors"
+                              key={report.id}
+                              className="bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors overflow-hidden p-4"
                             >
-                              <div className="flex justify-between mb-2">
-                                <p className="font-medium">Reported Post #{item}</p>
-                                <Badge className="bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">Flagged</Badge>
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center">
+                                  <Avatar className="h-10 w-10 mr-3 border-2 border-white shadow-sm">
+                                    <AvatarImage src={report.avatar} alt={report.author} />
+                                    <AvatarFallback className="bg-[#FFE5E7] text-[#FF453A]">
+                                      {report.author.charAt(0)}
+                                      {report.author.split(" ")[1]?.charAt(0)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <p className="font-medium">{report.author}</p>
+                                    <p className="text-xs text-gray-500 font-light">{report.time}</p>
+                                  </div>
+                                </div>
+                                <Badge className="bg-[#FFE5E7] text-[#FF453A] hover:bg-[#FFE5E7]">
+                                  {report.reportCount} Reports
+                                </Badge>
                               </div>
-                              <p className="text-sm text-gray-500 mb-3 font-light">
-                                Reported for: Inappropriate content
-                              </p>
-                              <div className="flex gap-2">
+
+                              <div className="mb-3">
+                                <p className="text-sm font-light">{report.content}</p>
+                              </div>
+
+                              {report.type === "image" && (
+                                <div className="mb-4 rounded-lg overflow-hidden">
+                                  <img
+                                    src={report.mediaUrl || "/placeholder.svg"}
+                                    alt="Reported post image"
+                                    className="w-full h-48 object-cover"
+                                  />
+                                </div>
+                              )}
+
+                              <div className="bg-[#FFE5E7]/50 p-3 rounded-lg mb-4">
+                                <div className="flex items-center gap-2 text-[#FF453A]">
+                                  <AlertTriangle className="h-4 w-4" />
+                                  <p className="text-sm font-medium">Reported for: {report.reason}</p>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1 pl-6">
+                                  This post was flagged by multiple users and requires moderation.
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 justify-end">
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="border-[#0A84FF]/20 text-[#0A84FF] hover:bg-[#E9F6FF]"
                                 >
-                                  Dismiss
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-[#FF9500]/20 text-[#FF9500] hover:bg-[#FFF8E6]"
+                                >
+                                  <Ban className="h-4 w-4 mr-1" />
+                                  Hide
                                 </Button>
                                 <Button variant="destructive" size="sm" className="bg-[#FF453A] hover:bg-[#FF453A]/90">
-                                  Remove Post
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="mr-1"
+                                  >
+                                    <path d="M3 6h18" />
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                    <line x1="10" x2="10" y1="11" y2="17" />
+                                    <line x1="14" x2="14" y1="11" y2="17" />
+                                  </svg>
+                                  Remove
                                 </Button>
                               </div>
                             </div>
@@ -1028,22 +1385,156 @@ function NewsAdmin() {
                           </p>
                         </div>
                         <div className="space-y-4">
-                          {[1, 2, 3].map((item) => (
+                          {[
+                            {
+                              id: 201,
+                              name: "James Wilson",
+                              username: "@jameswilson",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              suspendedDate: "March 15, 2023",
+                              suspendedUntil: "April 15, 2023",
+                              reason: "Multiple violations of community guidelines",
+                              violationCount: 5,
+                              previousWarnings: 3,
+                            },
+                            {
+                              id: 202,
+                              name: "Olivia Martinez",
+                              username: "@oliviam",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              suspendedDate: "March 18, 2023",
+                              suspendedUntil: "May 18, 2023",
+                              reason: "Posting inappropriate content",
+                              violationCount: 8,
+                              previousWarnings: 2,
+                            },
+                            {
+                              id: 203,
+                              name: "Daniel Johnson",
+                              username: "@danielj",
+                              avatar: "/placeholder.svg?height=40&width=40",
+                              suspendedDate: "March 10, 2023",
+                              suspendedUntil: "April 10, 2023",
+                              reason: "Spam and misleading information",
+                              violationCount: 4,
+                              previousWarnings: 2,
+                            },
+                          ].map((user) => (
                             <div
-                              key={item}
-                              className="p-4 bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors flex justify-between items-center"
+                              key={user.id}
+                              className="bg-[#F2F2F7]/50 rounded-xl hover:bg-[#F2F2F7] transition-colors overflow-hidden p-4"
                             >
-                              <div>
-                                <p className="font-medium">User #{item}</p>
-                                <p className="text-sm text-gray-500 font-light">Suspended until: April 15, 2023</p>
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center">
+                                  <Avatar className="h-10 w-10 mr-3 border-2 border-white shadow-sm">
+                                    <AvatarImage src={user.avatar} alt={user.name} />
+                                    <AvatarFallback className="bg-[#F2F2F7] text-gray-500">
+                                      {user.name.charAt(0)}
+                                      {user.name.split(" ")[1]?.charAt(0)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <p className="font-medium">{user.name}</p>
+                                    <p className="text-xs text-gray-500 font-light">{user.username}</p>
+                                  </div>
+                                </div>
+                                <Badge className="bg-[#F2F2F7] text-gray-700 hover:bg-[#F2F2F7]">Suspended</Badge>
                               </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="border-[#0A84FF]/20 text-[#0A84FF] hover:bg-[#E9F6FF]"
-                              >
-                                Reinstate
-                              </Button>
+
+                              <div className="bg-[#F2F2F7] p-3 rounded-lg mb-4">
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                  <div>
+                                    <p className="text-gray-500 font-light">Suspended on:</p>
+                                    <p className="font-medium">{user.suspendedDate}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-500 font-light">Suspended until:</p>
+                                    <p className="font-medium">{user.suspendedUntil}</p>
+                                  </div>
+                                  <div className="col-span-2 mt-2">
+                                    <p className="text-gray-500 font-light">Reason:</p>
+                                    <p className="font-medium">{user.reason}</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                <div className="bg-[#FFE5E7]/50 text-[#FF453A] px-3 py-1 rounded-full text-xs font-medium">
+                                  {user.violationCount} Violations
+                                </div>
+                                <div className="bg-[#FFF8E6]/50 text-[#FF9500] px-3 py-1 rounded-full text-xs font-medium">
+                                  {user.previousWarnings} Warnings
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 justify-end">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-[#0A84FF]/20 text-[#0A84FF] hover:bg-[#E9F6FF]"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="mr-1"
+                                  >
+                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                                    <path d="m9 12 2 2 4-4" />
+                                  </svg>
+                                  Reinstate
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-[#FF9500]/20 text-[#FF9500] hover:bg-[#FFF8E6]"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="mr-1"
+                                  >
+                                    <path d="M12 9v4" />
+                                    <path d="M12 17h.01" />
+                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                                  </svg>
+                                  Extend
+                                </Button>
+                                <Button variant="destructive" size="sm" className="bg-[#FF453A] hover:bg-[#FF453A]/90">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="mr-1"
+                                  >
+                                    <path d="M3 3h18v18H3z" />
+                                    <path d="M15 9h0" />
+                                    <path d="M9 15h0" />
+                                    <path d="m15 15-6-6" />
+                                    <path d="m9 9 6 6" />
+                                  </svg>
+                                  Permanent Ban
+                                </Button>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -1166,13 +1657,12 @@ function NewsAdmin() {
                       <div key={index} className="p-4 hover:bg-[#F2F2F7]/50">
                         <div className="flex items-start gap-3">
                           <div
-                            className={`rounded-full p-2 mt-1 ${
-                              activity.color === "green"
-                                ? "bg-[#E8F8EF] text-[#30D158]"
-                                : activity.color === "amber"
-                                  ? "bg-[#FFF8E6] text-[#FF9500]"
-                                  : "bg-[#E9F6FF] text-[#0A84FF]"
-                            }`}
+                            className={`rounded-full p-2 mt-1 ${activity.color === "green"
+                              ? "bg-[#E8F8EF] text-[#30D158]"
+                              : activity.color === "amber"
+                                ? "bg-[#FFF8E6] text-[#FF9500]"
+                                : "bg-[#E9F6FF] text-[#0A84FF]"
+                              }`}
                           >
                             {activity.icon}
                           </div>
@@ -1214,6 +1704,7 @@ function NewsAdmin() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

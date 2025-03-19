@@ -4,6 +4,7 @@ import ReactApexChart from "react-apexcharts"
 import MyFloatingDock from "./Styles/MyFloatingDock"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Footer from "./Styles/Footer"
 
 function Admin() {
   // Get current time for greeting
@@ -285,11 +286,10 @@ function Admin() {
                 {serviceCategories.map((category, index) => (
                   <div
                     key={index}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-xl ${
-                      category.active
+                    className={`flex items-center gap-2 px-5 py-2 rounded-xl ${category.active
                         ? "bg-white text-[#0A84FF] shadow-sm"
                         : "bg-transparent text-white hover:bg-white/10"
-                    } cursor-pointer transition-colors mx-1 first:ml-0 last:mr-0`}
+                      } cursor-pointer transition-colors mx-1 first:ml-0 last:mr-0`}
                   >
                     <div className={`${category.active ? "text-[#0A84FF]" : "text-white"}`}>{category.icon}</div>
                     <span className="font-medium">{category.label}</span>
@@ -407,13 +407,12 @@ function Admin() {
                         <td className="py-3 text-sm font-light">{request.location}</td>
                         <td className="py-3 text-sm">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-light ${
-                              request.status === "Pending"
+                            className={`px-2 py-0.5 rounded-full text-xs font-light ${request.status === "Pending"
                                 ? "bg-[#FFF8E6] text-[#FF9500]"
                                 : request.status === "In Progress"
                                   ? "bg-[#E9F6FF] text-[#0A84FF]"
                                   : "bg-[#E8F8EF] text-[#30D158]"
-                            }`}
+                              }`}
                           >
                             {request.status}
                           </span>
@@ -513,6 +512,7 @@ function Admin() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

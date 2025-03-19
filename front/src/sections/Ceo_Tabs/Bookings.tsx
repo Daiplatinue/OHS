@@ -338,7 +338,7 @@ function Bookings() {
               <div className="relative overflow-hidden rounded-2xl mb-4">
                 <img src={service.image || image1} alt={service.name} className="w-full h-48 object-cover" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+              <h3 className="text-xl font-light mb-2">{service.name}</h3>
               <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{service.description}</p>
               <div className="flex flex-col gap-1 mt-auto">
                 <div className="flex justify-between items-center">
@@ -392,7 +392,7 @@ function Bookings() {
               <div className="relative overflow-hidden rounded-2xl mb-4">
                 <img src={booking.image || image1} alt={booking.serviceName} className="w-full h-48 object-cover" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">{booking.serviceName}</h3>
+              <h3 className="text-xl font-light mb-2">{booking.serviceName}</h3>
               <div className="space-y-2 flex-grow">
                 <p className="text-gray-600 text-sm">
                   <span className="font-medium">Customer:</span> {booking.customerName}
@@ -500,7 +500,7 @@ function Bookings() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
       <div className="sticky top-0 z-40 flex">
         <MyFloatingDockCeo />
@@ -536,7 +536,7 @@ function Bookings() {
           <div className="pt-20">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{companyDetails.name}</h1>
+                <h1 className="text-2xl font-normal text-gray-900">{companyDetails.name}</h1>
                 <div className="flex items-center gap-2 mt-1 text-gray-600">
                   <MapPin className="h-4 w-4" />
                   <span>{companyDetails.location}</span>
@@ -551,13 +551,13 @@ function Bookings() {
             <div className="flex gap-6 mb-6">
               <div className="flex items-center gap-2">
                 <div>
-                  <div className="font-semibold">{companyDetails.followers.toLocaleString() + "M"}</div>
+                  <div className="font-normal">{companyDetails.followers.toLocaleString() + "M"}</div>
                   <div className="text-sm text-gray-600">Followers</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div>
-                  <div className="font-semibold">6.7M</div>
+                  <div>6.7M</div>
                   <div className="text-sm text-gray-600">Reviews</div>
                 </div>
               </div>
@@ -614,7 +614,7 @@ function Bookings() {
         {/* Content Section */}
         <div className="px-4 py-8 mb-20">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-medium">
               {activeTab === "services"
                 ? "Services"
                 : activeTab === "ongoing"
@@ -634,7 +634,7 @@ function Bookings() {
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
           <Dialog.Panel className="mx-auto max-w-3xl w-full bg-white rounded-2xl overflow-hidden shadow-xl transform transition-all">
             {selectedBooking && (
               <div className="flex flex-col md:flex-row h-full">
@@ -659,7 +659,7 @@ function Bookings() {
                 {/* Content Section - Right side on desktop */}
                 <div className="md:w-3/5 p-6 max-h-[80vh] overflow-y-auto">
                   <div className="flex justify-between items-start mb-4">
-                    <Dialog.Title className="text-2xl font-bold text-gray-900">Booking Details</Dialog.Title>
+                    <Dialog.Title className="text-2xl font-medium text-gray-900">Booking Details</Dialog.Title>
                     <button
                       onClick={() => setIsModalOpen(false)}
                       className="text-gray-400 hover:text-gray-500 hidden md:block"
@@ -670,7 +670,7 @@ function Bookings() {
 
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{selectedBooking.serviceName}</h3>
+                      <h3 className="text-xl font-light text-gray-900 mb-1">{selectedBooking.serviceName}</h3>
                       <div
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-opacity-10 mb-4"
                         style={{
@@ -733,7 +733,7 @@ function Bookings() {
                           <span className="text-gray-600">Distance Charge</span>
                           <span className="font-medium">₱{selectedBooking.distanceCharge.toLocaleString()}</span>
                         </div>
-                        <div className="flex justify-between text-lg font-semibold pt-2 border-t border-gray-200 mt-2">
+                        <div className="flex justify-between text-lg font-light pt-2 border-t border-gray-200 mt-2">
                           <span>Total</span>
                           <span>₱{selectedBooking.total.toLocaleString()}</span>
                         </div>
@@ -872,7 +872,7 @@ function Bookings() {
       <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
           <Dialog.Panel className="mx-auto max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-xl">
             <div className="flex flex-col md:flex-row">
               {/* Preview Section */}
@@ -892,7 +892,7 @@ function Bookings() {
                   </div>
 
                   <div className="bg-white rounded-xl p-4 shadow-sm flex-1">
-                    <h4 className="text-xl font-semibold mb-2">{editedService.name || "Service Name"}</h4>
+                    <h4 className="text-xl font-medium mb-2">{editedService.name || "Service Name"}</h4>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-4">
                       {editedService.description || "Service description will appear here."}
                     </p>
@@ -914,7 +914,7 @@ function Bookings() {
               {/* Form Section */}
               <div className="md:w-3/5 p-6 border-t md:border-t-0 md:border-l border-gray-200">
                 <div className="flex justify-between items-start mb-6">
-                  <Dialog.Title className="text-xl font-semibold">Edit Service</Dialog.Title>
+                  <Dialog.Title className="text-xl font-medium">Edit Service</Dialog.Title>
                   <button onClick={() => setIsEditModalOpen(false)} className="text-gray-400 hover:text-gray-500">
                     <X className="h-5 w-5" />
                   </button>

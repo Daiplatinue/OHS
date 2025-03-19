@@ -22,6 +22,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import Footer from "../Styles/Footer"
 
 type NotificationStatus = "read" | "unread" | "starred" | "archived" | "deleted"
 type NotificationCategory = "system" | "user" | "alert" | "update"
@@ -399,7 +400,7 @@ function MyNotificationsAdmin() {
   return (
     <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+      <div className="sticky z-40 flex">
         <MyFloatingDock />
       </div>
 
@@ -867,6 +868,7 @@ function MyNotificationsAdmin() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

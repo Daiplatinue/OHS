@@ -4,6 +4,7 @@ import MyFloatingDock from "../Styles/MyFloatingDock"
 import { Dialog } from "@headlessui/react"
 import { MapPin, Camera, X } from "lucide-react"
 import image1 from "../../assets/No_Image_Available.jpg"
+import Footer from "../Styles/Footer"
 
 interface PersonalInfo {
   id: number
@@ -926,7 +927,7 @@ function MyProfile() {
       </div>
 
       {/* User Profile Section */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
         {/* Cover Photo */}
         <div className="relative h-80 overflow-hidden rounded-b-3xl">
           <img src={userDetails.coverPhoto || image1} alt="Cover" className="w-full h-full object-cover" />
@@ -977,11 +978,10 @@ function MyProfile() {
             <nav className="flex -mb-px overflow-x-auto">
               <button
                 onClick={() => setActiveTab("personal")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "personal"
+                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === "personal"
                     ? "border-sky-500 text-sky-500"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1002,11 +1002,10 @@ function MyProfile() {
               </button>
               <button
                 onClick={() => setActiveTab("security")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "security"
+                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === "security"
                     ? "border-sky-500 text-sky-500"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1027,11 +1026,10 @@ function MyProfile() {
               </button>
               <button
                 onClick={() => setActiveTab("earnings")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "earnings"
+                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === "earnings"
                     ? "border-sky-500 text-sky-500"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1053,11 +1051,10 @@ function MyProfile() {
               </button>
               <button
                 onClick={() => setActiveTab("delete")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "delete"
+                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === "delete"
                     ? "border-sky-500 text-sky-500"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1081,11 +1078,10 @@ function MyProfile() {
               </button>
               <button
                 onClick={() => setActiveTab("booking")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "booking"
+                className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === "booking"
                     ? "border-sky-500 text-sky-500"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1399,6 +1395,7 @@ function MyProfile() {
           </Dialog.Panel>
         </div>
       </Dialog>
+      <Footer />
     </div>
   )
 }

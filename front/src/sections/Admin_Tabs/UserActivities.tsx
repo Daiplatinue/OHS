@@ -40,6 +40,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Footer from "../Styles/Footer"
 
 function UserActivities() {
   const [activeTab, setActiveTab] = useState("all")
@@ -217,16 +218,16 @@ function UserActivities() {
       | ReactElement<unknown, string | JSXElementConstructor<any>>
       | Iterable<ReactNode>
       | Promise<
-          | string
-          | number
-          | bigint
-          | boolean
-          | ReactPortal
-          | ReactElement<unknown, string | JSXElementConstructor<any>>
-          | Iterable<ReactNode>
-          | null
-          | undefined
-        >
+        | string
+        | number
+        | bigint
+        | boolean
+        | ReactPortal
+        | ReactElement<unknown, string | JSXElementConstructor<any>>
+        | Iterable<ReactNode>
+        | null
+        | undefined
+      >
       | null
       | undefined,
   ) => {
@@ -314,7 +315,7 @@ function UserActivities() {
   return (
     <div className="min-h-screen bg-[#F5F5F7] pb-20 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+      <div className="sticky z-40 flex">
         <MyFloatingDock />
       </div>
 
@@ -563,15 +564,14 @@ function UserActivities() {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-3 h-3 rounded-full ${
-                                index === 0
+                              className={`w-3 h-3 rounded-full ${index === 0
                                   ? "bg-[#0A84FF]"
                                   : index === 1
                                     ? "bg-[#30D158]"
                                     : index === 2
                                       ? "bg-[#5E5CE6]"
                                       : "bg-[#FF9500]"
-                              }`}
+                                }`}
                             ></div>
                             <span className="text-sm text-gray-700 font-light">{item.type}</span>
                           </div>
@@ -579,15 +579,14 @@ function UserActivities() {
                         </div>
                         <div className="h-1.5 bg-[#F2F2F7] rounded-full">
                           <div
-                            className={`h-full rounded-full ${
-                              index === 0
+                            className={`h-full rounded-full ${index === 0
                                 ? "bg-[#0A84FF]"
                                 : index === 1
                                   ? "bg-[#30D158]"
                                   : index === 2
                                     ? "bg-[#5E5CE6]"
                                     : "bg-[#FF9500]"
-                            }`}
+                              }`}
                             style={{ width: `${item.percentage}%` }}
                           ></div>
                         </div>
@@ -710,6 +709,7 @@ function UserActivities() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
