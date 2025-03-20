@@ -13,7 +13,7 @@ import {
 
 import MyFloatingDockCeo from "./Styles/MyFloatingDock-Ceo"
 
-export default function SolarProjectDashboard() {
+export default function Ceo() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
       {/* Floating Dock */}
@@ -392,4 +392,3 @@ function ServiceRequestRow({ customer, service, date, status, provider } : any) 
     </tr>
   )
 }
-

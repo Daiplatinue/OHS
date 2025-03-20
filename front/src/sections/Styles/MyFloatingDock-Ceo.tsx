@@ -9,11 +9,9 @@ import {
   PowerOff,
   Mail,
   Bell,
-  CircleUserRound,
   Newspaper,
   PoundSterlingIcon as PhilippinePeso,
   Album,
-  Droplet,
   ChevronUp,
   Coffee,
 } from "lucide-react"
@@ -122,12 +120,6 @@ const FloatingDock: React.FC = () => {
             isActive={location.pathname === "/ceo/bookings"}
           />
           <DockItem
-            icon={<Droplet size={20} strokeWidth={1.5} color="gray" />}
-            label="Services"
-            to="/ceo/services"
-            isActive={location.pathname === "/ceo/services"}
-          />
-          <DockItem
             icon={<MessageCircleMore size={20} strokeWidth={1.5} color="gray" />}
             label="Chats"
             to="/ceo"
@@ -136,31 +128,25 @@ const FloatingDock: React.FC = () => {
           <DockItem
             icon={<Mail size={20} strokeWidth={1.5} color="gray" />}
             label="Emails"
-            to="/ceo"
+            to="/ceo/email"
             isActive={location.pathname === "/settings"}
           />
           <DockItem
             icon={<Bell size={20} strokeWidth={1.5} color="gray" />}
             label="Notifications"
-            to="/ceo"
-            isActive={location.pathname === "/settings"}
-          />
-          <DockItem
-            icon={<CircleUserRound size={20} strokeWidth={1.5} color="gray" />}
-            label="Profile"
-            to="/ceo"
+            to="/ceo/notificaitons"
             isActive={location.pathname === "/settings"}
           />
           <DockItem
             icon={<Newspaper size={20} strokeWidth={1.5} color="gray" />}
             label="News"
-            to="/ceo"
+            to="/ceo/news"
             isActive={location.pathname === "/settings"}
           />
           <DockItem
             icon={<PowerOff size={20} strokeWidth={1.5} color="gray" />}
             label="Logout"
-            to="/ceo"
+            to="/login-alt"
             isActive={location.pathname === "/settings"}
           />
 

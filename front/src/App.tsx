@@ -21,7 +21,9 @@ import MyNotificationsAdmin from './sections/Admin_Tabs/MyNotificationsAdmin';
 import Ceo from './sections/Ceo';
 import MyBalance from './sections/Ceo_Tabs/MyBalance';
 import Bookings from './sections/Ceo_Tabs/Bookings';
-import Services from './sections/Ceo_Tabs/Services';
+import EmailCeo from './sections/Ceo_Tabs/MyEmailsCeo';
+import NotificationCeo from './sections/Ceo_Tabs/MyNotificationsCeo';
+import NewsCeo from './sections/Ceo_Tabs/NewsCeo';
 
 const App: React.FC = () => {
   return (
@@ -52,7 +54,11 @@ const App: React.FC = () => {
         <Route path='/ceo' element={<Ceo />} />
         <Route path='/ceo/my-balance' element={<MyBalance />} />
         <Route path='/ceo/bookings' element={<Bookings />} />
-        <Route path='/ceo/services' element={<Services />} />
+        <Route path='/ceo/email' element={<EmailCeo />} />
+        <Route path='/ceo/notificaitons' element={<NotificationCeo />} />
+        <Route path='/ceo/news' element={<NewsCeo />} />
+
+
 
       </Routes>
     </BrowserRouter>
