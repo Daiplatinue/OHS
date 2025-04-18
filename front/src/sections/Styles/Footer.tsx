@@ -1,8 +1,9 @@
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react"
+import { Github, Instagram, Twitter, Youtube } from "lucide-react"
 
 function Footer() {
     return (
         <>
+        
             <footer className="bg-white/90 text-black pt-16 pb-8">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-gray-300">
@@ -57,10 +58,10 @@ function Footer() {
                         <div className="flex flex-wrap justify-between items-center">
                             <p>&copy; 2025 <span className="text-sky-500">HandyGo</span>. All rights reserved.</p>
                             <div className="flex space-x-6 items-center">
-                                <Facebook className="h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
-                                <Twitter className="h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
-                                <Instagram className="h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
-                                <Youtube className="h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
+                                <Github className="h-5 w-5 transition-colors text-gray-500 duration-300 hover:text-gray-900 cursor-pointer" />
+                                <Twitter className="text-gray-500 h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
+                                <Instagram className="text-gray-500 h-5 w-5 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
+                                <Youtube className="h-5 w-5 text-gray-500 transition-colors duration-300 hover:text-gray-900 cursor-pointer" />
                             </div>
                         </div>
                         <div className="mt-4 flex flex-wrap gap-4">

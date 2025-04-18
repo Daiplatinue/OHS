@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -22,20 +24,18 @@ import {
   AlertCircle,
   XCircleIcon,
   ArrowUpRight,
-  ChevronRight,
   Coffee,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 interface DockItemProps {
   icon: React.ReactNode
-  label: string
   to: string
   isActive: boolean
   onClick?: () => void
 }
 
-const DockItem: React.FC<DockItemProps> = ({ icon, label, to, isActive, onClick }) => {
+const DockItem: React.FC<DockItemProps> = ({ icon, to, isActive, onClick }) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const handleClick = () => {
@@ -47,36 +47,43 @@ const DockItem: React.FC<DockItemProps> = ({ icon, label, to, isActive, onClick 
   }
 
   return (
-    <motion.div
-      className={`relative flex flex-col items-center justify-center p-2 cursor-pointer transition-all duration-200 ease-in-out ${
-        isActive ? "bg-primary/10 rounded-full" : ""
-      }`}
+    <div
+      className="relative flex items-center justify-center w-10 h-10 cursor-pointer transition-all duration-200 ease-in-out hover:scale-110"
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
     >
-      <motion.div
+      <div
         className={`flex items-center justify-center transition-all duration-200 ${
-          isActive ? "text-primary" : isHovered ? "text-primary/80" : "text-gray-500"
+          isActive ? "text-primary" : isHovered ? "text-primary/80" : "text-gray-400"
         }`}
-        animate={{
-          scale: isActive ? 1.1 : 1,
-          y: isActive ? -2 : 0,
-        }}
       >
         {icon}
-      </motion.div>
-      <motion.span
-        className={`text-[10px] mt-1 ${isActive ? "text-primary" : "text-gray-500"}`}
-        animate={{
-          fontWeight: isActive ? 600 : 400,
-        }}
+      </div>
+
+      {/* Label with animation */}
+      <div
+        className={`absolute -top-8 bg-sky-400 text-white text-xs px-2 py-1 rounded-md opacity-0 transition-all duration-200 ${
+          isHovered ? "opacity-100 transform translate-y-0" : "transform translate-y-2"
+        }`}
       >
-        {label}
-      </motion.span>
-    </motion.div>
+        {to === "/"
+          ? "Home"
+          : to === "#" && onClick
+            ? "Bookings"
+            : to === "/alerts"
+              ? "Alerts"
+              : to === "/profile"
+                ? "Profile"
+                : to === "/news"
+                  ? "News"
+                  : to === "/chat"
+                    ? "Chats"
+                    : to === "/logout"
+                      ? "Logout"
+                      : to}
+      </div>
+    </div>
   )
 }
 
@@ -383,12 +390,12 @@ const FloatingDock: React.FC = () => {
       {!showDock && (
         <motion.button
           onClick={() => setShowDock(true)}
-          className="fixed bottom-1/2 right-0 transform translate-y-1/2 bg-gray-300 text-gray-500 rounded-l-full p-3 shadow-lg hover:bg-gray-200 transition-all duration-200 z-50"
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border text-gray-500 rounded-full p-3 shadow-md hover:bg-gray-100 cursor-pointer transition-all duration-200 z-50"
           aria-label="Show dock"
-          initial={{ x: 10, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 10, opacity: 0 }}
-          whileHover={{ x: -2 }}
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 10, opacity: 0 }}
+          whileHover={{ y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
           <motion.div
@@ -404,52 +411,50 @@ const FloatingDock: React.FC = () => {
         </motion.button>
       )}
 
-      {/* New Dock Design - Vertical pill at the side */}
+      {/* New Dock Design - Horizontal at the bottom with admin styling */}
       {showDock && (
         <motion.div
-          className="fixed bottom-1/2 right-6 transform translate-y-1/2 bg-white rounded-full shadow-lg py-4 flex flex-col items-center gap-2 hover:shadow-xl border border-gray-100 z-50"
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 100, opacity: 0 }}
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-200/40 backdrop-blur-lg rounded-full shadow-lg px-2 py-1 flex items-center transition-all duration-200 hover:shadow-xl z-50"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          {/* Hide Dock Button */}
-          <motion.button
-            onClick={() => setShowDock(false)}
-            className="absolute -left-3 top-1/2 transform -translate-y-1/2 bg-gray-300 text-gray-600 rounded-full p-1 shadow-md hover:bg-gray-200 transition-all duration-200"
-            aria-label="Hide dock"
-            whileHover={{ x: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </motion.button>
-
-          <DockItem icon={<Home size={20} strokeWidth={1.5} />} label="Home" to="/" isActive={false} />
+          <DockItem icon={<Home size={20} strokeWidth={1.5} />} to="/" isActive={false} />
           <DockItem
             icon={<Bookmark size={20} strokeWidth={1.5} />}
-            label="Bookings"
             to="#"
             isActive={showDrawer}
             onClick={() => setShowDrawer(true)}
           />
-          <DockItem icon={<Bell size={20} strokeWidth={1.5} />} label="Alerts" to="/alerts" isActive={false} />
-          <DockItem icon={<User size={20} strokeWidth={1.5} />} label="Profile" to="/profile" isActive={false} />
-          <DockItem icon={<Newspaper size={20} strokeWidth={1.5} />} label="News" to="/news" isActive={false} />
-          <DockItem
-            icon={<MessageCircleMore size={20} strokeWidth={1.5} color="gray" />}
-            label="Chats"
-            to="/chat"
-            isActive={location.pathname === "/chat"}
-          />
-          <DockItem icon={<LogOut size={20} strokeWidth={1.5} />} label="Logout" to="/logout" isActive={false} />
+          <DockItem icon={<Bell size={20} strokeWidth={1.5} />} to="/alerts" isActive={false} />
+          <DockItem icon={<User size={20} strokeWidth={1.5} />} to="/profile" isActive={false} />
+          <DockItem icon={<Newspaper size={20} strokeWidth={1.5} />} to="/news" isActive={false} />
+          <DockItem icon={<MessageCircleMore size={20} strokeWidth={1.5} />} to="/chat" isActive={false} />
+          <DockItem icon={<LogOut size={20} strokeWidth={1.5} />} to="/logout" isActive={false} />
+
+          {/* Hide Dock Button */}
+          <div
+            className="relative flex items-center justify-center w-10 h-10 cursor-pointer transition-all duration-200 ease-in-out hover:scale-110"
+            onClick={() => setShowDock(false)}
+            onMouseEnter={(e) => e.currentTarget.classList.add("scale-110")}
+            onMouseLeave={(e) => e.currentTarget.classList.remove("scale-110")}
+          >
+            <div className="flex items-center justify-center transition-all duration-200 text-gray-400 hover:text-primary">
+              <ChevronUp size={20} strokeWidth={1.5} />
+            </div>
+            <div className="absolute -top-8 bg-sky-400 text-white text-xs px-2 py-1 rounded-md opacity-0 transition-all duration-200 hover:opacity-100 hover:transform hover:translate-y-0 transform translate-y-2">
+              Hide
+            </div>
+          </div>
         </motion.div>
       )}
 
-      {/* Side Drawer instead of Modal */}
+      {/* Side Drawer (keeping it on the right side) */}
       <AnimatePresence>
         {showDrawer && (
           <motion.div
-            className="fixed inset-y-0 right-0 w-full md:w-2/3 lg:w-1/2 xl:w-2/5 bg-gray-50 shadow-2xl z-50"
+            className="fixed inset-y-0 right-0 w-full md:w-2/3 lg:w-1/2 xl:w-2/5 bg-gray-50 shadow-2xl z-40"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -605,7 +610,7 @@ const FloatingDock: React.FC = () => {
       <AnimatePresence>
         {showDrawer && (
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
             onClick={() => setShowDrawer(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
