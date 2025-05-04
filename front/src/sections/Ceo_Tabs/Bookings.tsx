@@ -1,5 +1,7 @@
+"use client"
+
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo"
 import { Dialog } from "@headlessui/react"
 import {
@@ -18,8 +20,11 @@ import {
   Lock,
   Trash2,
   User,
+  Crown,
+  Sparkles,
 } from "lucide-react"
 import image1 from "../../assets/No_Image_Available.jpg"
+import confetti from "canvas-confetti"
 
 interface Service {
   id: number
@@ -68,6 +73,19 @@ interface PersonalInfo {
   image?: string
 }
 
+// Subscription tiers
+type SubscriptionTier = "free" | "mid" | "premium" | "unlimited"
+
+interface SubscriptionInfo {
+  tier: SubscriptionTier
+  maxServices: number
+  name: string
+  color: string
+  price: number
+  billingCycle: string
+  nextBillingDate: string
+}
+
 function Bookings() {
   const [showNotification] = useState(true)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
@@ -83,6 +101,23 @@ function Bookings() {
   const [isCreateServiceModalOpen, setIsCreateServiceModalOpen] = useState(false)
   const [createServiceStep, setCreateServiceStep] = useState(1)
   const totalSteps = 4
+
+  // Subscription state
+  const [subscription, setSubscription] = useState<SubscriptionInfo>({
+    tier: "free",
+    maxServices: 3,
+    name: "Free",
+    color: "text-gray-600",
+    price: 0,
+    billingCycle: "Monthly",
+    nextBillingDate: "N/A",
+  })
+
+  // Subscription plans modal
+  const [isPlansModalOpen, setIsPlansModalOpen] = useState(false)
+
+  // Celebration modal
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
   // New service form data
   const [newService, setNewService] = useState<Partial<Service>>({
@@ -345,6 +380,123 @@ function Bookings() {
     },
   ])
 
+  // Subscription plans data - Apple-inspired design
+  const subscriptionPlans = [
+    {
+      tier: "free",
+      name: "Free",
+      maxServices: 3,
+      price: 0,
+      color: "bg-gray-100",
+      textColor: "text-gray-600",
+      features: ["Up to 3 services", "Basic analytics", "Standard support"],
+    },
+    {
+      tier: "mid",
+      name: "Professional",
+      maxServices: 10,
+      price: 29.99,
+      color: "bg-blue-100",
+      textColor: "text-blue-600",
+      features: ["Up to 10 services", "Advanced analytics", "Priority support", "Custom branding"],
+    },
+    {
+      tier: "premium",
+      name: "Business",
+      maxServices: 20,
+      price: 59.99,
+      color: "bg-purple-100",
+      textColor: "text-purple-600",
+      features: ["Up to 20 services", "Premium analytics", "24/7 support", "Custom branding", "Team accounts"],
+    },
+    {
+      tier: "unlimited",
+      name: "Enterprise",
+      maxServices: Number.POSITIVE_INFINITY,
+      price: 99.99,
+      color: "bg-amber-100",
+      textColor: "text-amber-600",
+      features: [
+        "Unlimited services",
+        "Enterprise analytics",
+        "Dedicated support",
+        "Custom branding",
+        "Team accounts",
+        "API access",
+      ],
+    },
+  ]
+
+  // Function to trigger confetti celebration
+  const triggerCelebration = () => {
+    const duration = 3000
+    const animationEnd = Date.now() + duration
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 }
+
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min
+    }
+
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now()
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval)
+      }
+
+      const particleCount = 50 * (timeLeft / duration)
+
+      // Confetti burst from both sides
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: randomInRange(0.3, 0.7) },
+        colors: ["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"],
+      })
+
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: randomInRange(0.3, 0.7) },
+        colors: ["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"],
+      })
+    }, 250)
+  }
+
+  // Simulate return from transaction page
+  useEffect(() => {
+    // Check if there's a subscription upgrade in the URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const upgradedTier = urlParams.get("upgradedTier")
+
+    if (upgradedTier) {
+      // Find the plan that matches the tier
+      const plan = subscriptionPlans.find((plan) => plan.tier === upgradedTier)
+
+      if (plan) {
+        // Update subscription
+        setSubscription({
+          tier: plan.tier as SubscriptionTier,
+          maxServices: plan.maxServices,
+          name: plan.name,
+          color: plan.textColor,
+          price: plan.price,
+          billingCycle: "Monthly",
+          nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        })
+
+        // Show success modal and trigger celebration
+        setIsSuccessModalOpen(true)
+        setTimeout(() => {
+          triggerCelebration()
+        }, 500)
+
+        // Clean up the URL
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+    }
+  }, [])
+
   const filteredBookings = bookings.filter((booking) => {
     if (activeTab === "ongoing") return booking.status === "ongoing"
     if (activeTab === "pending") return booking.status === "pending"
@@ -435,6 +587,12 @@ function Bookings() {
   }
 
   const handleCreateService = () => {
+    // Check if service limit is reached
+    if (services.length >= subscription.maxServices) {
+      setIsPlansModalOpen(true)
+      return
+    }
+
     setIsCreateServiceModalOpen(true)
     setCreateServiceStep(1)
     setNewService({
@@ -473,6 +631,31 @@ function Bookings() {
     setServices([...services, newServiceEntry])
     setIsCreateServiceModalOpen(false)
     setCreateServiceStep(1)
+  }
+
+  // Handle subscription plan selection
+  const handleSelectPlan = (tier: SubscriptionTier) => {
+    // Navigate to Transaction page with plan info
+    const selectedPlan = subscriptionPlans.find((plan) => plan.tier === tier)
+
+    if (selectedPlan) {
+      // In a real app with React Router:
+      // navigate('/transaction', {
+      //   state: {
+      //     plan: selectedPlan,
+      //     seller: {
+      //       name: "Online Home Services",
+      //       rating: 5,
+      //       reviews: 823.2,
+      //       location: "Cebu City Branches",
+      //       price: selectedPlan.price
+      //     }
+      //   }
+      // });
+
+      // For this example, we'll simulate with URL parameters
+      window.location.href = `/transaction?plan=${tier}&price=${selectedPlan.price}&redirect=/ceo/bookings`
+    }
   }
 
   // Personal Info handlers
@@ -848,7 +1031,38 @@ function Bookings() {
       }
 
       return (
-        <div>
+        <div className="flex flex-col">
+          {/* Subscription info banner */}
+          <div
+            className={`mb-6 p-4 rounded-lg flex items-center ${
+              services.length >= subscription.maxServices
+                ? "bg-red-50 border border-red-200"
+                : "bg-gray-50 border border-gray-200"
+            }`}
+          >
+            <div className="flex items-center">
+              <Crown className={`h-5 w-5 mr-2 ${subscription.color}`} />
+              <div>
+                <h3 className="font-medium">
+                  {subscription.name} Plan
+                  <span
+                    className={`ml-2 text-sm ${
+                      services.length >= subscription.maxServices ? "text-red-600" : "text-gray-600"
+                    }`}
+                  >
+                    ({services.length}/
+                    {subscription.maxServices === Number.POSITIVE_INFINITY ? "∞" : subscription.maxServices})
+                  </span>
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {services.length >= subscription.maxServices
+                    ? "You've reached your service limit."
+                    : `You can add ${subscription.maxServices - services.length} more service${subscription.maxServices - services.length !== 1 ? "s" : ""}.`}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service) => (
               <div key={service.id} className="bg-gray-200/70 rounded-3xl p-6 relative flex flex-col h-[450px]">
@@ -931,13 +1145,22 @@ function Bookings() {
               </div>
             ))}
           </div>
-          <button
-            onClick={handleCreateService}
-            className="px-4 py-2 bg-sky-500 mt-10 text-white rounded-lg hover:bg-sky-600 transition-all flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Create Service
-          </button>
+
+          {/* Create Service button moved to the bottom */}
+          <div className="mt-10 flex justify-center">
+            <button
+              onClick={handleCreateService}
+              className={`px-6 py-3 rounded-full flex items-center gap-2 ${
+                services.length >= subscription.maxServices
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-sky-500 text-white hover:bg-sky-600"
+              } transition-all`}
+              disabled={services.length >= subscription.maxServices}
+            >
+              <Plus className="h-4 w-4" />
+              {services.length >= subscription.maxServices ? "Service Limit Reached" : "Create Service"}
+            </button>
+          </div>
         </div>
       )
     } else if (activeTab === "ongoing" || activeTab === "pending" || activeTab === "completed") {
@@ -1047,6 +1270,94 @@ function Bookings() {
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-500 mb-1">Bio</h4>
               <p className="text-gray-900">{userDetails.description}</p>
+            </div>
+          </div>
+
+          {/* Subscription Information - Apple-inspired design */}
+          <div className="bg-white rounded-3xl shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold">Subscription</h3>
+              <button
+                onClick={() => setIsPlansModalOpen(true)}
+                className="text-sky-500 hover:text-sky-600 text-sm font-medium"
+              >
+                Change Plan
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-6">
+              <div className="flex items-center mb-4">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${
+                    subscription.tier === "free"
+                      ? "bg-gray-200"
+                      : subscription.tier === "mid"
+                        ? "bg-blue-100"
+                        : subscription.tier === "premium"
+                          ? "bg-purple-100"
+                          : "bg-amber-100"
+                  }`}
+                >
+                  <Crown className={`h-6 w-6 ${subscription.color}`} />
+                </div>
+                <div>
+                  <h4 className="text-lg font-medium">{subscription.name} Plan</h4>
+                  <p className="text-gray-600 text-sm">
+                    {subscription.maxServices === Number.POSITIVE_INFINITY
+                      ? "Unlimited services"
+                      : `Up to ${subscription.maxServices} services`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h5 className="text-sm font-medium text-gray-500 mb-1">Current Usage</h5>
+                  <div className="flex items-center">
+                    <span className="text-xl font-medium">{services.length}</span>
+                    <span className="text-gray-500 mx-1">/</span>
+                    <span className="text-gray-500">
+                      {subscription.maxServices === Number.POSITIVE_INFINITY ? "∞" : subscription.maxServices}
+                    </span>
+                    <span className="text-gray-500 ml-1">services</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div
+                      className={`h-2 rounded-full ${
+                        subscription.tier === "free"
+                          ? "bg-gray-500"
+                          : subscription.tier === "mid"
+                            ? "bg-blue-500"
+                            : subscription.tier === "premium"
+                              ? "bg-purple-500"
+                              : "bg-amber-500"
+                      }`}
+                      style={{
+                        width: `${
+                          subscription.maxServices === Number.POSITIVE_INFINITY
+                            ? 10
+                            : Math.min(100, (services.length / subscription.maxServices) * 100)
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h5 className="text-sm font-medium text-gray-500 mb-1">Billing</h5>
+                  {subscription.price > 0 ? (
+                    <>
+                      <p className="text-xl font-medium">
+                        ${subscription.price}
+                        <span className="text-sm text-gray-500">/month</span>
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">Next billing: {subscription.nextBillingDate}</p>
+                    </>
+                  ) : (
+                    <p className="text-xl font-medium">Free</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2645,6 +2956,114 @@ function Bookings() {
                   </button>
                 )}
               </div>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Subscription Plans Modal */}
+      <Dialog open={isPlansModalOpen} onClose={() => setIsPlansModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-6">
+                <Dialog.Title className="text-xl font-semibold text-gray-900">Choose a Plan</Dialog.Title>
+                <button onClick={() => setIsPlansModalOpen(false)} className="text-gray-400 hover:text-gray-500">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-600">
+                  Select the plan that best fits your needs. Each plan includes different service limits and features.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {subscriptionPlans.map((plan) => (
+                  <div
+                    key={plan.tier}
+                    className={`border rounded-xl p-5 flex flex-col ${
+                      plan.tier === subscription.tier
+                        ? "border-sky-500 bg-sky-50"
+                        : "border-gray-200 hover:border-sky-300 hover:shadow-md"
+                    } transition-all cursor-pointer`}
+                    onClick={() => handleSelectPlan(plan.tier as SubscriptionTier)}
+                  >
+                    <div
+                      className={`text-sm font-medium px-2 py-1 rounded-full self-start mb-2 ${plan.color} ${plan.textColor}`}
+                    >
+                      {plan.name}
+                    </div>
+
+                    <div className="mt-2 mb-4">
+                      <span className="text-2xl font-bold">${plan.price}</span>
+                      {plan.price > 0 && <span className="text-gray-500 text-sm">/month</span>}
+                    </div>
+
+                    <div className="flex items-center mb-4">
+                      <span className="font-medium">Services:</span>
+                      <span className="ml-2">
+                        {plan.maxServices === Number.POSITIVE_INFINITY ? "Unlimited" : `Up to ${plan.maxServices}`}
+                      </span>
+                    </div>
+
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-600">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button
+                      onClick={() => handleSelectPlan(plan.tier as SubscriptionTier)}
+                      className={`w-full py-2 rounded-lg mt-auto ${
+                        plan.tier === subscription.tier
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : `${plan.textColor.replace("text", "bg")} text-white hover:opacity-90`
+                      }`}
+                      disabled={plan.tier === subscription.tier}
+                    >
+                      {plan.tier === subscription.tier ? "Current Plan" : "Select Plan"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Subscription Success Modal with Celebration */}
+      <Dialog open={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                <Sparkles className="h-10 w-10 text-green-500" />
+              </div>
+
+              <Dialog.Title className="text-2xl font-semibold text-gray-900 mb-4">Congratulations!</Dialog.Title>
+
+              <p className="text-gray-600 mb-6">
+                You've successfully upgraded to the{" "}
+                <span className={`font-medium ${subscription.color}`}>{subscription.name}</span> plan! You can now add
+                up to {subscription.maxServices === Number.POSITIVE_INFINITY ? "unlimited" : subscription.maxServices}{" "}
+                services.
+              </p>
+
+              <button
+                onClick={() => setIsSuccessModalOpen(false)}
+                className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all"
+              >
+                Start Using Your New Plan
+              </button>
             </div>
           </Dialog.Panel>
         </div>

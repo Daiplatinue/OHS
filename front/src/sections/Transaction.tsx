@@ -14,6 +14,7 @@ interface SellerInfo {
   rating: number
   reviews: number
   location: string
+  price?: number
 }
 
 function Transaction() {
@@ -35,29 +36,53 @@ function Transaction() {
   })
   const [isProcessing, setIsProcessing] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
-
+  const [redirectUrl, setRedirectUrl] = useState<string>("/ceo/bookings")
+  const [planName, setPlanName] = useState<string>("")
 
   useEffect(() => {
-    // Get seller information from location state
-    if (location.state && location.state.seller) {
-      setSeller(location.state.seller)
+    // Get plan information from URL parameters
+    const urlParams = new URLSearchParams(window.location.search)
+    const planParam = urlParams.get("plan")
+    const priceParam = urlParams.get("price")
+    const redirectParam = urlParams.get("redirect")
 
-      // Set total amount from seller info if available
-      if (location.state.seller.price) {
-        setTotalAmount(location.state.seller.price)
+    if (redirectParam) {
+      setRedirectUrl(redirectParam)
+    }
+
+    // Set plan name based on the plan parameter
+    if (planParam) {
+      switch (planParam) {
+        case "free":
+          setPlanName("Free")
+          break
+        case "mid":
+          setPlanName("Professional")
+          break
+        case "premium":
+          setPlanName("Business")
+          break
+        case "unlimited":
+          setPlanName("Enterprise")
+          break
+        default:
+          setPlanName("")
       }
-    } else {
-      // Fallback seller information if not provided in location state
-      setSeller({
-        id: 1,
-        name: "Default Service Provider",
-        rating: 4.0,
-        reviews: 15,
-        location: "Local Area",
-      })
+    }
 
-      // Set a default amount
-      setTotalAmount(5000)
+    // Set default seller information
+    setSeller({
+      id: 1,
+      name: "Online Home Services",
+      rating: 5,
+      reviews: 823.2,
+      location: "Cebu City Branches",
+      price: priceParam ? Number.parseFloat(priceParam) : 0,
+    })
+
+    // Set total amount from price parameter
+    if (priceParam) {
+      setTotalAmount(Number.parseFloat(priceParam))
     }
   }, [location])
 
@@ -94,42 +119,29 @@ function Transaction() {
     setTimeout(() => {
       setIsProcessing(false)
       setIsComplete(true)
+
+      // Redirect with the upgraded tier parameter
+      const urlParams = new URLSearchParams(window.location.search)
+      const planParam = urlParams.get("plan")
+
+      if (planParam) {
+        // In a real app with React Router:
+        // navigate(`${redirectUrl}?upgradedTier=${planParam}`)
+
+        // For this example:
+        window.location.href = `${redirectUrl}?upgradedTier=${planParam}`
+      } else {
+        // In a real app with React Router:
+        // navigate(redirectUrl)
+
+        // For this example:
+        window.location.href = redirectUrl
+      }
     }, 2000)
   }
 
   const goBack = () => {
     navigate(-1)
-  }
-
-  if (isComplete) {
-    return (
-      <div className="min-h-screen bg-white/90 text-black">
-        <div className="max-w-4xl mx-auto px-4 py-16">
-          <div className="bg-gray-300/50 rounded-2xl p-8 text-center">
-            <div className="w-20 h-20 bg-green-400/90 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-700">Payment Successful!</h2>
-            <p className="text-gray-600 mb-8">Your transaction has been completed successfully.</p>
-            <button
-              onClick={() => navigate("/")}
-              className="px-8 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-colors"
-            >
-              Return to Home
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    )
   }
 
   return (
@@ -162,14 +174,11 @@ function Transaction() {
                 </div>
                 <div>
                   <p className="text-gray-700">Rating</p>
-                  <p className="text-yellow-500">
-                    {"★".repeat(seller.rating)}
-                    {"☆".repeat(5 - seller.rating)}
-                  </p>
+                  <p className="text-yellow-500">{"★".repeat(5)}</p>
                 </div>
                 <div>
                   <p className="text-gray-700">Reviews</p>
-                  <p className="text-gray-800 font-medium">{seller.reviews} reviews</p>
+                  <p className="text-gray-800 font-medium">{seller.reviews}M reviews</p>
                 </div>
               </div>
             </div>
@@ -183,12 +192,12 @@ function Transaction() {
           <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">Payment Summary</h2>
             <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
-              <p className="text-gray-700">Service Fee</p>
-              <p className="text-gray-800 font-medium">₱{totalAmount.toLocaleString()}</p>
+              <p className="text-gray-700">{planName} Subscription (Monthly)</p>
+              <p className="text-gray-800 font-medium">${totalAmount.toFixed(2)}</p>
             </div>
             <div className="flex justify-between items-center">
               <p className="text-gray-700 font-bold">Total Amount</p>
-              <p className="text-xl text-gray-800 font-bold">₱{totalAmount.toLocaleString()}</p>
+              <p className="text-xl text-gray-800 font-bold">${totalAmount.toFixed(2)}</p>
             </div>
           </div>
 
@@ -374,10 +383,11 @@ function Transaction() {
               <button
                 type="submit"
                 disabled={!paymentMethod || (paymentMethod === "wallet" && !selectedWallet) || isProcessing}
-                className={`px-8 py-3 rounded-full font-medium transition-all ${!paymentMethod || (paymentMethod === "wallet" && !selectedWallet) || isProcessing
+                className={`px-8 py-3 rounded-full font-medium transition-all ${
+                  !paymentMethod || (paymentMethod === "wallet" && !selectedWallet) || isProcessing
                     ? "bg-gray-700 text-gray-400 cursor-not-allowed"
                     : "bg-sky-500 text-white hover:bg-sky-600"
-                  }`}
+                }`}
               >
                 {isProcessing ? "Processing..." : "Complete Payment"}
               </button>
@@ -391,4 +401,3 @@ function Transaction() {
 }
 
 export default Transaction
-

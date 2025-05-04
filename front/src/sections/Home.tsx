@@ -212,6 +212,70 @@ const products = [
     image: "https://cdn.pixabay.com/photo/2023/07/04/10/32/ai-generated-8106005_960_720.jpg",
     description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
   },
+  {
+    id: 5,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 6,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 7,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 8,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 9,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 10,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 11,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
+  {
+    id: 12,
+    name: "Wireless Network Setup",
+    price: 30000,
+    category: "Wifi Setup",
+    image: "https://cdn.pixabay.com/photo/2014/08/09/21/53/network-connection-414415_1280.jpg",
+    description: "Keep your space pest-free with expert extermination for termites, rodents, bed bugs, and more.",
+  },
 ]
 
 function useScrollReveal() {
@@ -362,7 +426,7 @@ function App() {
       {/* Categories Section */}
       <div className="px-4 mt-8 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
+          <h2 className="text-2xl font-semibold mb-6">More Features</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {/* Category 1 */}
             <div className="relative rounded-xl overflow-hidden h-40 group cursor-pointer hover:shadow-lg transition-all duration-300">
