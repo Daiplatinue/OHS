@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo"
@@ -73,7 +71,6 @@ interface PersonalInfo {
   image?: string
 }
 
-// Subscription tiers
 type SubscriptionTier = "free" | "mid" | "premium" | "unlimited"
 
 interface SubscriptionInfo {
@@ -97,12 +94,10 @@ function Bookings() {
   const [editedService, setEditedService] = useState<Partial<Service>>({})
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
-  // Create Service Modal States
   const [isCreateServiceModalOpen, setIsCreateServiceModalOpen] = useState(false)
   const [createServiceStep, setCreateServiceStep] = useState(1)
   const totalSteps = 4
 
-  // Subscription state
   const [subscription, setSubscription] = useState<SubscriptionInfo>({
     tier: "free",
     maxServices: 3,
@@ -113,13 +108,10 @@ function Bookings() {
     nextBillingDate: "N/A",
   })
 
-  // Subscription plans modal
   const [isPlansModalOpen, setIsPlansModalOpen] = useState(false)
 
-  // Celebration modal
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
-  // New service form data
   const [newService, setNewService] = useState<Partial<Service>>({
     name: "",
     price: 0,
@@ -128,8 +120,7 @@ function Bookings() {
     chargePerKm: 0,
   })
 
-  // Sample expenses for the service
-  const [expenses, setExpenses] = useState<ExpenseItem[]>([
+  const [expenses] = useState<ExpenseItem[]>([
     { name: "Tools and Equipment", estimatedCost: 5000, required: true },
     { name: "Transportation", estimatedCost: 2000, required: true },
     { name: "Materials", estimatedCost: 3000, required: false },
@@ -137,7 +128,6 @@ function Bookings() {
     { name: "Insurance", estimatedCost: 1500, required: true },
   ])
 
-  // Requirements checklist
   const [requirements, setRequirements] = useState({
     businessPermit: false,
     validID: false,
@@ -149,7 +139,6 @@ function Bookings() {
     bankAccount: false,
   })
 
-  // Personal Info States
   const [selectedInfo, setSelectedInfo] = useState<PersonalInfo | null>(null)
   const [editedInfo, setEditedInfo] = useState<Partial<PersonalInfo>>({})
   const [isEditInfoModalOpen, setIsEditInfoModalOpen] = useState(false)
@@ -380,7 +369,6 @@ function Bookings() {
     },
   ])
 
-  // Subscription plans data - Apple-inspired design
   const subscriptionPlans = [
     {
       tier: "free",
@@ -395,7 +383,7 @@ function Bookings() {
       tier: "mid",
       name: "Professional",
       maxServices: 10,
-      price: 29.99,
+      price: 25000,
       color: "bg-blue-100",
       textColor: "text-blue-600",
       features: ["Up to 10 services", "Advanced analytics", "Priority support", "Custom branding"],
@@ -404,7 +392,7 @@ function Bookings() {
       tier: "premium",
       name: "Business",
       maxServices: 20,
-      price: 59.99,
+      price: 50000,
       color: "bg-purple-100",
       textColor: "text-purple-600",
       features: ["Up to 20 services", "Premium analytics", "24/7 support", "Custom branding", "Team accounts"],
@@ -413,7 +401,7 @@ function Bookings() {
       tier: "unlimited",
       name: "Enterprise",
       maxServices: Number.POSITIVE_INFINITY,
-      price: 99.99,
+      price: 100000,
       color: "bg-amber-100",
       textColor: "text-amber-600",
       features: [
@@ -427,7 +415,6 @@ function Bookings() {
     },
   ]
 
-  // Function to trigger confetti celebration
   const triggerCelebration = () => {
     const duration = 3000
     const animationEnd = Date.now() + duration
@@ -446,7 +433,6 @@ function Bookings() {
 
       const particleCount = 50 * (timeLeft / duration)
 
-      // Confetti burst from both sides
       confetti({
         ...defaults,
         particleCount,
@@ -463,18 +449,14 @@ function Bookings() {
     }, 250)
   }
 
-  // Simulate return from transaction page
   useEffect(() => {
-    // Check if there's a subscription upgrade in the URL
     const urlParams = new URLSearchParams(window.location.search)
     const upgradedTier = urlParams.get("upgradedTier")
 
     if (upgradedTier) {
-      // Find the plan that matches the tier
       const plan = subscriptionPlans.find((plan) => plan.tier === upgradedTier)
 
       if (plan) {
-        // Update subscription
         setSubscription({
           tier: plan.tier as SubscriptionTier,
           maxServices: plan.maxServices,
@@ -485,13 +467,11 @@ function Bookings() {
           nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         })
 
-        // Show success modal and trigger celebration
         setIsSuccessModalOpen(true)
         setTimeout(() => {
           triggerCelebration()
         }, 500)
 
-        // Clean up the URL
         window.history.replaceState({}, document.title, window.location.pathname)
       }
     }
@@ -587,7 +567,6 @@ function Bookings() {
   }
 
   const handleCreateService = () => {
-    // Check if service limit is reached
     if (services.length >= subscription.maxServices) {
       setIsPlansModalOpen(true)
       return
@@ -617,7 +596,6 @@ function Bookings() {
   }
 
   const handleSubmitNewService = () => {
-    // Create a new service with the form data
     const newServiceEntry: Service = {
       id: services.length > 0 ? Math.max(...services.map((s) => s.id)) + 1 : 1,
       name: newService.name || "New Service",
@@ -633,9 +611,7 @@ function Bookings() {
     setCreateServiceStep(1)
   }
 
-  // Handle subscription plan selection
   const handleSelectPlan = (tier: SubscriptionTier) => {
-    // Navigate to Transaction page with plan info
     const selectedPlan = subscriptionPlans.find((plan) => plan.tier === tier)
 
     if (selectedPlan) {
@@ -658,7 +634,6 @@ function Bookings() {
     }
   }
 
-  // Personal Info handlers
   const handleEditInfo = (info: PersonalInfo) => {
     setSelectedInfo(info)
     setEditedInfo({
@@ -1808,16 +1783,13 @@ function Bookings() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [processingBookingId, setProcessingBookingId] = useState<number | null>(null)
 
-  // Add these state variables to the component, near the other useState declarations
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false)
   const [declineReason, setDeclineReason] = useState("")
 
-  // Add this function to handle the decline process
   const handleDeclineBooking = (bookingId: number) => {
     setIsLoading(true)
     setProcessingBookingId(bookingId)
 
-    // Simulate API call
     setTimeout(() => {
       const updatedBookings = bookings.filter((booking) => booking.id !== bookingId)
 
@@ -2999,7 +2971,7 @@ function Bookings() {
                     </div>
 
                     <div className="mt-2 mb-4">
-                      <span className="text-2xl font-bold">${plan.price}</span>
+                      <span className="text-2xl font-bold">₱{plan.price}</span>
                       {plan.price > 0 && <span className="text-gray-500 text-sm">/month</span>}
                     </div>
 
