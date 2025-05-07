@@ -25,6 +25,8 @@ import EmailCeo from './sections/Ceo_Tabs/MyEmailsCeo';
 import NotificationCeo from './sections/Ceo_Tabs/MyNotificationsCeo';
 import NewsCeo from './sections/Ceo_Tabs/NewsCeo';
 
+import Provider from './sections/Provider';
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>
@@ -58,7 +60,8 @@ const App: React.FC = () => {
         <Route path='/ceo/notificaitons' element={<NotificationCeo />} />
         <Route path='/ceo/news' element={<NewsCeo />} />
 
-
+        {/* Provider */}
+        <Route path='/provider' element={<Provider />} />
 
       </Routes>
     </BrowserRouter>
