@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import MyFloatingDockCeo from "../Styles/MyFloatingDock-Ceo"
@@ -22,56 +20,68 @@ import {
   User,
   Crown,
   Sparkles,
-  Calendar,
-  Check,
-  CheckCircle2,
 } from "lucide-react"
 import image1 from "../../assets/No_Image_Available.jpg"
 import confetti from "canvas-confetti"
 
-import {
-  type Service,
-  type Booking,
-  type PersonalInfo,
-  type SubscriptionTier,
-  type SubscriptionInfo,
-  services as initialServices,
-  bookings as initialBookings,
-  personalInfo as initialPersonalInfo,
-  expenses,
-  subscriptionPlans,
-  companyDetails,
-  userDetails,
-} from "./bookings-data"
+interface Service {
+  id: number
+  name: string
+  price: number
+  description: string
+  hasNotification: boolean
+  notificationCount?: number
+  image: string
+  chargePerKm: number
+}
 
-const keyframes = `
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes bounceIn {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.2); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  
-  @keyframes slideInUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
-  @keyframes shakeX {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-    20%, 40%, 60%, 80% { transform: translateX(10px); }
-  }
-  
-  @keyframes countdown {
-    from { width: 100%; }
-    to { width: 0%; }
-  }
-`
+interface Booking {
+  id: number
+  serviceId: number
+  serviceName: string
+  customerName: string
+  date: string
+  time: string
+  location: string
+  distanceCharge: number
+  total: number
+  modeOfPayment: string
+  status: "ongoing" | "pending" | "completed"
+  price: number
+  image: string
+}
+
+interface ExpenseItem {
+  name: string
+  estimatedCost: number
+  required: boolean
+}
+
+interface PersonalInfo {
+  id: number
+  type: string
+  title: string
+  description: string
+  startDate?: string
+  endDate?: string
+  location?: string
+  organization?: string
+  hasNotification?: boolean
+  notificationCount?: number
+  image?: string
+}
+
+type SubscriptionTier = "free" | "mid" | "premium" | "unlimited"
+
+interface SubscriptionInfo {
+  tier: SubscriptionTier
+  maxServices: number
+  name: string
+  color: string
+  price: number
+  billingCycle: string
+  nextBillingDate: string
+}
 
 function Bookings() {
   const [showNotification] = useState(true)
@@ -86,9 +96,7 @@ function Bookings() {
 
   const [isCreateServiceModalOpen, setIsCreateServiceModalOpen] = useState(false)
   const [createServiceStep, setCreateServiceStep] = useState(1)
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-  const [totalSteps] = useState(4)
+  const totalSteps = 4
 
   const [subscription, setSubscription] = useState<SubscriptionInfo>({
     tier: "free",
@@ -102,6 +110,8 @@ function Bookings() {
 
   const [isPlansModalOpen, setIsPlansModalOpen] = useState(false)
 
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+
   const [newService, setNewService] = useState<Partial<Service>>({
     name: "",
     price: 0,
@@ -109,6 +119,14 @@ function Bookings() {
     image: "",
     chargePerKm: 0,
   })
+
+  const [expenses] = useState<ExpenseItem[]>([
+    { name: "Tools and Equipment", estimatedCost: 5000, required: true },
+    { name: "Transportation", estimatedCost: 2000, required: true },
+    { name: "Materials", estimatedCost: 3000, required: false },
+    { name: "Labor", estimatedCost: 4000, required: true },
+    { name: "Insurance", estimatedCost: 1500, required: true },
+  ])
 
   const [requirements, setRequirements] = useState({
     businessPermit: false,
@@ -126,9 +144,276 @@ function Bookings() {
   const [isEditInfoModalOpen, setIsEditInfoModalOpen] = useState(false)
   const [isDeleteInfoConfirmOpen, setIsDeleteInfoConfirmOpen] = useState(false)
 
-  const [services, setServices] = useState<Service[]>(initialServices)
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo[]>(initialPersonalInfo)
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings)
+  const [services, setServices] = useState<Service[]>([
+    {
+      id: 1,
+      name: "Plumbing Services",
+      price: 8000,
+      description: "Keep your water systems running smoothly with expert plumbing services.",
+      hasNotification: true,
+      notificationCount: 3,
+      image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg",
+      chargePerKm: 50,
+    },
+    {
+      id: 2,
+      name: "Electrical Repairs",
+      price: 6500,
+      description: "Professional electrical services for your home or business.",
+      hasNotification: false,
+      image: "https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_1280.jpg",
+      chargePerKm: 40,
+    },
+    {
+      id: 3,
+      name: "Cleaning Services",
+      price: 4000,
+      description: "Comprehensive cleaning solutions for residential and commercial spaces.",
+      hasNotification: true,
+      notificationCount: 1,
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
+      chargePerKm: 30,
+    },
+    {
+      id: 4,
+      name: "Home Renovation",
+      price: 15000,
+      description: "Transform your living space with our expert renovation services.",
+      hasNotification: false,
+      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg",
+      chargePerKm: 60,
+    },
+  ])
+
+  const companyDetails = {
+    name: "Sisyphus Ventures",
+    location: "United States",
+    description:
+      "Professional home services and repairs with guaranteed satisfaction. Available 24/7 for all your maintenance needs.",
+    logo: "https://uploads.dailydot.com/2024/07/side-eye-cat.jpg?q=65&auto=format&w=1200&ar=2:1&fit=crop",
+    coverPhoto: "https://cdn.pixabay.com/photo/2016/12/05/21/08/cologne-1884931_1280.jpg",
+    followers: 34.5,
+  }
+
+  const userDetails = {
+    name: "John Doe",
+    location: "San Francisco, CA",
+    description:
+      "Professional software developer with 5+ years of experience in web and mobile application development. Passionate about creating intuitive user experiences.",
+    avatar: "https://uploads.dailydot.com/2024/07/side-eye-cat.jpg?q=65&auto=format&w=1200&ar=2:1&fit=crop",
+    coverPhoto: "https://cdn.pixabay.com/photo/2016/12/05/21/08/cologne-1884931_1280.jpg",
+    followers: 1.2,
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    birthday: "1990-05-15",
+    gender: "Male",
+  }
+
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo[]>([
+    {
+      id: 1,
+      type: "education",
+      title: "Computer Science",
+      description: "Bachelor's degree in Computer Science with focus on software engineering and data structures.",
+      startDate: "2010-09-01",
+      endDate: "2014-06-30",
+      organization: "Stanford University",
+      location: "Stanford, CA",
+      image: "https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_1280.jpg",
+    },
+    {
+      id: 2,
+      type: "education",
+      title: "Machine Learning",
+      description: "Master's degree in Machine Learning and Artificial Intelligence.",
+      startDate: "2014-09-01",
+      endDate: "2016-06-30",
+      organization: "MIT",
+      location: "Cambridge, MA",
+      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg",
+    },
+    {
+      id: 3,
+      type: "experience",
+      title: "Senior Developer",
+      description: "Led a team of 5 developers to build and maintain enterprise-level web applications.",
+      startDate: "2020-01-15",
+      endDate: "Present",
+      organization: "Tech Solutions Inc.",
+      location: "San Francisco, CA",
+      hasNotification: true,
+      notificationCount: 2,
+      image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg",
+    },
+    {
+      id: 4,
+      type: "experience",
+      title: "Web Developer",
+      description: "Developed and maintained client websites using React, Node.js, and MongoDB.",
+      startDate: "2016-08-01",
+      endDate: "2019-12-31",
+      organization: "Digital Creations",
+      location: "Los Angeles, CA",
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
+    },
+    {
+      id: 5,
+      type: "skills",
+      title: "Frontend Development",
+      description:
+        "Proficient in React, Vue.js, HTML5, CSS3, and JavaScript. Experienced in building responsive and accessible web applications.",
+      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg",
+    },
+    {
+      id: 6,
+      type: "skills",
+      title: "Backend Development",
+      description:
+        "Experienced with Node.js, Express, Python, Django, and RESTful API design. Familiar with database design and optimization.",
+      hasNotification: true,
+      notificationCount: 1,
+      image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg",
+    },
+  ])
+
+  const [bookings, setBookings] = useState<Booking[]>([
+    {
+      id: 101,
+      serviceId: 1,
+      serviceName: "Plumbing Services",
+      customerName: "John Smith",
+      date: "2025-03-15",
+      time: "10:00 AM",
+      location: "123 Main St, Anytown",
+      distanceCharge: 500,
+      total: 8500,
+      modeOfPayment: "Credit Card",
+      status: "ongoing",
+      price: 8000,
+      image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg",
+    },
+    {
+      id: 102,
+      serviceId: 2,
+      serviceName: "Electrical Repairs",
+      customerName: "Sarah Johnson",
+      date: "2025-03-16",
+      time: "2:30 PM",
+      location: "456 Oak Ave, Somewhere",
+      distanceCharge: 300,
+      total: 6800,
+      modeOfPayment: "Cash",
+      status: "pending",
+      price: 6500,
+      image: "https://cdn.pixabay.com/photo/2017/01/24/03/53/plant-2004483_1280.jpg",
+    },
+    {
+      id: 103,
+      serviceId: 3,
+      serviceName: "Cleaning Services",
+      customerName: "Michael Brown",
+      date: "2025-03-10",
+      time: "9:00 AM",
+      location: "789 Pine St, Elsewhere",
+      distanceCharge: 200,
+      total: 4200,
+      modeOfPayment: "Digital Wallet",
+      status: "completed",
+      price: 4000,
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
+    },
+    {
+      id: 104,
+      serviceId: 1,
+      serviceName: "Plumbing Services",
+      customerName: "Emily Davis",
+      date: "2025-03-18",
+      time: "11:30 AM",
+      location: "321 Elm St, Nowhere",
+      distanceCharge: 450,
+      total: 8450,
+      modeOfPayment: "Credit Card",
+      status: "pending",
+      price: 8000,
+      image: "https://cdn.pixabay.com/photo/2024/07/23/09/14/ai-generated-8914595_1280.jpg",
+    },
+    {
+      id: 105,
+      serviceId: 4,
+      serviceName: "Home Renovation",
+      customerName: "Robert Wilson",
+      date: "2025-03-05",
+      time: "8:00 AM",
+      location: "654 Maple Dr, Anywhere",
+      distanceCharge: 800,
+      total: 15800,
+      modeOfPayment: "Bank Transfer",
+      status: "completed",
+      price: 15000,
+      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg",
+    },
+    {
+      id: 106,
+      serviceId: 3,
+      serviceName: "Cleaning Services",
+      customerName: "Jennifer Taylor",
+      date: "2025-03-14",
+      time: "1:00 PM",
+      location: "987 Cedar Ln, Someplace",
+      distanceCharge: 350,
+      total: 4350,
+      modeOfPayment: "Digital Wallet",
+      status: "ongoing",
+      price: 4000,
+      image: "https://cdn.pixabay.com/photo/2014/02/17/14/28/vacuum-cleaner-268179_1280.jpg",
+    },
+  ])
+
+  const subscriptionPlans = [
+    {
+      tier: "free",
+      name: "Free",
+      maxServices: 3,
+      price: 0,
+      color: "bg-gray-100",
+      textColor: "text-gray-600",
+      features: ["Up to 3 services", "Basic analytics", "Standard support"],
+    },
+    {
+      tier: "mid",
+      name: "Professional",
+      maxServices: 10,
+      price: 25000,
+      color: "bg-blue-100",
+      textColor: "text-blue-600",
+      features: ["Up to 10 services", "Advanced analytics", "Priority support", "Custom branding"],
+    },
+    {
+      tier: "premium",
+      name: "Business",
+      maxServices: 20,
+      price: 50000,
+      color: "bg-purple-100",
+      textColor: "text-purple-600",
+      features: ["Up to 20 services", "Premium analytics", "24/7 support", "Custom branding", "Team accounts"],
+    },
+    {
+      tier: "unlimited",
+      name: "Enterprise",
+      maxServices: Number.POSITIVE_INFINITY,
+      price: 100000,
+      color: "bg-amber-100",
+      textColor: "text-amber-600",
+      features: [
+        "Unlimited services",
+        "Enterprise analytics",
+        "Dedicated support",
+        "Custom branding",
+        "Team accounts",
+        "API access",
+      ],
+    },
+  ]
 
   const triggerCelebration = () => {
     const duration = 3000
@@ -182,9 +467,6 @@ function Bookings() {
           nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         })
 
-        setSuccessMessage(
-          `You've successfully upgraded to the ${plan.name} plan! You can now add up to ${plan.maxServices === Number.POSITIVE_INFINITY ? "unlimited" : plan.maxServices} services.`,
-        )
         setIsSuccessModalOpen(true)
         setTimeout(() => {
           triggerCelebration()
@@ -327,15 +609,6 @@ function Bookings() {
     setServices([...services, newServiceEntry])
     setIsCreateServiceModalOpen(false)
     setCreateServiceStep(1)
-
-    // Show success message after service creation
-    setSuccessMessage(`Service "${newServiceEntry.name}" has been created successfully!`)
-    setIsSuccessModalOpen(true)
-
-    // Close success modal after 3 seconds
-    setTimeout(() => {
-      setIsSuccessModalOpen(false)
-    }, 3000)
   }
 
   const handleSelectPlan = (tier: SubscriptionTier) => {
@@ -1539,10 +1812,6 @@ function Bookings() {
         setIsLoading(false)
         setShowSuccess(true)
 
-        // Show success modal with animation
-        setSuccessMessage("Service completed successfully! Transaction has been processed.")
-        setIsSuccessModalOpen(true)
-
         setTimeout(() => {
           const updatedBookings = bookings.map(
             (booking): Booking => (booking.id === bookingId ? { ...booking, status: "completed" as const } : booking),
@@ -1552,7 +1821,6 @@ function Bookings() {
           setIsModalOpen(false)
           setShowSuccess(false)
           setProcessingBookingId(null)
-          setIsSuccessModalOpen(false)
           setActiveTab("completed")
         }, 5000)
       }, 10000)
@@ -1569,25 +1837,15 @@ function Bookings() {
       )
 
       setBookings(updatedBookings)
-
-      // Show success modal
-      setSuccessMessage("Booking accepted successfully!")
-      setIsSuccessModalOpen(true)
-
-      setTimeout(() => {
-        setIsSuccessModalOpen(false)
-        setActiveTab("ongoing")
-      }, 5000)
-
       setIsModalOpen(false)
       setIsLoading(false)
       setProcessingBookingId(null)
+      setActiveTab("ongoing")
     }, 5000)
   }
 
   return (
     <div className="min-h-screen bg-gray-50 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
-      <style>{keyframes}</style>
       {/* Floating Dock */}
       <div className="sticky top-0 z-40 flex">
         <MyFloatingDockCeo />
@@ -1766,67 +2024,78 @@ function Bookings() {
 
       {/* Booking Details Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-md" aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
-          <Dialog.Panel className="mx-auto max-w-2xl w-full bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl transform transition-all border border-white/20">
+          <Dialog.Panel className="mx-auto max-w-3xl w-full bg-white rounded-2xl overflow-hidden shadow-xl transform transition-all">
             {selectedBooking && (
-              <div className="flex flex-col h-full">
-                {/* Image Section - Top */}
-                <div className="relative h-48 w-full">
-                  <img
-                    src={selectedBooking.image || image1}
-                    alt={selectedBooking.serviceName}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
-
-                  {/* Service name overlay on image */}
-                  <div className="absolute bottom-0 left-0 p-6 w-full">
-                    <h3 className="text-2xl font-light text-white tracking-tight">{selectedBooking.serviceName}</h3>
-                    <div
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 
-                ${
-                  selectedBooking.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : selectedBooking.status === "ongoing"
-                      ? "bg-sky-100 text-sky-800"
-                      : "bg-green-100 text-green-800"
-                }`}
-                    >
-                      {selectedBooking.status === "pending"
-                        ? "Pending"
-                        : selectedBooking.status === "ongoing"
-                          ? "In Progress"
-                          : "Completed"}
-                    </div>
+              <div className="flex flex-col md:flex-row h-full">
+                {/* Image Section - Left side on desktop */}
+                <div className="md:w-2/5 relative">
+                  <div className="h-48 md:h-full">
+                    <img
+                      src={selectedBooking.image || image1}
+                      alt={selectedBooking.serviceName}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent md:hidden"></div>
                   </div>
-
-                  {/* Close button */}
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="absolute top-4 left-4 bg-black/20 backdrop-blur-xl p-2 rounded-full hover:bg-black/30 transition-all duration-200 text-white"
+                    className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm p-1.5 rounded-full hover:bg-white/40 transition-all text-white md:hidden"
                   >
                     <X className="h-5 w-5" />
                   </button>
                 </div>
 
-                {/* Content Section - Below image, scrollable */}
-                <div className="p-6 max-h-[60vh] overflow-y-auto">
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                {/* Content Section - Right side on desktop */}
+                <div className="md:w-3/5 p-6 max-h-[80vh] overflow-y-auto">
+                  <div className="flex justify-between items-start mb-4">
+                    <Dialog.Title className="text-2xl font-medium text-gray-900">Booking Details</Dialog.Title>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="text-gray-400 hover:text-gray-500 hidden md:block"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-light text-gray-900 mb-1">{selectedBooking.serviceName}</h3>
+                      <div
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-opacity-10 mb-4"
+                        style={{
+                          backgroundColor:
+                            selectedBooking.status === "completed"
+                              ? "rgba(34, 197, 94, 0.1)"
+                              : selectedBooking.status === "ongoing"
+                                ? "rgba(59, 130, 246, 0.1)"
+                                : "rgba(234, 179, 8, 0.1)",
+                          color:
+                            selectedBooking.status === "completed"
+                              ? "rgb(22, 163, 74)"
+                              : selectedBooking.status === "ongoing"
+                                ? "rgb(37, 99, 235)"
+                                : "rgb(202, 138, 4)",
+                        }}
+                      >
+                        {selectedBooking.status}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                       <div>
-                        <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Customer</h3>
+                        <h3 className="text-sm font-medium text-gray-500">Customer</h3>
                         <p className="mt-1 text-base font-medium text-gray-900">{selectedBooking.customerName}</p>
                       </div>
                       <div>
-                        <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Payment Method</h3>
+                        <h3 className="text-sm font-medium text-gray-500">Payment Method</h3>
                         <p className="mt-1 text-base font-medium text-gray-900">{selectedBooking.modeOfPayment}</p>
                       </div>
                       <div>
-                        <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Date & Time</h3>
-                        <p className="mt-1 text-base font-medium text-gray-900 flex items-center">
-                          <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                        <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
+                        <p className="mt-1 text-base font-medium text-gray-900">
                           {new Date(selectedBooking.date).toLocaleDateString("en-US", {
                             weekday: "short",
                             month: "short",
@@ -1837,19 +2106,17 @@ function Bookings() {
                         </p>
                       </div>
                       <div>
-                        <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Location</h3>
+                        <h3 className="text-sm font-medium text-gray-500">Location</h3>
                         <p className="mt-1 text-base font-medium text-gray-900 flex items-start">
-                          <MapPin className="h-4 w-4 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
+                          <MapPin className="h-4 w-4 text-gray-400 mr-1 mt-0.5 flex-shrink-0" />
                           <span>{selectedBooking.location}</span>
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50/80 backdrop-blur-sm rounded-2xl p-6">
-                      <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-4">
-                        Payment Summary
-                      </h3>
-                      <div className="space-y-3">
+                    <div className="bg-gray-50 rounded-xl p-4 mt-6">
+                      <h3 className="text-sm font-medium text-gray-500 mb-3">Payment Summary</h3>
+                      <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Service Fee</span>
                           <span className="font-medium">₱{selectedBooking.price.toLocaleString()}</span>
@@ -1858,18 +2125,18 @@ function Bookings() {
                           <span className="text-gray-600">Distance Charge</span>
                           <span className="font-medium">₱{selectedBooking.distanceCharge.toLocaleString()}</span>
                         </div>
-                        <div className="flex justify-between text-lg font-medium pt-3 border-t border-gray-200 mt-3">
+                        <div className="flex justify-between text-lg font-light pt-2 border-t border-gray-200 mt-2">
                           <span>Total</span>
-                          <span className="text-sky-600">₱{selectedBooking.total.toLocaleString()}</span>
+                          <span>₱{selectedBooking.total.toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 pt-4">
                       {selectedBooking &&
                         selectedBooking.status === "ongoing" &&
                         !ceoMarkedCompleted.includes(selectedBooking.id) && (
-                          <div className="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-2xl p-4 text-blue-800 text-sm">
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 text-sm">
                             <p className="font-medium">
                               Admin is still holding your transaction until both customer and CEO marked as completed.
                             </p>
@@ -1877,136 +2144,115 @@ function Bookings() {
                         )}
 
                       {showSuccess && processingBookingId === selectedBooking.id && (
-                        <div className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-2xl p-4 text-green-800 text-sm flex items-center">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 text-sm flex items-center">
                           <CheckCircle className="h-5 w-5 mr-2 text-green-500 animate-bounce" />
                           <p className="font-medium">Transaction is completed, please check your balance.</p>
                         </div>
                       )}
 
                       {selectedBooking && ceoMarkedCompleted.includes(selectedBooking.id) && !showSuccess && (
-                        <div className="bg-yellow-50/80 backdrop-blur-sm border border-yellow-200 rounded-2xl p-4 text-yellow-800 text-sm">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
                           <p className="font-medium">Please wait for the customer to mark as completed at their end.</p>
                           <p className="mt-1">Contact our services if anything goes wrong.</p>
                         </div>
                       )}
-                    </div>
-                  </div>
-                </div>
 
-                {/* Footer with buttons - Fixed at bottom */}
-                <div className="p-6 border-t border-gray-100">
-                  <div className="flex space-x-4">
-                    {selectedBooking && selectedBooking.status === "ongoing" && (
-                      <button
-                        onClick={() => handleMarkAsCompleted(selectedBooking.id)}
-                        disabled={ceoMarkedCompleted.includes(selectedBooking.id) || isLoading || showSuccess}
-                        className={`w-full px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm ${
-                          ceoMarkedCompleted.includes(selectedBooking.id) || showSuccess
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : isLoading && processingBookingId === selectedBooking.id
-                              ? "bg-sky-400 cursor-wait"
-                              : "bg-sky-500 hover:bg-sky-600 shadow-lg shadow-sky-200"
-                        }`}
-                      >
-                        {isLoading && processingBookingId === selectedBooking.id ? (
-                          <span className="flex items-center justify-center">
-                            <svg
-                              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Processing...
-                          </span>
-                        ) : ceoMarkedCompleted.includes(selectedBooking.id) ? (
-                          "Waiting for Customer"
-                        ) : (
-                          <span className="flex items-center justify-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            Mark as Completed
-                          </span>
+                      <div className="flex space-x-3">
+                        {selectedBooking && selectedBooking.status === "ongoing" && (
+                          <button
+                            onClick={() => handleMarkAsCompleted(selectedBooking.id)}
+                            disabled={ceoMarkedCompleted.includes(selectedBooking.id) || isLoading || showSuccess}
+                            className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${
+                              ceoMarkedCompleted.includes(selectedBooking.id) || showSuccess
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : isLoading && processingBookingId === selectedBooking.id
+                                  ? "bg-sky-400 cursor-wait"
+                                  : "bg-sky-500 hover:bg-sky-600"
+                            }`}
+                          >
+                            {isLoading && processingBookingId === selectedBooking.id ? (
+                              <span className="flex items-center justify-center">
+                                <svg
+                                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  ></circle>
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  ></path>
+                                </svg>
+                                Processing...
+                              </span>
+                            ) : ceoMarkedCompleted.includes(selectedBooking.id) ? (
+                              "Waiting for Customer"
+                            ) : (
+                              "Mark as Completed"
+                            )}
+                          </button>
                         )}
-                      </button>
-                    )}
 
-                    {selectedBooking && selectedBooking.status === "pending" && (
-                      <div className="flex space-x-3 w-full">
-                        <button
-                          onClick={() => {
-                            setIsDeclineModalOpen(true)
-                          }}
-                          className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-sm"
-                        >
-                          <span className="flex items-center justify-center">
-                            <X className="h-4 w-4 mr-2" />
-                            Decline Booking
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => handleAcceptBooking(selectedBooking.id)}
-                          disabled={isLoading}
-                          className={`flex-1 px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm ${
-                            isLoading && processingBookingId === selectedBooking.id
-                              ? "bg-sky-400 cursor-wait"
-                              : "bg-sky-500 hover:bg-sky-600 shadow-lg shadow-sky-200"
-                          }`}
-                        >
-                          {isLoading && processingBookingId === selectedBooking.id ? (
-                            <span className="flex items-center justify-center">
-                              <svg
-                                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                              </svg>
-                              Processing...
-                            </span>
-                          ) : (
-                            <span className="flex items-center justify-center">
-                              <Check className="h-4 w-4 mr-2" />
-                              Accept Booking
-                            </span>
-                          )}
-                        </button>
+                        {selectedBooking && selectedBooking.status === "pending" && (
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={() => {
+                                setIsDeclineModalOpen(true)
+                              }}
+                              className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-[300px]"
+                            >
+                              Decline Booking
+                            </button>
+                            <button
+                              onClick={() => handleAcceptBooking(selectedBooking.id)}
+                              disabled={isLoading}
+                              className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${
+                                isLoading && processingBookingId === selectedBooking.id
+                                  ? "bg-sky-400 cursor-wait"
+                                  : "bg-sky-500 hover:bg-sky-600"
+                              }`}
+                            >
+                              {isLoading && processingBookingId === selectedBooking.id ? (
+                                <span className="flex items-center justify-center">
+                                  <svg
+                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <circle
+                                      className="opacity-25"
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      stroke="currentColor"
+                                      strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                      className="opacity-75"
+                                      fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                  </svg>
+                                  Processing...
+                                </span>
+                              ) : (
+                                "Accept Booking"
+                              )}
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
-
-                    {selectedBooking && selectedBooking.status === "completed" && (
-                      <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-sm"
-                      >
-                        Close
-                      </button>
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2764,37 +3010,31 @@ function Bookings() {
         </div>
       </Dialog>
 
-      {/* Success Modal with Celebration */}
+      {/* Subscription Success Modal with Celebration */}
       <Dialog open={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-md" aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
-          <Dialog.Panel className="mx-auto max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl transform transition-all border border-white/20 p-6 animate-[fadeIn_0.5s_ease-out]">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6 animate-[pulse_2s_ease-in-out_infinite]">
-                {successMessage.includes("upgraded") ? (
-                  <Sparkles className="h-10 w-10 text-green-500 animate-[bounceIn_0.6s_ease-out]" />
-                ) : (
-                  <CheckCircle2 className="h-10 w-10 text-green-500 animate-[bounceIn_0.6s_ease-out]" />
-                )}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                <Sparkles className="h-10 w-10 text-green-500" />
               </div>
 
-              <Dialog.Title className="text-xl font-medium text-gray-900 mb-2 animate-[slideInUp_0.4s_ease-out]">
-                {successMessage.includes("upgraded") ? "Congratulations!" : "Success!"}
-              </Dialog.Title>
+              <Dialog.Title className="text-2xl font-semibold text-gray-900 mb-4">Congratulations!</Dialog.Title>
 
-              <p className="text-gray-600 mb-6 animate-[fadeIn_0.5s_ease-out_0.2s_both]">
-                {successMessage ||
-                  (subscription.tier !== "free"
-                    ? `You've successfully upgraded to the ${subscription.name} plan! You can now add up to ${subscription.maxServices === Number.POSITIVE_INFINITY ? "unlimited" : subscription.maxServices} services.`
-                    : "Operation completed successfully!")}
+              <p className="text-gray-600 mb-6">
+                You've successfully upgraded to the{" "}
+                <span className={`font-medium ${subscription.color}`}>{subscription.name}</span> plan! You can now add
+                up to {subscription.maxServices === Number.POSITIVE_INFINITY ? "unlimited" : subscription.maxServices}{" "}
+                services.
               </p>
 
               <button
                 onClick={() => setIsSuccessModalOpen(false)}
-                className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all animate-[fadeIn_0.5s_ease-out_0.3s_both]"
+                className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all"
               >
-                {successMessage.includes("upgraded") ? "Start Using Your New Plan" : "Close"}
+                Start Using Your New Plan
               </button>
             </div>
           </Dialog.Panel>

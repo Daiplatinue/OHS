@@ -1,46 +1,55 @@
-import type React from "react"
+import type React from "react";
 
 const LegalText: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 text-sm text-gray-600">
-      <p className="mb-4">Price displayed are inclusive of all taxes and duties. Free delivery for all orders.</p>
-
       <p className="mb-4">
-        Apple Intelligence is available in beta on all iPhone 16 models, iPhone 15 Pro, iPhone 15 Pro Max, iPad mini
-        (A17 Pro), and iPad and Mac models with M1 and later, with Siri and English (Australia, Canada, New Zealand,
-        Singapore, South Africa, UK or US), French, German, Italian, Japanese, Korean, Portuguese (Brazil) or Spanish,
-        as part of an iOS 18, iPadOS 18 and macOS Sequoia software update, with more languages coming soon. Some
-        features may not be available in all regions or languages.
+        Prices displayed are inclusive of all taxes and service fees. Free booking management for all orders.
+        Our platform is designed to ensure transparency and reliability, giving you peace of mind with every booking.
       </p>
 
       <p className="mb-4">
-        Apple TV+ offer available to new and qualified returning subscribers only. $9.99/month after free trial. Only
-        one offer per Apple Account and only one offer per family if you're part of a Family Sharing group, regardless
-        of the number of devices that you or your family purchase. This offer is not available if you or your family
-        have previously accepted an Apple TV+ one year free offer. Offer good for 3 months after eligible device
-        activation. Plan automatically renews until cancelled. Restrictions and other terms apply.
+        Handy Go's booking and service platform connects you to trusted professionals across various categories,
+        including plumbing, electrical, home cleaning, appliance repair, and more. Services are available in multiple
+        locations, with real-time updates and flexible scheduling to fit your convenience. Availability may vary
+        by region.
       </p>
 
       <p className="mb-4">
-        Special pricing available to qualified customers. To learn more about how to start qualifying for special
-        pricing, talk to an Apple Specialist in a store or give us a call on 1800-1651-0525 (Smart / PLDT),
-        1800-8474-7382 (Globe).
+        <strong>Handy Go+ Membership:</strong> Enjoy priority booking, exclusive discounts, and faster service responses 
+        with Handy Go+ for just $9.99/month after a free trial. Members also benefit from extended customer support, 
+        no cancellation fees, and premium service options. Only one offer per Handy Go Account and one per family 
+        if you're part of a Family Sharing group. Offer valid for 3 months after activation. Plan automatically renews
+        until cancelled. Restrictions and other terms apply.
       </p>
 
       <p className="mb-4">
-        New subscribers only. $9.99/month after trial. Offer is available for new Apple Music subscribers with a new
-        eligible device for a limited time only. Offer redemption for eligible audio devices requires connecting or
-        pairing to an Apple device running the latest iOS or iPadOS. Offer redemption for Apple Watch requires
-        connecting or pairing to an iPhone running the latest iOS. Offer good for 3 months after eligible device
-        activation. Only one offer per Apple Account, regardless of the number of eligible devices purchased. Plan
-        automatically renews until cancelled. Restrictions and other{" "}
+        <strong>Special Pricing:</strong> We offer exclusive discounts for first-time users, senior citizens, and
+        community programs. To learn more about how to qualify, talk to a Handy Go specialist or contact our support team.
+      </p>
+
+      <p className="mb-4">
+        <strong>Booking Management:</strong> With Handy Go, you can easily schedule, reschedule, or cancel bookings
+        directly through our platform. Real-time notifications keep you informed every step of the way, ensuring
+        seamless communication with service providers.
+      </p>
+
+      <p className="mb-4">
+        New subscribers only. $9.99/month after the trial period. Offer is available for new Handy Go+ subscribers
+        with a new eligible activation for a limited time only. Only one offer per Handy Go Account, regardless of the
+        number of bookings made. Plan automatically renews until cancelled. Restrictions and other{" "}
         <a href="#" className="text-blue-600 hover:underline">
           terms
         </a>{" "}
         apply.
       </p>
-    </div>
-  )
-}
 
-export default LegalText
+      <p className="mb-4">
+        For assistance, call our customer service hotline at 1800-123-4567 or reach out through our live chat support 
+        available 24/7. Your satisfaction is our priority, and we are committed to delivering quality service with every booking.
+      </p>
+    </div>
+  );
+};
+
+export default LegalText;

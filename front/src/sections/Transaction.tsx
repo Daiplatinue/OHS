@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import { useState, useEffect } from "react"
@@ -40,7 +38,6 @@ function Transaction() {
   const [planName, setPlanName] = useState<string>("")
 
   useEffect(() => {
-    // Get plan information from URL parameters
     const urlParams = new URLSearchParams(window.location.search)
     const planParam = urlParams.get("plan")
     const priceParam = urlParams.get("price")
@@ -50,7 +47,6 @@ function Transaction() {
       setRedirectUrl(redirectParam)
     }
 
-    // Set plan name based on the plan parameter
     if (planParam) {
       switch (planParam) {
         case "free":
