@@ -63,8 +63,8 @@ export const pipeFixProsData: CompanyDetails = {
   phone: "+1 (212) 555-1234",
   email: "info@pipefixpros.com",
   website: "www.pipefixpros.com",
-  logo: "https://cdn.pixabay.com/photo/2017/01/31/23/42/animal-2028258_1280.png",
-  coverPhoto: "https://cdn.pixabay.com/photo/2016/07/07/16/46/dice-1502706_1280.jpg",
+  logo: "https://cdn.pixabay.com/photo/2025/05/04/17/47/dog-9578735_1280.jpg",
+  coverPhoto: "https://cdn.pixabay.com/photo/2025/04/29/13/22/cityscape-9567180_1280.jpg",
   rating: 4.8,
   reviews: 1250,
   services: [
@@ -84,7 +84,7 @@ export const pipeFixProsData: CompanyDetails = {
         "Professional pipe installation services for new construction or repiping projects. We use high-quality materials and follow all local building codes for lasting results.",
       price: 3500,
       duration: "4-6 hours",
-      image: "https://cdn.pixabay.com/photo/2016/09/01/13/52/plumbing-1636422_1280.jpg",
+      image: "https://cdn.pixabay.com/photo/2015/10/13/15/23/pipe-986318_1280.jpg",
     },
     {
       id: 3,
@@ -93,7 +93,7 @@ export const pipeFixProsData: CompanyDetails = {
         "Comprehensive drain cleaning service using advanced hydro-jetting technology to remove even the toughest clogs and buildup, restoring proper flow to your plumbing system.",
       price: 1800,
       duration: "1-3 hours",
-      image: "https://cdn.pixabay.com/photo/2017/06/20/14/55/plumber-2423265_1280.jpg",
+      image: "https://cdn.pixabay.com/photo/2022/10/22/20/49/bathroom-sink-7540024_1280.jpg",
     },
     {
       id: 4,
@@ -102,7 +102,7 @@ export const pipeFixProsData: CompanyDetails = {
         "State-of-the-art leak detection service using non-invasive methods to locate hidden leaks, followed by professional repair to prevent water damage and waste.",
       price: 2200,
       duration: "2-4 hours",
-      image: "https://cdn.pixabay.com/photo/2016/07/19/22/59/plumber-1529391_1280.jpg",
+      image: "https://cdn.pixabay.com/photo/2017/07/19/20/00/allotment-2520218_960_720.jpg",
     },
     {
       id: 5,
@@ -111,7 +111,7 @@ export const pipeFixProsData: CompanyDetails = {
         "Expert installation of all plumbing fixtures including faucets, sinks, toilets, showers, and bathtubs. We ensure proper fitting and function for years of reliable use.",
       price: 1500,
       duration: "1-2 hours",
-      image: "https://cdn.pixabay.com/photo/2016/07/19/22/54/plumber-1529369_1280.jpg",
+      image: "https://cdn.pixabay.com/photo/2016/02/23/08/30/screw-1217107_1280.jpg",
     },
   ],
   teamMembers: [

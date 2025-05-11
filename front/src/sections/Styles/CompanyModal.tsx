@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import {
   MapPin,
@@ -14,9 +16,11 @@ import {
   FileText,
   MessageSquare,
   Flag,
+  ChevronRight,
 } from "lucide-react"
 import image1 from "../../assets/No_Image_Available.jpg"
 import type { CompanyDetails } from "./company-data"
+import "./company-modal.css" // We'll create this file next
 
 interface CompanyModalProps {
   isOpen: boolean
@@ -30,12 +34,12 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
   if (!isOpen || !company) return null
 
   const renderTabContent = () => {
-    if (activeTab === "about") {
-      return (
-        <div className="space-y-6">
+    const content =
+      activeTab === "about" ? (
+        <div className="space-y-6 animate-fadeIn">
           {/* Company Description */}
           <div className="bg-white rounded-3xl shadow-sm p-6">
-            <h3 className="text-xl font-semibold mb-4">About {company.name}</h3>
+            <h3 className="text-xl font-extralight mb-4 mt-[-45px]">About {company.name}</h3>
             <p className="text-gray-600">{company.longDescription || company.description}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -76,7 +80,7 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
 
           {/* Contact Information */}
           <div className="bg-white rounded-3xl shadow-sm p-6">
-            <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
+            <h3 className="text-xl font-extralight mb-4">Contact Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center mr-3">
@@ -110,7 +114,7 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
 
           {/* Certifications */}
           <div className="bg-white rounded-3xl shadow-sm p-6">
-            <h3 className="text-xl font-semibold mb-4">Certifications & Achievements</h3>
+            <h3 className="text-xl font-extralight mb-4">Certifications & Achievements</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {company.certifications.map((cert, index) => (
                 <div key={index} className="flex items-center bg-gray-50 p-3 rounded-xl">
@@ -123,7 +127,7 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
 
           {/* Team Members */}
           <div className="bg-white rounded-3xl shadow-sm p-6">
-            <h3 className="text-xl font-semibold mb-4">Our Team</h3>
+            <h3 className="text-xl font-extralight mb-4">Our Team</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {company.teamMembers.map((member) => (
                 <div key={member.id} className="text-center">
@@ -137,39 +141,43 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
             </div>
           </div>
         </div>
-      )
-    } else if (activeTab === "services") {
-      return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {company.services.map((service) => (
-            <div key={service.id} className="bg-gray-200/70 rounded-3xl p-6 relative flex flex-col h-[450px]">
-              <div className="relative overflow-hidden rounded-2xl mb-4">
-                <img src={service.image || image1} alt={service.name} className="w-full h-48 object-cover" />
-              </div>
-              <h3 className="text-xl font-light mb-2">{service.name}</h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{service.description}</p>
-              <div className="flex flex-col gap-1 mt-auto">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Starting Rate:</span>
-                  <span className="text-lg font-medium">₱{service.price.toLocaleString()}</span>
+      ) : activeTab === "services" ? (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-sm ">
+            <h3 className="text-xl font-extralight mb-4 mt-[-20px]">Services</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {company.services.map((service) => (
+                <div
+                  key={service.id}
+                  className="group cursor-pointer bg-gray-200/70 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 relative flex flex-col h-[450px]"
+                >
+                  <div className="relative overflow-hidden rounded-lg mb-4">
+                    <img
+                      src={service.image || image1}
+                      alt={service.name}
+                      className="w-full h-64 object-cover transform transition duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2 text-black">{service.name}</h3>
+                  <p className="text-sm text-gray-600 mb-16 line-clamp-3">{service.description}</p>
+                  <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
+                    <span className="text-lg font-medium text-black">₱{service.price.toLocaleString()}</span>
+                    <button className="text-sky-500 flex items-center transition-all duration-300 hover:text-blue-600 hover:translate-x-1">
+                      See More <ChevronRight className="h-4 w-4 ml-1" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Duration:</span>
-                  <span className="text-base">{service.duration}</span>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      )
-    } else if (activeTab === "reviews") {
-      return (
-        <div className="space-y-6">
+      ) : (
+        <div className="space-y-6 animate-fadeIn">
           {/* Rating Summary */}
-          <div className="bg-white rounded-3xl shadow-sm p-6">
+          <div className="bg-white rounded-3xl shadow-sm p-6 mt-[-50px]">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-semibold">Customer Reviews</h3>
+                <h3 className="text-xl font-extralight">Customer Reviews</h3>
                 <p className="text-gray-500">See what our customers are saying about us</p>
               </div>
               <div className="text-right">
@@ -236,12 +244,13 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
           </div>
         </div>
       )
-    }
+
+    return content
   }
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
-      <div className="bg-gray-50 rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div className="bg-gray-50 rounded-3xl w-full max-w-5xl h-[95vh] overflow-hidden flex flex-col shadow-2xl transition-all duration-300 ease-in-out">
         {/* Cover Photo */}
         <div className="relative h-64 overflow-hidden">
           <img src={company.coverPhoto || image1} alt="Cover" className="w-full h-full object-cover" />
@@ -265,8 +274,8 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
               </div>
             </div>
             <div className="ml-4 mb-4">
-              <h1 className="text-2xl font-semibold text-white">{company.name}</h1>
-              <div className="flex items-center gap-2 mt-1 text-white/90">
+              <h1 className="text-2xl font-semibold text-gray-700 mt-20">{company.name}</h1>
+              <div className="flex items-center gap-2 mt-1 text-gray-700">
                 <MapPin className="h-4 w-4" />
                 <span>{company.address}</span>
               </div>
@@ -275,7 +284,7 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
 
           <div className="pt-20">
             {/* Stats Section */}
-            <div className="flex gap-6 mb-4">
+            <div className="flex gap-6 mb-4 mt-3">
               <div className="flex items-center gap-2">
                 <div className="flex text-yellow-400">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -350,7 +359,9 @@ const CompanyModal = ({ isOpen, onClose, company }: CompanyModalProps) => {
         </div>
 
         {/* Content Section - Scrollable */}
-        <div className="overflow-y-auto flex-grow p-8">{renderTabContent()}</div>
+        <div className="overflow-y-auto flex-grow p-8 h-[calc(85vh-400px)] transition-all duration-300 ease-in-out">
+          {renderTabContent()}
+        </div>
 
         {/* Footer */}
         <div className="p-6 border-t border-gray-200 mt-auto bg-white">

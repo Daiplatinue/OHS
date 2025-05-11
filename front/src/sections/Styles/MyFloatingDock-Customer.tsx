@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -25,6 +23,7 @@ import {
   XCircleIcon,
   ArrowUpRight,
   Coffee,
+  MapPin,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -124,12 +123,14 @@ interface Booking {
   date: string
   price: number
   image: string
+  paymentComplete?: boolean
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState<number>(30)
   const [status, setStatus] = useState(booking.status)
+  const [paymentComplete, ] = useState(booking.paymentComplete || false)
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -165,6 +166,11 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 
     // Navigate to transaction page with seller info
     navigate("/transaction", { state: { seller: sellerInfo } })
+  }
+
+  const handleTrackProvider = () => {
+    // Navigate to tracking page with booking ID
+    navigate(`/track-provider?bookingId=${booking.id}`)
   }
 
   const getStatusBadge = () => {
@@ -228,13 +234,23 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
               <Clock className="w-4 h-4" />
               <span className="text-sm font-medium">{timeLeft}s</span>
             </div>
-            <button
-              className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
-              onClick={handleCompletePayment}
-            >
-              <ArrowUpRight className="w-4 h-4" />
-              Complete Payment
-            </button>
+            {paymentComplete ? (
+              <button
+                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+                onClick={handleTrackProvider}
+              >
+                <MapPin className="w-4 h-4" />
+                Track Service
+              </button>
+            ) : (
+              <button
+                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+                onClick={handleCompletePayment}
+              >
+                <ArrowUpRight className="w-4 h-4" />
+                Complete Payment
+              </button>
+            )}
           </div>
         )
       case "cancelled":
@@ -277,77 +293,75 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   )
 }
 
-const dummyBookings = [
-  {
-    id: 1,
-    companyName: "Sisyphus Ventures",
-    service: "Plumbing Services",
-    status: "pending",
-    date: "2024-03-20",
-    price: 8000,
-    image:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: 2,
-    companyName: "TechFix Solutions",
-    service: "Electronics Repair",
-    status: "ongoing",
-    date: "2024-03-19",
-    price: 5000,
-    image:
-      "https://images.unsplash.com/photo-1588508065123-287b28e013da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: 3,
-    companyName: "GreenThumb Gardens",
-    service: "Landscaping",
-    status: "cancelled",
-    date: "2024-03-18",
-    price: 12000,
-    image:
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: 4,
-    companyName: "ElectroFix Pro",
-    service: "Electrical Services",
-    status: "pending",
-    date: "2024-03-17",
-    price: 6500,
-    image:
-      "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: 5,
-    companyName: "CleanPro Services",
-    service: "House Cleaning",
-    status: "ongoing",
-    date: "2024-03-16",
-    price: 3500,
-    image:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: 6,
-    companyName: "GardenMasters",
-    service: "Garden Maintenance",
-    status: "pending",
-    date: "2024-03-15",
-    price: 4500,
-    image:
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-]
-
 const FloatingDock: React.FC = () => {
-  const navigate = useNavigate()
   const [showDrawer, setShowDrawer] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAllServices, setShowAllServices] = useState(false)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [activeTab, setActiveTab] = useState("all")
   const [showDock, setShowDock] = useState(true)
+  const [bookings, setBookings] = useState<Booking[]>([
+    {
+      id: 1,
+      companyName: "Sisyphus Ventures",
+      service: "Plumbing Services",
+      status: "pending",
+      date: "2024-03-20",
+      price: 8000,
+      image:
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+      id: 2,
+      companyName: "TechFix Solutions",
+      service: "Electronics Repair",
+      status: "ongoing",
+      date: "2024-03-19",
+      price: 5000,
+      image:
+        "https://images.unsplash.com/photo-1588508065123-287b28e013da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+      id: 3,
+      companyName: "GreenThumb Gardens",
+      service: "Landscaping",
+      status: "cancelled",
+      date: "2024-03-18",
+      price: 12000,
+      image:
+        "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+      id: 4,
+      companyName: "ElectroFix Pro",
+      service: "Electrical Services",
+      status: "pending",
+      date: "2024-03-17",
+      price: 6500,
+      image:
+        "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+      id: 5,
+      companyName: "CleanPro Services",
+      service: "House Cleaning",
+      status: "ongoing",
+      date: "2024-03-16",
+      price: 3500,
+      image:
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+      id: 6,
+      companyName: "GardenMasters",
+      service: "Garden Maintenance",
+      status: "pending",
+      date: "2024-03-15",
+      price: 4500,
+      image:
+        "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+  ])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -355,6 +369,93 @@ const FloatingDock: React.FC = () => {
     }, 1000)
 
     return () => clearInterval(timer)
+  }, [])
+
+  // Check localStorage for booking updates and drawer open state
+  useEffect(() => {
+    // Check if we should open the bookings drawer
+    const shouldOpenBookings = localStorage.getItem("openBookingsDrawer")
+    if (shouldOpenBookings === "true") {
+      setShowDrawer(true)
+      localStorage.removeItem("openBookingsDrawer") // Clear the flag
+    }
+
+    // Check if we need to update a booking status
+    const updateStatusData = localStorage.getItem("updateBookingStatus")
+    if (updateStatusData) {
+      try {
+        const { id, status } = JSON.parse(updateStatusData)
+
+        // Update the booking with the given ID to the new status
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) => (booking.id === id ? { ...booking, status } : booking)),
+        )
+
+        localStorage.removeItem("updateBookingStatus") // Clear the flag
+      } catch (e) {
+        console.error("Error parsing booking status update", e)
+      }
+    }
+
+    // Check for recent payment completion
+    const recentPayment = localStorage.getItem("recentBookingPayment")
+    if (recentPayment) {
+      try {
+        const paymentData = JSON.parse(recentPayment)
+
+        // Update the booking with payment completion and status
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.id === paymentData.id
+              ? {
+                  ...booking,
+                  status: paymentData.status || booking.status,
+                  paymentComplete: true,
+                }
+              : booking,
+          ),
+        )
+
+        // If tracking is requested, open the drawer
+        if (paymentData.trackProvider) {
+          setShowDrawer(true)
+          setActiveTab("ongoing")
+        }
+
+        localStorage.removeItem("recentBookingPayment") // Clear the data
+      } catch (e) {
+        console.error("Error parsing recent payment data", e)
+      }
+    }
+
+    // Check URL parameters for booking updates
+    const urlParams = new URLSearchParams(window.location.search)
+    const bookingIdParam = urlParams.get("bookingId")
+    const statusParam = urlParams.get("status")
+    const paymentCompleteParam = urlParams.get("paymentComplete")
+    const openBookingsParam = urlParams.get("openBookings")
+
+    if (bookingIdParam && statusParam) {
+      const bookingId = Number.parseInt(bookingIdParam, 10)
+
+      // Update the booking with the given ID to the new status
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
+          booking.id === bookingId
+            ? {
+                ...booking,
+                status: statusParam,
+                paymentComplete: paymentCompleteParam === "true",
+              }
+            : booking,
+        ),
+      )
+    }
+
+    // Open bookings drawer if requested in URL
+    if (openBookingsParam === "true") {
+      setShowDrawer(true)
+    }
   }, [])
 
   const formattedTime = currentTime.toLocaleTimeString("en-US", {
@@ -369,11 +470,11 @@ const FloatingDock: React.FC = () => {
     day: "numeric",
   })
 
-  const totalBookings = dummyBookings.length
-  const pendingBookings = dummyBookings.filter((b) => b.status === "pending").length
-  const ongoingBookings = dummyBookings.filter((b) => b.status === "ongoing").length
+  const totalBookings = bookings.length
+  const pendingBookings = bookings.filter((b) => b.status === "pending").length
+  const ongoingBookings = bookings.filter((b) => b.status === "ongoing").length
 
-  const filteredBookings = dummyBookings.filter((booking) => {
+  const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
       booking.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       booking.service.toLowerCase().includes(searchQuery.toLowerCase())

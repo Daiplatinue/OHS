@@ -1,7 +1,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, CreditCard, Wallet, DollarSign } from "lucide-react"
+import { ArrowLeft, CreditCard, Wallet, DollarSign, CheckCircle2, MapPin } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import MyFloatingDockCustomer from "../sections/Styles/MyFloatingDock-Customer"
 import Footer from "../sections/Styles/Footer"
@@ -33,21 +33,96 @@ function Transaction() {
     accountNumber: "",
   })
   const [isProcessing, setIsProcessing] = useState(false)
-  const [isComplete, setIsComplete] = useState(false)
-  const [redirectUrl, setRedirectUrl] = useState<string>("/ceo/bookings")
+  const [, setIsComplete] = useState(false)
+  const [redirectUrl, setRedirectUrl] = useState<string>("/")
   const [planName, setPlanName] = useState<string>("")
+  const [transactionType, setTransactionType] = useState<"subscription" | "booking">("subscription")
+  const [bookingDetails, setBookingDetails] = useState<any>(null)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  const [previousPage, setPreviousPage] = useState<string>("")
+  const [, setBookingStatus] = useState<string>("")
+  const [bookingId, setBookingId] = useState<number | null>(null)
+
+  // Animation keyframes
+  const keyframes = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  `
 
   useEffect(() => {
+    // Store the previous page URL for redirect
+    setPreviousPage(document.referrer || location.state?.from || "")
+
+    // Check if we have booking data in location state
+    const bookingData = location.state?.booking
+    const sellerData = location.state?.seller
+
+    // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search)
     const planParam = urlParams.get("plan")
     const priceParam = urlParams.get("price")
     const redirectParam = urlParams.get("redirect")
+    const userTypeParam = urlParams.get("userType")
+    const statusParam = urlParams.get("status")
+    const bookingIdParam = urlParams.get("bookingId")
 
-    if (redirectParam) {
-      setRedirectUrl(redirectParam)
+    // Set booking ID if provided
+    if (bookingIdParam) {
+      setBookingId(Number.parseInt(bookingIdParam, 10))
+    } else if (sellerData && sellerData.id) {
+      setBookingId(sellerData.id)
     }
 
+    // Set booking status if provided
+    if (statusParam) {
+      setBookingStatus(statusParam)
+    } else {
+      // Default status for new bookings
+      setBookingStatus("pending")
+    }
+
+    // Set redirect URL if provided
+    if (redirectParam) {
+      setRedirectUrl(redirectParam)
+    } else if (previousPage) {
+      // Use previous page as fallback if available
+      setRedirectUrl(previousPage)
+    } else {
+      // Set default redirect based on user type and transaction type
+      if (userTypeParam === "ceo" || planParam) {
+        // If user is CEO or this is a subscription plan, redirect to CEO bookings
+        setRedirectUrl("/ceo/bookings")
+      } else {
+        // Default for customers - redirect to home page where floating dock is available
+        setRedirectUrl("/")
+      }
+    }
+
+    // Handle subscription plan data from URL parameters
     if (planParam) {
+      // This is a subscription transaction
+      setTransactionType("subscription")
+
       switch (planParam) {
         case "free":
           setPlanName("Free")
@@ -64,23 +139,55 @@ function Transaction() {
         default:
           setPlanName("")
       }
-    }
 
-    // Set default seller information
-    setSeller({
-      id: 1,
-      name: "Online Home Services",
-      rating: 5,
-      reviews: 823.2,
-      location: "Cebu City Branches",
-      price: priceParam ? Number.parseFloat(priceParam) : 0,
-    })
+      // Set seller information for subscription
+      setSeller({
+        id: 1,
+        name: "Online Home Services",
+        rating: 5,
+        reviews: 823.2,
+        location: "Cebu City Branches",
+        price: priceParam ? Number.parseFloat(priceParam) : 0,
+      })
 
-    // Set total amount from price parameter
-    if (priceParam) {
-      setTotalAmount(Number.parseFloat(priceParam))
+      // Set total amount from price parameter
+      if (priceParam) {
+        setTotalAmount(Number.parseFloat(priceParam))
+      }
     }
-  }, [location])
+    // Handle booking data from location state
+    else if (bookingData || sellerData) {
+      // This is a booking payment transaction
+      setTransactionType("booking")
+
+      if (bookingData) {
+        // Set booking details
+        setBookingDetails(bookingData)
+        setPlanName(bookingData.serviceName || "Service Booking")
+        setTotalAmount(bookingData.total || 0)
+
+        // Set booking ID if available
+        if (bookingData.id) {
+          setBookingId(bookingData.id)
+        }
+      }
+
+      // Set seller information from state
+      if (sellerData) {
+        setSeller(sellerData)
+
+        // If we have seller price but no total amount yet
+        if (sellerData.price && !totalAmount) {
+          setTotalAmount(sellerData.price)
+        }
+
+        // Set booking ID if available
+        if (sellerData.id && !bookingId) {
+          setBookingId(sellerData.id)
+        }
+      }
+    }
+  }, [location, totalAmount, previousPage, bookingId])
 
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method)
@@ -116,24 +223,96 @@ function Transaction() {
       setIsProcessing(false)
       setIsComplete(true)
 
-      // Redirect with the upgraded tier parameter
+      // Update booking status to ongoing after payment
+      if (transactionType === "booking") {
+        setBookingStatus("ongoing")
+      }
+
+      // Set success message based on transaction type
+      if (transactionType === "subscription") {
+        setSuccessMessage(`You've successfully subscribed to the ${planName} plan!`)
+      } else {
+        setSuccessMessage("Payment completed successfully! Your booking has been confirmed.")
+      }
+
+      // Show success modal
+      setIsSuccessModalOpen(true)
+    }, 2000)
+  }
+
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false)
+
+    // Handle different redirect logic based on transaction type
+    if (transactionType === "subscription") {
+      // For subscription: redirect with the upgraded tier parameter
       const urlParams = new URLSearchParams(window.location.search)
       const planParam = urlParams.get("plan")
 
       if (planParam) {
-        // In a real app with React Router:
-        // navigate(`${redirectUrl}?upgradedTier=${planParam}`)
-
-        // For this example:
         window.location.href = `${redirectUrl}?upgradedTier=${planParam}`
       } else {
-        // In a real app with React Router:
-        // navigate(redirectUrl)
-
-        // For this example:
         window.location.href = redirectUrl
       }
-    }, 2000)
+    } else {
+      // For booking: use localStorage to communicate with the floating dock
+
+      // Store booking information in localStorage
+      const bookingInfo = {
+        id: bookingId,
+        status: "ongoing",
+        paymentComplete: true,
+        timestamp: new Date().getTime(),
+      }
+
+      localStorage.setItem("recentBookingPayment", JSON.stringify(bookingInfo))
+
+      // Also set a flag to open the bookings drawer
+      localStorage.setItem("openBookingsDrawer", "true")
+
+      // Set a flag to indicate the booking status should be updated
+      localStorage.setItem(
+        "updateBookingStatus",
+        JSON.stringify({
+          id: bookingId,
+          status: "ongoing",
+        }),
+      )
+
+      // Redirect to home page
+      window.location.href = "/"
+    }
+  }
+
+  const handleTrackProvider = () => {
+    // Close the modal
+    setIsSuccessModalOpen(false)
+
+    // Store tracking information in localStorage
+    const trackingInfo = {
+      id: bookingId,
+      status: "ongoing",
+      paymentComplete: true,
+      trackProvider: true,
+      timestamp: new Date().getTime(),
+    }
+
+    localStorage.setItem("recentBookingPayment", JSON.stringify(trackingInfo))
+
+    // Set a flag to open the bookings drawer
+    localStorage.setItem("openBookingsDrawer", "true")
+
+    // Set a flag to indicate the booking status should be updated
+    localStorage.setItem(
+      "updateBookingStatus",
+      JSON.stringify({
+        id: bookingId,
+        status: "ongoing",
+      }),
+    )
+
+    // Redirect to home page
+    window.location.href = "/"
   }
 
   const goBack = () => {
@@ -142,6 +321,9 @@ function Transaction() {
 
   return (
     <div className="min-h-screen bg-white/90 text-black">
+      {/* Include animation keyframes */}
+      <style>{keyframes}</style>
+
       {/* Floating Dock - Now at the top */}
       <div className="sticky z-40 flex">
         <MyFloatingDockCustomer />
@@ -154,7 +336,9 @@ function Transaction() {
         </button>
 
         <div className="bg-gray-200/70 rounded-2xl p-8">
-          <h1 className="text-2xl font-bold mb-8 text-gray-700">Complete Your Transaction</h1>
+          <h1 className="text-2xl font-bold mb-8 text-gray-700">
+            {transactionType === "subscription" ? "Complete Your Subscription" : "Complete Your Payment"}
+          </h1>
 
           {seller ? (
             <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
@@ -187,10 +371,34 @@ function Transaction() {
           {/* Total Payment Section */}
           <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">Payment Summary</h2>
-            <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
-              <p className="text-gray-700">{planName} Subscription (Monthly)</p>
-              <p className="text-gray-800 font-medium">${totalAmount.toFixed(2)}</p>
-            </div>
+
+            {transactionType === "subscription" ? (
+              <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+                <p className="text-gray-700">{planName} Subscription (Monthly)</p>
+                <p className="text-gray-800 font-medium">${totalAmount.toFixed(2)}</p>
+              </div>
+            ) : bookingDetails ? (
+              <>
+                <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+                  <p className="text-gray-700">{planName}</p>
+                  <p className="text-gray-800 font-medium">
+                    ${bookingDetails.price?.toFixed(2) || totalAmount.toFixed(2)}
+                  </p>
+                </div>
+                {bookingDetails.distanceCharge && (
+                  <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+                    <p className="text-gray-700">Distance Charge</p>
+                    <p className="text-gray-800 font-medium">${bookingDetails.distanceCharge.toFixed(2)}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+                <p className="text-gray-700">Service Fee</p>
+                <p className="text-gray-800 font-medium">${totalAmount.toFixed(2)}</p>
+              </div>
+            )}
+
             <div className="flex justify-between items-center">
               <p className="text-gray-700 font-bold">Total Amount</p>
               <p className="text-xl text-gray-800 font-bold">${totalAmount.toFixed(2)}</p>
@@ -391,6 +599,56 @@ function Transaction() {
           </form>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {isSuccessModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          style={{ animation: "fadeIn 0.3s ease-out" }}
+        >
+          <div
+            className="mx-auto max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl transform transition-all border border-white/20 p-6"
+            style={{ animation: "fadeIn 0.5s ease-out" }}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div
+                className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6"
+                style={{ animation: "pulse 2s ease-in-out infinite" }}
+              >
+                <CheckCircle2 className="h-10 w-10 text-green-500" style={{ animation: "bounceIn 0.6s ease-out" }} />
+              </div>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-2" style={{ animation: "slideInUp 0.4s ease-out" }}>
+                Payment Successful!
+              </h3>
+
+              <p className="text-gray-600 mb-6" style={{ animation: "fadeIn 0.5s ease-out 0.2s both" }}>
+                {successMessage}
+              </p>
+
+              {transactionType === "booking" ? (
+                <button
+                  onClick={handleTrackProvider}
+                  className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all flex items-center"
+                  style={{ animation: "fadeIn 0.5s ease-out 0.3s both" }}
+                >
+                  <MapPin className="h-5 w-5 mr-2" />
+                  Track Provider
+                </button>
+              ) : (
+                <button
+                  onClick={handleSuccessModalClose}
+                  className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all"
+                  style={{ animation: "fadeIn 0.5s ease-out 0.3s both" }}
+                >
+                  Continue
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   )

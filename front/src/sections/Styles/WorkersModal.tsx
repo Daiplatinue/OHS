@@ -48,13 +48,11 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
   const [confirmationStep, setConfirmationStep] = useState<boolean>(false)
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [calendarDays, setCalendarDays] = useState<Date[]>([])
-  const [, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false)
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState<boolean>(false)
   const [selectedCompany, setSelectedCompany] = useState<any>(null)
 
   const mapRef = useRef<L.Map | null>(null)
-  const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const markerRef = useRef<L.Marker | null>(null)
   const companyMarkerRef = useRef<L.Marker | null>(null)
   const lineRef = useRef<L.Polyline | null>(null)
@@ -103,37 +101,10 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
     }
   }, [bookingStep, selectedSeller, bookingSuccess, confirmationStep])
 
-  // Initialize map when component mounts and bookingStep is 2
+  // Initialize map when component mounts and bookingStep is 2 AND a location is selected
   useEffect(() => {
-    if (bookingStep === 2 && mapContainerRef.current && !mapRef.current) {
-      // Get user's current location
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords
-            setUserLocation({ lat: latitude, lng: longitude })
-
-            initializeMap(latitude, longitude)
-          },
-          (error) => {
-            console.error("Error getting location:", error)
-            // Default to company location if user location is not available
-            initializeMap(COMPANY_LOCATION.lat, COMPANY_LOCATION.lng)
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
-          },
-        )
-      } else {
-        // Default to company location if geolocation is not supported
-        initializeMap(COMPANY_LOCATION.lat, COMPANY_LOCATION.lng)
-      }
-    }
-
     return () => {
-      if (mapRef.current && bookingStep !== 2) {
+      if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null
         markerRef.current = null
@@ -143,123 +114,8 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
     }
   }, [bookingStep])
 
-  const initializeMap = (lat: number, lng: number) => {
-    if (!mapContainerRef.current) return
 
-    // Create custom marker icons
-    const userIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      shadowSize: [41, 41],
-    })
-
-    const companyIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      shadowSize: [41, 41],
-    })
-
-    // Initialize map
-    const map = L.map(mapContainerRef.current, {
-      center: [lat, lng],
-      zoom: 13,
-      attributionControl: true,
-    })
-
-    // Add OpenStreetMap tiles with CORS-friendly URL
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      crossOrigin: "anonymous",
-      maxZoom: 19,
-    }).addTo(map)
-
-    // Force a resize after initialization to ensure proper rendering
-    setTimeout(() => {
-      map.invalidateSize()
-    }, 100)
-
-    // Add user marker
-    const marker = L.marker([lat, lng], { draggable: true, icon: userIcon })
-      .addTo(map)
-      .bindPopup("Your location")
-      .openPopup()
-
-    // Add company marker
-    const companyMarker = L.marker([COMPANY_LOCATION.lat, COMPANY_LOCATION.lng], { icon: companyIcon })
-      .addTo(map)
-      .bindPopup(COMPANY_LOCATION.name)
-
-    // Draw line between markers
-    const line = L.polyline(
-      [
-        [lat, lng],
-        [COMPANY_LOCATION.lat, COMPANY_LOCATION.lng],
-      ],
-      {
-        color: "blue",
-        weight: 3,
-        opacity: 0.7,
-        dashArray: "5, 10",
-      },
-    ).addTo(map)
-
-    // Calculate distance and update selected location
-    const distance = calculateDistance(lat, lng, COMPANY_LOCATION.lat, COMPANY_LOCATION.lng)
-    updateSelectedLocation(lat, lng, distance)
-
-    // Handle marker drag events
-    marker.on("dragend", () => {
-      const position = marker.getLatLng()
-
-      // Update line
-      line.setLatLngs([
-        [position.lat, position.lng],
-        [COMPANY_LOCATION.lat, COMPANY_LOCATION.lng],
-      ])
-
-      // Calculate new distance
-      const newDistance = calculateDistance(position.lat, position.lng, COMPANY_LOCATION.lat, COMPANY_LOCATION.lng)
-
-      // Update selected location
-      updateSelectedLocation(position.lat, position.lng, newDistance)
-    })
-
-    // Handle map click events
-    map.on("click", (e) => {
-      const { lat, lng } = e.latlng
-
-      // Update marker position
-      marker.setLatLng([lat, lng])
-
-      // Update line
-      line.setLatLngs([
-        [lat, lng],
-        [COMPANY_LOCATION.lat, COMPANY_LOCATION.lng],
-      ])
-
-      // Calculate new distance
-      const newDistance = calculateDistance(lat, lng, COMPANY_LOCATION.lat, COMPANY_LOCATION.lng)
-
-      // Update selected location
-      updateSelectedLocation(lat, lng, newDistance)
-    })
-
-    // Save references
-    mapRef.current = map
-    markerRef.current = marker
-    companyMarkerRef.current = companyMarker
-    lineRef.current = line
-  }
-
-  // Fix Leaflet default icon issue
   useEffect(() => {
-    // This is needed to fix the Leaflet default icon issue
     delete (L.Icon.Default.prototype as any)._getIconUrl
 
     L.Icon.Default.mergeOptions({
@@ -268,58 +124,6 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
       shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
     })
   }, [])
-
-  const updateSelectedLocation = (lat: number, lng: number, distance: number) => {
-    // Reverse geocode to get address
-    reverseGeocode(lat, lng).then((name) => {
-      setSelectedLocation({
-        name: name || "Selected Location",
-        lat,
-        lng,
-        distance: Math.round(distance * 10) / 10, // Round to 1 decimal place
-      })
-
-      // Update total rate if seller is selected
-      if (selectedSeller) {
-        const newTotalRate = selectedSeller.startingRate + distance * selectedSeller.ratePerKm
-        setTotalRate(newTotalRate)
-      }
-    })
-  }
-
-  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
-      )
-      const data = await response.json()
-
-      if (data && data.display_name) {
-        // Extract a shorter version of the address
-        const parts = data.display_name.split(",")
-        return parts.slice(0, 3).join(", ")
-      }
-
-      return "Unknown location"
-    } catch (error) {
-      console.error("Error reverse geocoding:", error)
-      return "Unknown location"
-    }
-  }
-
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    // Haversine formula to calculate distance between two points on Earth
-    const R = 6371 // Radius of the Earth in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180
-    const dLon = ((lon2 - lon1) * Math.PI) / 180
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    const distance = R * c // Distance in km
-
-    return distance
-  }
 
   if (!isOpen) return null
 
@@ -383,10 +187,6 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
     const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
     setSelectedDate(formattedDate)
     setBookingStep(2)
-    // Remove the automatic opening of the location modal
-    // setTimeout(() => {
-    //   openLocationModal()
-    // }, 100)
   }
 
   const handleBookNow = () => {
@@ -694,10 +494,6 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                   <MapPin className="h-4 w-4 mr-2 text-sky-600" /> Select your service location
                 </h4>
 
-                {/* Map container */}
-                <div ref={mapContainerRef} className="h-64 rounded-lg mb-4"></div>
-
-                {/* Selected location info */}
                 {selectedLocation ? (
                   <div className="mt-4 p-4 bg-sky-50 rounded-lg border border-sky-100 mb-4">
                     <h4 className="font-medium mb-2">Selected Location</h4>
@@ -722,31 +518,33 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                       <div className="flex justify-between font-medium text-lg">
                         <span>Total:</span>
                         <span>
-                          ₱{totalRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₱
+                          {totalRate.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                         </span>
                       </div>
                     </div>
+
+                    {/* Button to change location */}
+                    <div className="flex justify-center mt-4">
+                      <button
+                        onClick={openLocationModal}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                      >
+                        Change Location
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4 text-center">
-                    <p className="text-gray-600">No location selected yet.</p>
+                  <div className="mt-4 p-8 bg-gray-50 rounded-lg border border-gray-200 mb-4 text-center">
+                    <p className="text-gray-600 mb-4">Please select a location to continue with your booking.</p>
                     <button
                       onClick={openLocationModal}
-                      className="mt-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
+                      className="px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
                     >
                       Select Location
-                    </button>
-                  </div>
-                )}
-
-                {/* Button to change location if already selected */}
-                {selectedLocation && (
-                  <div className="flex justify-center">
-                    <button
-                      onClick={openLocationModal}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                    >
-                      Change Location
                     </button>
                   </div>
                 )}
@@ -914,6 +712,7 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
           onClose={closeLocationModal}
           onSelectLocation={selectLocation}
           companyLocation={COMPANY_LOCATION}
+          previousLocation={selectedLocation}
         />
       )}
       {isCompanyModalOpen && (

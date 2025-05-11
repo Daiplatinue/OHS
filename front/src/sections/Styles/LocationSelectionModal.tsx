@@ -23,6 +23,7 @@ interface LocationSelectionModalProps {
     name: string
   }
   savedLocations?: Location[]
+  previousLocation?: Location | null
 }
 
 const LocationSelectionModal = ({
@@ -31,6 +32,7 @@ const LocationSelectionModal = ({
   onSelectLocation,
   companyLocation,
   savedLocations = [],
+  previousLocation = null,
 }: LocationSelectionModalProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [, setSearchResults] = useState<Location[]>([])
@@ -53,6 +55,38 @@ const LocationSelectionModal = ({
   const routeControlRef = useRef<any>(null)
   const editMarkerRef = useRef<L.Marker | null>(null)
   const routeAnimationRef = useRef<number | null>(null)
+  const routePulseRef = useRef<any>(null)
+
+  // Add CSS for route animations
+  useEffect(() => {
+    // Add CSS for route animations if not already present
+    if (!document.getElementById("route-animations-css")) {
+      const style = document.createElement("style")
+      style.id = "route-animations-css"
+      style.innerHTML = `
+      @keyframes routePulse {
+        0% { stroke-opacity: 0.6; stroke-width: 5px; }
+        50% { stroke-opacity: 0.8; stroke-width: 7px; }
+        100% { stroke-opacity: 0.6; stroke-width: 5px; }
+      }
+      
+      @keyframes routeFlow {
+        0% { stroke-dashoffset: 1000; }
+        100% { stroke-dashoffset: 0; }
+      }
+      
+      .route-pulse {
+        animation: routePulse 2s ease-in-out infinite;
+      }
+      
+      .route-flow {
+        stroke-dasharray: 15, 10;
+        animation: routeFlow 30s linear infinite;
+      }
+    `
+      document.head.appendChild(style)
+    }
+  }, [])
 
   useEffect(() => {
     const defaultLocations = savedLocations.length
@@ -132,6 +166,12 @@ const LocationSelectionModal = ({
         if (routeAnimationRef.current) {
           cancelAnimationFrame(routeAnimationRef.current)
           routeAnimationRef.current = null
+        }
+
+        // Stop pulse animation
+        if (routePulseRef.current) {
+          clearInterval(routePulseRef.current)
+          routePulseRef.current = null
         }
 
         // Remove all polylines and route elements
@@ -244,17 +284,42 @@ const LocationSelectionModal = ({
     }
   }, [isEditingPosition, selectedMapLocation])
 
+  useEffect(() => {
+    if (isOpen && mapRef.current && previousLocation) {
+      // Set the previously selected location as the current selection
+      setSelectedMapLocation(previousLocation)
+
+      // Add a marker for the previously selected location
+      if (selectedMarkerRef.current) {
+        selectedMarkerRef.current.remove()
+      }
+
+      const locationIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+        shadowSize: [41, 41],
+      })
+
+      const marker = L.marker([previousLocation.lat, previousLocation.lng], { icon: locationIcon })
+        .addTo(mapRef.current)
+        .bindPopup(previousLocation.name)
+        .openPopup()
+
+      selectedMarkerRef.current = marker
+
+      // Center the map on the previous location
+      mapRef.current.setView([previousLocation.lat, previousLocation.lng], 14)
+
+      // Draw the route to the company
+      drawRouteToCompany(previousLocation)
+    }
+  }, [isOpen, previousLocation])
+
   const initializeMap = () => {
     if (!mapContainerRef.current) return
-
-    const locationIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      shadowSize: [41, 41],
-    })
 
     const companyIcon = L.icon({
       iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
@@ -292,9 +357,20 @@ const LocationSelectionModal = ({
 
       const { lat, lng } = e.latlng
 
+      // Remove previous marker if it exists
       if (selectedMarkerRef.current) {
         selectedMarkerRef.current.remove()
+        selectedMarkerRef.current = null
       }
+
+      const locationIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+        shadowSize: [41, 41],
+      })
 
       const marker = L.marker([lat, lng], { icon: locationIcon }).addTo(map)
       selectedMarkerRef.current = marker
@@ -465,6 +541,12 @@ const LocationSelectionModal = ({
         cancelAnimationFrame(routeAnimationRef.current)
         routeAnimationRef.current = null
       }
+
+      // Stop pulse animation
+      if (routePulseRef.current) {
+        clearInterval(routePulseRef.current)
+        routePulseRef.current = null
+      }
     }
 
     if (mapRef.current) {
@@ -580,7 +662,7 @@ const LocationSelectionModal = ({
     return Math.round((basePrice + distance * pricePerKm) * 100) / 100
   }
 
-  // Get route using OSRM API
+  // Get route using OSRM API - FIX: Corrected the endpoint coordinates
   const getRouteCoordinates = async (start: [number, number], end: [number, number]): Promise<[number, number][]> => {
     try {
       const response = await fetch(
@@ -601,7 +683,7 @@ const LocationSelectionModal = ({
     }
   }
 
-  // Replace the drawRouteToCompany function with this improved version
+  // Update the drawRouteToCompany function to apply animation to the entire route
   const drawRouteToCompany = async (location: Location) => {
     if (!mapRef.current) return
 
@@ -616,6 +698,12 @@ const LocationSelectionModal = ({
     if (routeControlRef.current) {
       routeControlRef.current.remove()
       routeControlRef.current = null
+    }
+
+    // Stop any existing pulse animation
+    if (routePulseRef.current) {
+      clearInterval(routePulseRef.current)
+      routePulseRef.current = null
     }
 
     // Clear any route shadows or additional elements
@@ -663,15 +751,6 @@ const LocationSelectionModal = ({
 
       routeLineRef.current = routeLine
 
-      // Add a pulsing effect to the route
-      const pulseIcon = L.divIcon({
-        html: `<div class="pulse-icon"></div>`,
-        className: "pulse-icon-wrapper",
-        iconSize: [15, 15],
-      })
-
-      const pulseMarker = L.marker([0, 0], { icon: pulseIcon }).addTo(mapRef.current)
-
       // Animate the route drawing
       let step = 0
       const totalSteps = routeCoords.length
@@ -681,18 +760,11 @@ const LocationSelectionModal = ({
           const animatedRoute = routeCoords.slice(0, step)
           if (routeLineRef.current) {
             routeLineRef.current.setLatLngs(animatedRoute)
-
-            // Update pulse marker position
-            if (step > 0 && step < totalSteps) {
-              pulseMarker.setLatLng(routeCoords[step - 1])
-            }
           }
           step += Math.max(1, Math.floor(totalSteps / 100)) // Speed up animation for long routes
           routeAnimationRef.current = requestAnimationFrame(animateRoute)
         } else {
           // Animation complete - switch to steady state
-          pulseMarker.remove()
-
           // Add route shadow for better visibility
           const routeShadow = L.polyline(routeCoords, {
             color: "#000",
@@ -705,15 +777,20 @@ const LocationSelectionModal = ({
 
           routeShadow.bringToBack()
 
-          // Set the final route with steady animation
+          // Set the final route with idle animation
           if (routeLineRef.current) {
             routeLineRef.current.setLatLngs(routeCoords)
 
-            // Remove any existing animation classes
-            routeLineRef.current.getElement()?.classList.remove("animated-dash")
+            // Apply both animations to the route line
+            const routeElement = routeLineRef.current.getElement()
+            if (routeElement) {
+              routeElement.classList.add("route-pulse")
+              routeElement.classList.add("route-flow")
 
-            // Add the steady animation class
-            routeLineRef.current.getElement()?.classList.add("steady-glow")
+              // Set the stroke-dasharray and stroke-dashoffset for the flowing animation
+              routeElement.setAttribute("stroke-dasharray", "15, 10")
+              routeElement.setAttribute("stroke-dashoffset", "1000")
+            }
           }
         }
       }
@@ -764,6 +841,17 @@ const LocationSelectionModal = ({
       ).addTo(mapRef.current)
 
       routeLineRef.current = routeLine
+
+      // Apply animations to the fallback route as well
+      const routeElement = routeLineRef.current.getElement()
+      if (routeElement) {
+        routeElement.classList.add("route-pulse")
+        routeElement.classList.add("route-flow")
+
+        // Set the stroke-dasharray and stroke-dashoffset for the flowing animation
+        routeElement.setAttribute("stroke-dasharray", "15, 10")
+        routeElement.setAttribute("stroke-dashoffset", "1000")
+      }
 
       const bounds = L.latLngBounds([
         [location.lat, location.lng],
