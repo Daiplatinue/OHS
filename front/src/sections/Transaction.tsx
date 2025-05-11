@@ -232,7 +232,7 @@ function Transaction() {
       if (transactionType === "subscription") {
         setSuccessMessage(`You've successfully subscribed to the ${planName} plan!`)
       } else {
-        setSuccessMessage("Payment completed successfully! Your booking has been confirmed.")
+        setSuccessMessage("Payment completed successfully! You can now view your provider's location.")
       }
 
       // Show success modal

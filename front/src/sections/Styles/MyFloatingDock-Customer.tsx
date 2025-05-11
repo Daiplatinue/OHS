@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Home,
@@ -24,8 +24,11 @@ import {
   ArrowUpRight,
   Coffee,
   MapPin,
+  CheckSquare,
+  Star,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import ProviderTrackingMap from "./ProviderTrackingMap"
 
 interface DockItemProps {
   icon: React.ReactNode
@@ -124,18 +127,33 @@ interface Booking {
   price: number
   image: string
   paymentComplete?: boolean
+  providerArrived?: boolean
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState<number>(30)
   const [status, setStatus] = useState(booking.status)
-  const [paymentComplete, ] = useState(booking.paymentComplete || false)
+  const [paymentComplete] = useState(booking.paymentComplete || false)
+  const [showTrackingModal, setShowTrackingModal] = useState(false)
+  const [isLoadingMap, setIsLoadingMap] = useState(false)
+  const [providerArrived, setProviderArrived] = useState(booking.providerArrived || false)
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [reviewRating, setReviewRating] = useState<number | null>(null)
+  const [reviewText, setReviewText] = useState("")
+
+  const providerMarkerRef = useRef<any>(null)
+  const customerLocation = { lat: 14.5995, lng: 120.9842 }
+  const currentPointIndexRef = useRef<number>(0)
+  const [providerStatus, setProviderStatus] = useState<"driving" | "stopped">("driving")
+  const [arrivalTime, setArrivalTime] = useState<Date | null>(null)
 
   useEffect(() => {
     let timer: NodeJS.Timeout
 
-    if (status === "ongoing") {
+    // Only start the timer if status is ongoing AND we're not in "Track Service" mode
+    if (status === "ongoing" && !paymentComplete) {
       timer = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
@@ -151,7 +169,32 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
     return () => {
       if (timer) clearInterval(timer)
     }
-  }, [status])
+  }, [status, paymentComplete])
+
+  // Check for provider arrival
+  useEffect(() => {
+    const checkProviderArrival = () => {
+      const providerArrivedData = localStorage.getItem("providerArrived")
+      if (providerArrivedData) {
+        try {
+          const data = JSON.parse(providerArrivedData)
+          if (data.bookingId === booking.id) {
+            setProviderArrived(true)
+          }
+        } catch (e) {
+          console.error("Error parsing provider arrival data", e)
+        }
+      }
+    }
+
+    // Check immediately
+    checkProviderArrival()
+
+    // Set up interval to check periodically
+    const intervalId = setInterval(checkProviderArrival, 2000)
+
+    return () => clearInterval(intervalId)
+  }, [booking.id])
 
   const handleCompletePayment = () => {
     // Create seller information from the booking data
@@ -169,8 +212,59 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   }
 
   const handleTrackProvider = () => {
-    // Navigate to tracking page with booking ID
-    navigate(`/track-provider?bookingId=${booking.id}`)
+    // Show loading state
+    setIsLoadingMap(true)
+
+    // Show tracking modal after a short delay to simulate loading
+    setTimeout(() => {
+      setShowTrackingModal(true)
+      setIsLoadingMap(false)
+    }, 500)
+  }
+
+  const handleCompleteService = () => {
+    // Show review modal instead of immediately completing
+    setShowReviewModal(true)
+  }
+
+  const handleReviewSubmit = () => {
+    // Hide review modal and show success modal
+    setShowReviewModal(false)
+    setShowSuccessModal(true)
+
+    // Store review data if needed
+    localStorage.setItem(
+      "serviceReview",
+      JSON.stringify({
+        id: booking.id,
+        timestamp: new Date().getTime(),
+        rating: reviewRating,
+        text: reviewText,
+      }),
+    )
+  }
+
+  const handleSuccessConfirm = () => {
+    // Hide success modal
+    setShowSuccessModal(false)
+
+    // Update booking status to completed
+    setStatus("completed")
+
+    // Store completion in localStorage
+    localStorage.setItem(
+      "serviceCompleted",
+      JSON.stringify({
+        id: booking.id,
+        timestamp: new Date().getTime(),
+      }),
+    )
+
+    // Clear provider arrived flag
+    localStorage.removeItem("providerArrived")
+
+    // Close the tracking modal if it's open
+    setShowTrackingModal(false)
   }
 
   const getStatusBadge = () => {
@@ -194,6 +288,13 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
           <div className="flex items-center gap-1 text-rose-600 bg-rose-50 px-2 py-1 rounded-full text-xs font-medium">
             <XCircleIcon className="w-3 h-3" />
             Cancelled
+          </div>
+        )
+      case "completed":
+        return (
+          <div className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded-full text-xs font-medium">
+            <CheckSquare className="w-3 h-3" />
+            Completed
           </div>
         )
       default:
@@ -222,25 +323,47 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
       case "ongoing":
         return (
           <div className="mt-4 space-y-2">
-            <div
-              className={`flex items-center justify-between ${
-                timeLeft > 20
-                  ? "bg-emerald-50 text-emerald-700"
-                  : timeLeft > 10
-                    ? "bg-amber-50 text-amber-700"
-                    : "bg-rose-50 text-rose-700"
-              } rounded-lg px-3 py-1.5`}
-            >
-              <Clock className="w-4 h-4" />
-              <span className="text-sm font-medium">{timeLeft}s</span>
-            </div>
-            {paymentComplete ? (
+            {/* Only show timer when not in Track Service mode */}
+            {!paymentComplete && !providerArrived && (
+              <div
+                className={`flex items-center justify-between ${
+                  timeLeft > 20
+                    ? "bg-emerald-50 text-emerald-700"
+                    : timeLeft > 10
+                      ? "bg-amber-50 text-amber-700"
+                      : "bg-rose-50 text-rose-700"
+                } rounded-lg px-3 py-1.5`}
+              >
+                <Clock className="w-4 h-4" />
+                <span className="text-sm font-medium">{timeLeft}s</span>
+              </div>
+            )}
+
+            {providerArrived ? (
+              <button
+                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                onClick={handleCompleteService}
+              >
+                <CheckSquare className="w-4 h-4" />
+                Complete Service
+              </button>
+            ) : paymentComplete ? (
               <button
                 className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
                 onClick={handleTrackProvider}
+                disabled={isLoadingMap}
               >
-                <MapPin className="w-4 h-4" />
-                Track Service
+                {isLoadingMap ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Loading Map...
+                  </>
+                ) : (
+                  <>
+                    <MapPin className="w-4 h-4" />
+                    Track Service
+                  </>
+                )}
               </button>
             ) : (
               <button
@@ -248,7 +371,7 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
                 onClick={handleCompletePayment}
               >
                 <ArrowUpRight className="w-4 h-4" />
-                Complete Payment
+                Manage Payment
               </button>
             )}
           </div>
@@ -260,9 +383,21 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
             Book Again
           </button>
         )
+      case "completed":
+        return (
+          <button className="flex items-center gap-1 px-4 py-2 mt-4 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors w-full justify-center">
+            <RotateCcw className="w-4 h-4" />
+            Book Again
+          </button>
+        )
       default:
         return null
     }
+  }
+
+  // Define onProviderArrived here
+  const onProviderArrived = () => {
+    setProviderArrived(true)
   }
 
   return (
@@ -289,6 +424,205 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 
         {getActionButtons()}
       </div>
+
+      {/* Tracking Modal */}
+      <AnimatePresence>
+        {showTrackingModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowTrackingModal(false)}
+            />
+            <motion.div
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-5 shadow-xl z-50 w-[90%] max-w-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Service Provider Tracking</h3>
+                <button
+                  onClick={() => setShowTrackingModal(false)}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <ProviderTrackingMap
+                providerName={booking.companyName}
+                bookingId={booking.id}
+                customerLocation={customerLocation} // Manila coordinates as example
+                providerLocation={{ lat: 14.5547, lng: 121.0244 }} // Makati coordinates as example
+                onProviderArrived={() => {
+                  // Only update the state, don't close the modal
+                  setProviderArrived(true)
+                }}
+              />
+
+              <div className="mt-4 flex justify-end">
+                {providerArrived ? (
+                  <button
+                    onClick={handleCompleteService}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    Complete
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      // Create a custom event that the ProviderTrackingMap component can listen for
+                      const arrivalEvent = new CustomEvent("providerForceArrival", {
+                        detail: { bookingId: booking.id },
+                      })
+                      window.dispatchEvent(arrivalEvent)
+
+                      // Also update our local state
+                      setProviderArrived(true)
+
+                      // Store in localStorage to persist the state
+                      localStorage.setItem(
+                        "providerArrived",
+                        JSON.stringify({
+                          bookingId: booking.id,
+                          providerName: booking.companyName,
+                          timestamp: new Date().getTime(),
+                        }),
+                      )
+                    }}
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    Complete Simulation
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Review Modal */}
+      <AnimatePresence>
+        {showReviewModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowReviewModal(false)}
+            />
+            <motion.div
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-5 shadow-xl z-50 w-[90%] max-w-md"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Rate Your Service</h3>
+                <button
+                  onClick={() => setShowReviewModal(false)}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="flex justify-center mb-4">
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={`review-rating-${rating}`}
+                      onClick={() => setReviewRating(rating)}
+                      className="focus:outline-none"
+                    >
+                      <Star
+                        className={`h-8 w-8 ${
+                          reviewRating !== null && rating <= reviewRating
+                            ? "text-amber-500 fill-amber-500"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
+                  Share your experience (optional)
+                </label>
+                <textarea
+                  id="review"
+                  className="w-full p-3 border rounded-md text-sm"
+                  rows={3}
+                  placeholder="How was your experience with this service?"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
+                  onClick={() => setShowReviewModal(false)}
+                >
+                  Skip
+                </button>
+                <button
+                  className="px-4 py-2 bg-primary text-white rounded-lg"
+                  onClick={handleReviewSubmit}
+                  disabled={reviewRating === null}
+                >
+                  Submit Review
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            <motion.div
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-5 shadow-xl z-50 w-[90%] max-w-md"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                  <CheckCircle2 className="h-8 w-8 text-green-500" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">Service Completed Successfully!</h3>
+                <p className="text-gray-600 mb-4">
+                  Thank you for using our service. We hope you had a great experience!
+                </p>
+                <button
+                  onClick={handleSuccessConfirm}
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Confirm
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -425,6 +759,57 @@ const FloatingDock: React.FC = () => {
         localStorage.removeItem("recentBookingPayment") // Clear the data
       } catch (e) {
         console.error("Error parsing recent payment data", e)
+      }
+    }
+
+    // Check for provider arrival
+    const providerArrivedData = localStorage.getItem("providerArrived")
+    if (providerArrivedData) {
+      try {
+        const data = JSON.parse(providerArrivedData)
+
+        // Update the booking with provider arrival
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.id === data.bookingId
+              ? {
+                  ...booking,
+                  providerArrived: true,
+                }
+              : booking,
+          ),
+        )
+
+        // Open the drawer to show the Complete Service button
+        setShowDrawer(true)
+        setActiveTab("ongoing")
+      } catch (e) {
+        console.error("Error parsing provider arrival data", e)
+      }
+    }
+
+    // Check for service completion
+    const serviceCompletedData = localStorage.getItem("serviceCompleted")
+    if (serviceCompletedData) {
+      try {
+        const data = JSON.parse(serviceCompletedData)
+
+        // Update the booking status to completed
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.id === data.id
+              ? {
+                  ...booking,
+                  status: "completed",
+                  providerArrived: false,
+                }
+              : booking,
+          ),
+        )
+
+        localStorage.removeItem("serviceCompleted") // Clear the data
+      } catch (e) {
+        console.error("Error parsing service completion data", e)
       }
     }
 
@@ -641,6 +1026,16 @@ const FloatingDock: React.FC = () => {
                   >
                     Cancelled
                   </button>
+                  <button
+                    onClick={() => setActiveTab("completed")}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                      activeTab === "completed"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    Completed
+                  </button>
                 </div>
               </div>
 
@@ -672,7 +1067,7 @@ const FloatingDock: React.FC = () => {
               {/* Bookings List */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {displayedBookings.length > 0 ? (
-                  displayedBookings.map((booking) => <BookingCard key={booking.id} booking={booking} />)
+                  displayedBookings.map((booking) => <BookingCard key={`booking-${booking.id}`} booking={booking} />)
                 ) : (
                   <div className="flex flex-col items-center justify-center h-40 text-gray-500">
                     <Filter className="w-10 h-10 mb-2 opacity-50" />
