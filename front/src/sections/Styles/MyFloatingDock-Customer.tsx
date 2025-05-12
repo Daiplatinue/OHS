@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Home,
@@ -23,21 +23,60 @@ import {
   XCircleIcon,
   ArrowUpRight,
   Coffee,
-  MapPin,
   CheckSquare,
   Star,
+  MapPin,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import ProviderTrackingMap from "./ProviderTrackingMap"
+import NotificationPopup from "../Customer_Tabs/Notification"
+
+const WaitingForProviderState: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const [isWaiting, setIsWaiting] = useState(true)
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+
+    if (isWaiting) {
+      timer = setTimeout(() => {
+        setIsWaiting(false)
+      }, 10000)
+    }
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [isWaiting])
+
+  return (
+    <>
+      {isWaiting ? (
+        <div className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg">
+          <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+          Waiting for provider...
+        </div>
+      ) : (
+        <button
+          onClick={onComplete}
+          className="px-4 py-2 w-82 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+        >
+          <MapPin className="w-4 h-4 inline mr-1" />
+          Track Service
+        </button>
+      )}
+    </>
+  )
+}
 
 interface DockItemProps {
   icon: React.ReactNode
   to: string
   isActive: boolean
   onClick?: () => void
+  badge?: number
 }
 
-const DockItem: React.FC<DockItemProps> = ({ icon, to, isActive, onClick }) => {
+const DockItem: React.FC<DockItemProps> = ({ icon, to, isActive, onClick, badge }) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const handleClick = () => {
@@ -60,7 +99,25 @@ const DockItem: React.FC<DockItemProps> = ({ icon, to, isActive, onClick }) => {
           isActive ? "text-primary" : isHovered ? "text-primary/80" : "text-gray-400"
         }`}
       >
-        {icon}
+        {to === "/notification" ? (
+          <motion.div
+            animate={badge !== undefined && badge > 0 ? { rotate: [0, -5, 5, -5, 5, 0] } : {}}
+            transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
+            className="relative"
+          >
+            {icon}
+            {badge !== undefined && badge > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full ring-1 ring-white"
+                style={{ transform: "translate(30%, -30%)" }}
+              />
+            )}
+          </motion.div>
+        ) : (
+          icon
+        )}
       </div>
 
       {/* Label with animation */}
@@ -73,8 +130,8 @@ const DockItem: React.FC<DockItemProps> = ({ icon, to, isActive, onClick }) => {
           ? "Home"
           : to === "#" && onClick
             ? "Bookings"
-            : to === "/alerts"
-              ? "Alerts"
+            : to === "/notification"
+              ? "Notifications"
               : to === "/profile"
                 ? "Profile"
                 : to === "/news"
@@ -136,18 +193,14 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const [status, setStatus] = useState(booking.status)
   const [paymentComplete] = useState(booking.paymentComplete || false)
   const [showTrackingModal, setShowTrackingModal] = useState(false)
-  const [isLoadingMap, setIsLoadingMap] = useState(false)
+  const [, setIsLoadingMap] = useState(false)
   const [providerArrived, setProviderArrived] = useState(booking.providerArrived || false)
   const [showReviewModal, setShowReviewModal] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [reviewRating, setReviewRating] = useState<number | null>(null)
   const [reviewText, setReviewText] = useState("")
 
-  const providerMarkerRef = useRef<any>(null)
   const customerLocation = { lat: 14.5995, lng: 120.9842 }
-  const currentPointIndexRef = useRef<number>(0)
-  const [providerStatus, setProviderStatus] = useState<"driving" | "stopped">("driving")
-  const [arrivalTime, setArrivalTime] = useState<Date | null>(null)
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -215,11 +268,11 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
     // Show loading state
     setIsLoadingMap(true)
 
-    // Show tracking modal after a short delay to simulate loading
-    setTimeout(() => {
-      setShowTrackingModal(true)
-      setIsLoadingMap(false)
-    }, 500)
+    // Show tracking modal with waiting state
+    setShowTrackingModal(true)
+
+    // The loading state will be managed inside the tracking modal
+    setIsLoadingMap(false)
   }
 
   const handleCompleteService = () => {
@@ -292,7 +345,7 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
         )
       case "completed":
         return (
-          <div className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded-full text-xs font-medium">
+          <div className="flex items-center gap-1 text-sky-600 bg-sky-50 px-2 py-1 rounded-full text-xs font-medium">
             <CheckSquare className="w-3 h-3" />
             Completed
           </div>
@@ -341,30 +394,16 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 
             {providerArrived ? (
               <button
-                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors"
                 onClick={handleCompleteService}
               >
                 <CheckSquare className="w-4 h-4" />
                 Complete Service
               </button>
             ) : paymentComplete ? (
-              <button
-                className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
-                onClick={handleTrackProvider}
-                disabled={isLoadingMap}
-              >
-                {isLoadingMap ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Loading Map...
-                  </>
-                ) : (
-                  <>
-                    <MapPin className="w-4 h-4" />
-                    Track Service
-                  </>
-                )}
-              </button>
+              <div className="w-full">
+                <WaitingForProviderState onComplete={handleTrackProvider} />
+              </div>
             ) : (
               <button
                 className="w-full flex items-center justify-center gap-1 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
@@ -393,11 +432,6 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
       default:
         return null
     }
-  }
-
-  // Define onProviderArrived here
-  const onProviderArrived = () => {
-    setProviderArrived(true)
   }
 
   return (
@@ -468,10 +502,35 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
                 {providerArrived ? (
                   <button
                     onClick={handleCompleteService}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className="px-6 py-2.5 bg-sky-500 text-white rounded-full font-medium shadow-sm hover:bg-sky-600 active:scale-95 transition-all duration-200"
                   >
                     Complete
                   </button>
+                ) : paymentComplete ? (
+                  <div>
+                    <WaitingForProviderState
+                      onComplete={() => {
+                        // Create a custom event that the ProviderTrackingMap component can listen for
+                        const arrivalEvent = new CustomEvent("providerForceArrival", {
+                          detail: { bookingId: booking.id },
+                        })
+                        window.dispatchEvent(arrivalEvent)
+
+                        // Also update our local state
+                        setProviderArrived(true)
+
+                        // Store in localStorage to persist the state
+                        localStorage.setItem(
+                          "providerArrived",
+                          JSON.stringify({
+                            bookingId: booking.id,
+                            providerName: booking.companyName,
+                            timestamp: new Date().getTime(),
+                          }),
+                        )
+                      }}
+                    />
+                  </div>
                 ) : (
                   <button
                     onClick={() => {
@@ -494,7 +553,7 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
                         }),
                       )
                     }}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
                   >
                     Complete Simulation
                   </button>
@@ -510,56 +569,58 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
         {showReviewModal && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/30 backdrop-blur-md z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowReviewModal(false)}
             />
             <motion.div
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-5 shadow-xl z-50 w-[90%] max-w-md"
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl rounded-3xl p-6 shadow-xl z-50 w-[90%] max-w-md border border-white/20"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25 }}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Rate Your Service</h3>
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="text-xl font-semibold text-gray-800">Rate Your Service</h3>
                 <button
                   onClick={() => setShowReviewModal(false)}
-                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-gray-100/80 transition-colors"
                 >
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
 
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-6">
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((rating) => (
-                    <button
+                    <motion.button
                       key={`review-rating-${rating}`}
                       onClick={() => setReviewRating(rating)}
                       className="focus:outline-none"
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
                     >
                       <Star
-                        className={`h-8 w-8 ${
+                        className={`h-9 w-9 ${
                           reviewRating !== null && rating <= reviewRating
                             ? "text-amber-500 fill-amber-500"
                             : "text-gray-300"
                         }`}
                       />
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="mb-6">
+                <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-2">
                   Share your experience (optional)
                 </label>
                 <textarea
                   id="review"
-                  className="w-full p-3 border rounded-md text-sm"
+                  className="w-full p-4 border border-gray-200 rounded-2xl text-sm bg-gray-50/80 focus:ring-sky-500 focus:border-transparent focus:outline-none transition-all"
                   rows={3}
                   placeholder="How was your experience with this service?"
                   value={reviewText}
@@ -567,20 +628,26 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
                 ></textarea>
               </div>
 
-              <div className="flex justify-end gap-2">
-                <button
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
+              <div className="flex justify-end gap-3">
+                <motion.button
+                  className="px-6 py-2.5 bg-gray-200/80 text-gray-700 rounded-full font-medium"
                   onClick={() => setShowReviewModal(false)}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
                   Skip
-                </button>
-                <button
-                  className="px-4 py-2 bg-primary text-white rounded-lg"
+                </motion.button>
+                <motion.button
+                  className={`px-6 py-2.5 bg-sky-500 text-white rounded-full font-medium shadow-sm ${
+                    reviewRating === null ? "opacity-50 cursor-not-allowed" : "hover:bg-sky-600"
+                  }`}
                   onClick={handleReviewSubmit}
                   disabled={reviewRating === null}
+                  whileTap={reviewRating !== null ? { scale: 0.95 } : {}}
+                  transition={{ duration: 0.2 }}
                 >
                   Submit Review
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </>
@@ -592,32 +659,38 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
         {showSuccessModal && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/30 backdrop-blur-md z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
             <motion.div
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-5 shadow-xl z-50 w-[90%] max-w-md"
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl rounded-3xl p-6 shadow-xl z-50 w-[90%] max-w-md border border-white/20"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25 }}
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                  <CheckCircle2 className="h-8 w-8 text-green-500" />
-                </div>
-                <h3 className="text-xl font-medium text-gray-900 mb-2">Service Completed Successfully!</h3>
-                <p className="text-gray-600 mb-4">
+                <motion.div
+                  className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <CheckCircle2 className="h-10 w-10 text-green-500" />
+                </motion.div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Service Completed Successfully!</h3>
+                <p className="text-gray-600 mb-6">
                   Thank you for using our service. We hope you had a great experience!
                 </p>
-                <button
+                <motion.button
                   onClick={handleSuccessConfirm}
-                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-8 py-3 bg-sky-500 text-white rounded-full font-medium shadow-sm hover:bg-sky-600 transition-all duration-200"
+                  whileTap={{ scale: 0.95 }}
                 >
                   Confirm
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </>
@@ -627,6 +700,8 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   )
 }
 
+import type { NotificationItem } from "../Customer_Tabs/Notification"
+
 const FloatingDock: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -634,6 +709,7 @@ const FloatingDock: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [activeTab, setActiveTab] = useState("all")
   const [showDock, setShowDock] = useState(true)
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false)
   const [bookings, setBookings] = useState<Booking[]>([
     {
       id: 1,
@@ -696,6 +772,8 @@ const FloatingDock: React.FC = () => {
         "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     },
   ])
+
+  const [unreadNotifications, setUnreadNotifications] = useState(2) // Start with 2 unread notifications
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -870,6 +948,17 @@ const FloatingDock: React.FC = () => {
 
   const displayedBookings = showAllServices ? filteredBookings : filteredBookings.slice(0, 4)
 
+  // Handler for notification bell click
+  const handleNotificationClick = () => {
+    setShowNotificationPopup(!showNotificationPopup)
+  }
+
+  // Function to check if all notifications are read and update badge count
+  const updateNotificationBadge = (notifications: NotificationItem[]) => {
+    const unreadCount = notifications.filter((n) => !n.read).length
+    setUnreadNotifications(unreadCount)
+  }
+
   return (
     <AnimatePresence>
       {/* Toggle Button - Only visible when dock is hidden */}
@@ -884,16 +973,28 @@ const FloatingDock: React.FC = () => {
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
-          <motion.div
-            animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
-            transition={{
-              duration: 1.5,
-              repeat: Number.POSITIVE_INFINITY,
-              repeatDelay: 3,
-            }}
-          >
-            <Coffee className="w-5 h-5" />
-          </motion.div>
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
+              transition={{
+                duration: 1.5,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatDelay: 3,
+              }}
+            >
+              <Coffee className="w-5 h-5" />
+            </motion.div>
+
+            {/* Notification badge on hidden dock button */}
+            {unreadNotifications > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full ring-1 ring-white"
+                style={{ transform: "translate(30%, -30%)" }}
+              />
+            )}
+          </div>
         </motion.button>
       )}
 
@@ -913,7 +1014,43 @@ const FloatingDock: React.FC = () => {
             isActive={showDrawer}
             onClick={() => setShowDrawer(true)}
           />
-          <DockItem icon={<Bell size={20} strokeWidth={1.5} />} to="/alerts" isActive={false} />
+          <div className="relative">
+            <DockItem
+              icon={<Bell size={20} strokeWidth={1.5} className="bell-icon" />}
+              to="/notification"
+              isActive={showNotificationPopup}
+              onClick={handleNotificationClick}
+              badge={unreadNotifications}
+            />
+
+            {/* Notification Popup */}
+            <AnimatePresence>
+              {showNotificationPopup && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 350,
+                    damping: 25,
+                    mass: 0.5,
+                  }}
+                  className="absolute bottom-16 right-[-10.5rem] w-80 md:w-96 shadow-xl z-50"
+                  style={{
+                    transformOrigin: "bottom right",
+                    filter: "drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <NotificationPopup
+                    onClose={() => setShowNotificationPopup(false)}
+                    updateBadge={updateNotificationBadge}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <DockItem icon={<User size={20} strokeWidth={1.5} />} to="/profile" isActive={false} />
           <DockItem icon={<Newspaper size={20} strokeWidth={1.5} />} to="/news" isActive={false} />
           <DockItem icon={<MessageCircleMore size={20} strokeWidth={1.5} />} to="/chat" isActive={false} />
@@ -1030,7 +1167,7 @@ const FloatingDock: React.FC = () => {
                     onClick={() => setActiveTab("completed")}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
                       activeTab === "completed"
-                        ? "bg-blue-500 text-white"
+                        ? "bg-sky-500 text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >

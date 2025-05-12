@@ -7,8 +7,6 @@ import Transaction from './sections/Transaction';
 
 import ChatRTC from './sections/Styles/ChatRTC';
 
-import Notification from './sections/Customer_Tabs/Notification';
-
 import Admin from './sections/Admin';
 import Admin_Transaction from './sections/Admin_Tabs/Admin_Transactions';
 import AccountsTab from './sections/Admin_Tabs/AccountsTab';
@@ -27,6 +25,8 @@ import NewsCeo from './sections/Ceo_Tabs/NewsCeo';
 
 import Provider from './sections/Provider';
 
+import Proposition from './sections/Proposition';
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>
@@ -40,7 +40,6 @@ const App: React.FC = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/login-alt' element={<LoginAlt />} />
         <Route path='/transaction' element={<Transaction />} />
-        <Route path='/notification' element={<Notification />} />
 
         {/* Admin Tabs */}
         <Route path='/admin' element={<Admin />} />
@@ -62,6 +61,10 @@ const App: React.FC = () => {
 
         {/* Provider */}
         <Route path='/provider' element={<Provider />} />
+
+        {/* Proposition */}
+        <Route path='/proposition' element={<Proposition />} />
+        
 
       </Routes>
     </BrowserRouter>

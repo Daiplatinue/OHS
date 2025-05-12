@@ -629,16 +629,16 @@ function Transaction() {
               {transactionType === "booking" ? (
                 <button
                   onClick={handleTrackProvider}
-                  className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all flex items-center"
+                  className="px-8 py-3 bg-blue-500 text-white rounded-full font-medium shadow-sm hover:bg-blue-600 active:scale-95 transition-all duration-200 flex items-center gap-2"
                   style={{ animation: "fadeIn 0.5s ease-out 0.3s both" }}
                 >
-                  <MapPin className="h-5 w-5 mr-2" />
-                  Track Provider
+                  <MapPin className="h-5 w-5" />
+                  Track Service
                 </button>
               ) : (
                 <button
                   onClick={handleSuccessModalClose}
-                  className="px-6 py-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-all"
+                  className="px-8 py-3 bg-blue-500 text-white rounded-full font-medium shadow-sm hover:bg-blue-600 active:scale-95 transition-all duration-200"
                   style={{ animation: "fadeIn 0.5s ease-out 0.3s both" }}
                 >
                   Continue
