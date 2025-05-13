@@ -2,6 +2,7 @@ import { useState } from "react"
 import MyFloatingDockProvider from "../sections/Styles/MyFloatingDock-Provider"
 import { CircleIcon, Calendar, Clock, MapPin, AlertCircle, Check, X, CheckCircle2 } from "lucide-react"
 import { Dialog } from "@headlessui/react"
+import ProviderSimulation from "../sections/Styles/CustomerTrackingMap"
 
 import Footer from "../sections/Styles/Footer"
 
@@ -61,6 +62,8 @@ function ProviderDashboard() {
   const [cancelCount, setCancelCount] = useState(0)
   const [showSuspensionWarning, setShowSuspensionWarning] = useState(false)
   const [showCancelReminder, setShowCancelReminder] = useState(false)
+  const [showMapSimulation, setShowMapSimulation] = useState(false)
+  const [serviceBeingTracked, setServiceBeingTracked] = useState<Service | null>(null)
 
   const [pendingServices, setPendingServices] = useState<Service[]>([
     {
@@ -159,7 +162,7 @@ function ProviderDashboard() {
     },
   ])
 
-  const [completedServices, setCompletedServices] = useState<Service[]>([
+  const [completedServices] = useState<Service[]>([
     {
       id: 1,
       customerName: "Jennifer Lee",
@@ -223,39 +226,7 @@ function ProviderDashboard() {
       setIsLoading(false)
     }, 1500)
   }
-
-  const handleCompleteService = (serviceId: number) => {
-    setIsLoading(true)
-
-    setTimeout(() => {
-      const serviceToMove = ongoingServices.find((service) => service.id === serviceId)
-
-      if (serviceToMove) {
-        const today = new Date()
-        const formattedDate = `${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getDate().toString().padStart(2, "0")}/${today.getFullYear()}`
-
-        const updatedService = {
-          ...serviceToMove,
-          status: "completed" as const,
-          completedDate: formattedDate,
-        }
-
-        setOngoingServices((prev) => prev.filter((service) => service.id !== serviceId))
-        setCompletedServices((prev) => [...prev, updatedService])
-
-        setSuccessMessage("Service completed successfully! Customer and provider agreement is complete.")
-        setIsModalOpen(false)
-        setIsSuccessModalOpen(true)
-
-        setTimeout(() => {
-          setIsSuccessModalOpen(false)
-        }, 5000)
-      }
-
-      setIsLoading(false)
-    }, 5000)
-  }
-
+  
   const handleCancelService = (serviceId: number) => {
     setShowCancelReminder(true)
     setSelectedService(ongoingServices.find((service) => service.id === serviceId) || null)
@@ -302,6 +273,21 @@ function ProviderDashboard() {
     const diffTime = cancelDate.getTime() - today.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
+  }
+
+  const handleTrackService = (service: Service) => {
+    setServiceBeingTracked(service)
+    setShowMapSimulation(true)
+  }
+
+  const handleSimulationComplete = () => {
+    setShowMapSimulation(false)
+    setSuccessMessage("Service provider is on the way!")
+    setIsSuccessModalOpen(true)
+
+    setTimeout(() => {
+      setIsSuccessModalOpen(false)
+    }, 5000)
   }
 
   const renderPendingServicesTable = () => {
@@ -461,6 +447,7 @@ function ProviderDashboard() {
                 >
                   Status
                 </th>
+                {/* No Action column needed */}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -499,11 +486,12 @@ function ProviderDashboard() {
                         In Progress
                       </span>
                     </td>
+                    {/* No Action column needed */}
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-gray-500">
+                  <td colSpan={7} className="px-6 py-10 text-center text-sm text-gray-500">
                     No ongoing services found
                   </td>
                 </tr>
@@ -1038,44 +1026,13 @@ function ProviderDashboard() {
                           Cancel Service
                         </button>
                         <button
-                          onClick={() => handleCompleteService(selectedService.id)}
-                          disabled={isLoading}
-                          className={`flex-1 px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm ${
-                            isLoading
-                              ? "bg-green-400 cursor-wait"
-                              : "bg-green-500 hover:bg-green-600 shadow-lg shadow-green-200"
-                          }`}
+                          onClick={() => handleTrackService(selectedService)}
+                          className="flex-1 px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm bg-sky-500 hover:bg-sky-600 shadow-lg shadow-sky-200"
                         >
-                          {isLoading ? (
-                            <span className="flex items-center justify-center">
-                              <svg
-                                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                              </svg>
-                              Canceling...
-                            </span>
-                          ) : (
-                            <span className="flex items-center justify-center">
-                              <X className="h-4 w-4 mr-2" />
-                              Cancel Service
-                            </span>
-                          )}
+                          <span className="flex items-center justify-center">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            Track Customer
+                          </span>
                         </button>
                       </>
                     )}
@@ -1194,6 +1151,24 @@ function ProviderDashboard() {
           </Dialog.Panel>
         </div>
       </Dialog>
+
+      {/* Map Simulation Modal */}
+      {showMapSimulation && serviceBeingTracked && (
+        <Dialog open={showMapSimulation} onClose={() => {}} className="relative z-50">
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-md" aria-hidden="true" />
+
+          <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
+            <Dialog.Panel className="mx-auto max-w-5xl w-full h-[85vh] bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl transform transition-all border border-white/20">
+              <ProviderSimulation
+                customerName={serviceBeingTracked.customerName}
+                customerLocation={serviceBeingTracked.location}
+                onSimulationComplete={handleSimulationComplete}
+                onClose={() => setShowMapSimulation(false)}
+              />
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
 
       <Footer />
 

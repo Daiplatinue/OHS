@@ -61,7 +61,7 @@ const ProviderTrackingMap = forwardRef<ProviderTrackingMapRef, ProviderTrackingM
     const [providerRating, setProviderRating] = useState<number | null>(null)
     const [showReviewForm, setShowReviewForm] = useState(false)
     const [showThankYouMessage, setShowThankYouMessage] = useState(false)
-    const [isCompleted, setIsCompleted] = useState(false)
+    const [, setIsCompleted] = useState(false)
     const [reviewText, setReviewText] = useState("")
 
     const mapRef = useRef<L.Map | null>(null)
@@ -519,12 +519,6 @@ const ProviderTrackingMap = forwardRef<ProviderTrackingMapRef, ProviderTrackingM
         const distance = calculateDistance(from.lat, from.lng, to.lat, to.lng)
         const estimatedMinutes = Math.ceil((distance / 30) * 60)
         setEstimatedTime(estimatedMinutes)
-      }
-    }
-
-    const handleConfirmArrival = () => {
-      if (onProviderArrived) {
-        onProviderArrived()
       }
     }
 
