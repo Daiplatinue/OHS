@@ -26,6 +26,8 @@ import {
   CheckSquare,
   Star,
   MapPin,
+  Users,
+  FileText,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import ProviderTrackingMap from "./ProviderTrackingMap"
@@ -185,6 +187,14 @@ interface Booking {
   image: string
   paymentComplete?: boolean
   providerArrived?: boolean
+  workerCount?: number
+  serviceType?: string
+  location?: string
+  distance?: number
+  estimatedTime?: string
+  baseRate?: number
+  ratePerKm?: number
+  additionalFees?: number
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
@@ -199,6 +209,7 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [reviewRating, setReviewRating] = useState<number | null>(null)
   const [reviewText, setReviewText] = useState("")
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
 
   const customerLocation = { lat: 14.5995, lng: 120.9842 }
 
@@ -250,18 +261,43 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   }, [booking.id])
 
   const handleCompletePayment = () => {
+    // Store the current booking data in localStorage
+    localStorage.setItem("currentBookingDetails", JSON.stringify(booking))
+
     // Create seller information from the booking data
     const sellerInfo = {
       id: booking.id,
       name: booking.companyName,
-      rating: 4.5, // You can add a rating field to your booking interface if available
-      reviews: 24, // You can add a reviews field to your booking interface if available
-      location: "Local Service Provider", // You can add a location field to your booking interface if available
-      price: booking.price, // Pass the price to the transaction page
+      rating: 4.5,
+      reviews: 24,
+      location: booking.location || "Local Service Provider",
+      price: booking.price,
+      startingRate: booking.baseRate || booking.price - (booking.distance || 0) * (booking.ratePerKm || 0),
+      ratePerKm: booking.ratePerKm || 20,
+      description: `${booking.service} - ${booking.serviceType || ""}`.trim(),
+      workerCount: booking.workerCount || 1,
     }
 
-    // Navigate to transaction page with seller info
-    navigate("/transaction", { state: { seller: sellerInfo } })
+    // Navigate to transaction page with seller info and booking details
+    navigate("/transaction", {
+      state: {
+        seller: sellerInfo,
+        booking: {
+          id: booking.id,
+          service: booking.service,
+          serviceType: booking.serviceType,
+          date: booking.date,
+          location: booking.location,
+          distance: booking.distance,
+          baseRate: booking.baseRate || booking.price - (booking.distance || 0) * (booking.ratePerKm || 0),
+          distanceCharge: (booking.distance || 0) * (booking.ratePerKm || 0),
+          additionalFees: booking.additionalFees || 0,
+          price: booking.price,
+          workerCount: booking.workerCount,
+          estimatedTime: booking.estimatedTime,
+        },
+      },
+    })
   }
 
   const handleTrackProvider = () => {
@@ -318,6 +354,12 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 
     // Close the tracking modal if it's open
     setShowTrackingModal(false)
+  }
+
+  const handleViewDetails = () => {
+    // Store the current booking data in localStorage for the Transaction component to access
+    localStorage.setItem("currentBookingDetails", JSON.stringify(booking))
+    setShowDetailsModal(true)
   }
 
   const getStatusBadge = () => {
@@ -434,6 +476,12 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
     }
   }
 
+  const formatDate = (dateString: string) => {
+    if (!dateString) return ""
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+  }
+
   return (
     <div className="flex bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
       <div className="w-1/3 relative h-[150px]">
@@ -444,6 +492,16 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
           <div>
             <h3 className="font-semibold text-base">{booking.companyName}</h3>
             <p className="text-gray-600 text-sm mt-1">{booking.service}</p>
+
+            {/* Worker count information */}
+            {booking.workerCount && (
+              <div className="flex items-center text-gray-500 text-xs mt-1">
+                <Users className="w-3 h-3 mr-1 text-sky-500" />
+                <span>
+                  {booking.workerCount} worker{booking.workerCount > 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
           </div>
           {getStatusBadge()}
         </div>
@@ -456,8 +514,194 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
           <p className="font-medium">₱{booking.price.toLocaleString()}</p>
         </div>
 
+        {/* View Details Button */}
+        <div className="mt-2 mb-1">
+          <button
+            onClick={handleViewDetails}
+            className="w-full flex items-center justify-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs"
+          >
+            <FileText className="w-3 h-3" />
+            View Details
+          </button>
+        </div>
+
         {getActionButtons()}
       </div>
+
+      {/* Details Modal */}
+      <AnimatePresence>
+        {showDetailsModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDetailsModal(false)}
+            />
+            <motion.div
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-6 shadow-xl z-50 w-[90%] max-w-4xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-gray-700">Booking Details</h3>
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Service Provider Information */}
+              <div className="mb-6 p-5 bg-gray-200/70 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-lg">{booking.companyName}</p>
+                    <div className="flex items-center mt-1">
+                      <div className="text-yellow-500 mr-2">{"★".repeat(4)}</div>
+                      <span className="text-sm text-gray-600">24 reviews</span>
+                    </div>
+                  </div>
+                  {getStatusBadge()}
+                </div>
+              </div>
+
+              {/* Two-column layout for service info and payment summary */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column - Service Information */}
+                <div className="p-5 bg-gray-200/70 rounded-lg">
+                  <h4 className="text-lg font-semibold mb-3 text-gray-700">Service Information</h4>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                      <span className="text-gray-600">Service:</span>
+                      <span className="font-medium">{booking.service}</span>
+                    </div>
+
+                    {booking.serviceType && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                        <span className="text-gray-600">Service Type:</span>
+                        <span className="font-medium">{booking.serviceType}</span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                      <span className="text-gray-600">Date:</span>
+                      <span className="font-medium">{formatDate(booking.date)}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                      <span className="text-gray-600">Location:</span>
+                      <span className="font-medium">{booking.location || "Not specified"}</span>
+                    </div>
+
+                    {booking.workerCount && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                        <div className="flex items-center text-gray-600">
+                          <Users className="h-4 w-4 mr-1 text-sky-500" />
+                          <span>Workers:</span>
+                        </div>
+                        <span className="font-medium">
+                          {booking.workerCount} worker{booking.workerCount > 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    )}
+
+                    {booking.estimatedTime && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-300">
+                        <div className="flex items-center text-gray-600">
+                          <Clock className="h-4 w-4 mr-1 text-sky-500" />
+                          <span>Estimated Time:</span>
+                        </div>
+                        <span className="font-medium">{booking.estimatedTime}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Column - Payment Summary */}
+                <div className="p-5 bg-gray-200/70 rounded-lg">
+                  <h4 className="text-lg font-semibold mb-3 text-gray-700">Payment Summary</h4>
+
+                  {/* Base Rate */}
+                  <div className="flex justify-between items-center border-b border-gray-300 pb-2 mb-2">
+                    <p className="text-gray-600">Base Service Rate</p>
+                    <p className="text-gray-800 font-medium">₱{booking.baseRate?.toLocaleString() || "0"}</p>
+                  </div>
+
+                  {/* Distance Charge */}
+                  {booking.distance && booking.ratePerKm && (
+                    <div className="flex justify-between items-center border-b border-gray-300 pb-2 mb-2">
+                      <p className="text-gray-600">
+                        Distance Charge ({booking.distance.toFixed(1)} km × ₱{booking.ratePerKm})
+                      </p>
+                      <p className="text-gray-800 font-medium">
+                        ₱
+                        {(booking.distance * booking.ratePerKm).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Additional Fees */}
+                  {booking.additionalFees && booking.additionalFees > 0 && (
+                    <div className="flex justify-between items-center border-b border-gray-300 pb-2 mb-2">
+                      <p className="text-gray-600">Additional Fees</p>
+                      <p className="text-gray-800 font-medium">₱{booking.additionalFees.toLocaleString()}</p>
+                    </div>
+                  )}
+
+                  {/* Total */}
+                  <div className="flex justify-between items-center pt-2 mt-2">
+                    <p className="text-gray-700 font-bold">Total Amount</p>
+                    <p className="text-xl text-gray-800 font-bold">₱{booking.price.toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 mt-6">
+                {status === "pending" && (
+                  <button
+                    onClick={() => {
+                      setStatus("cancelled")
+                      setShowDetailsModal(false)
+                    }}
+                    className="px-4 py-2 bg-rose-100 text-rose-700 rounded-lg hover:bg-rose-200 transition-colors"
+                  >
+                    Cancel Booking
+                  </button>
+                )}
+
+                {status === "ongoing" && !paymentComplete && (
+                  <button
+                    onClick={() => {
+                      setShowDetailsModal(false)
+                      handleCompletePayment()
+                    }}
+                    className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+                  >
+                    Manage Payment
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Tracking Modal */}
       <AnimatePresence>
@@ -713,63 +957,105 @@ const FloatingDock: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([
     {
       id: 1,
-      companyName: "Sisyphus Ventures",
+      companyName: "PipeFix Pros",
       service: "Plumbing Services",
+      serviceType: "Leak Repairs",
       status: "pending",
       date: "2024-03-20",
-      price: 8000,
-      image:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 1500,
+      image: "https://cdn.pixabay.com/photo/2016/07/11/18/11/plumbing-1510522_1280.jpg",
+      workerCount: 1,
+      estimatedTime: "1-2 hours",
+      location: "123 Main St, Cebu City",
+      distance: 3.5,
+      baseRate: 1200,
+      ratePerKm: 25,
+      additionalFees: 100,
     },
     {
       id: 2,
-      companyName: "TechFix Solutions",
-      service: "Electronics Repair",
+      companyName: "ColorMasters",
+      service: "Handyman Services",
+      serviceType: "Painting Services",
       status: "ongoing",
       date: "2024-03-19",
-      price: 5000,
-      image:
-        "https://images.unsplash.com/photo-1588508065123-287b28e013da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 1500,
+      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/house-1835979_1280.jpg",
+      workerCount: 2,
+      estimatedTime: "4-8 hours",
+      location: "456 Oak Ave, Cebu City",
+      distance: 5.2,
+      baseRate: 1000,
+      ratePerKm: 20,
+      additionalFees: 0,
     },
     {
       id: 3,
-      companyName: "GreenThumb Gardens",
-      service: "Landscaping",
+      companyName: "DeepClean Pros",
+      service: "Home Cleaning Services",
+      serviceType: "Deep Cleaning",
       status: "cancelled",
       date: "2024-03-18",
-      price: 12000,
-      image:
-        "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 4500,
+      image: "https://cdn.pixabay.com/photo/2018/07/15/13/04/woman-3539608_1280.jpg",
+      workerCount: 3,
+      estimatedTime: "4-6 hours",
+      location: "789 Pine St, Cebu City",
+      distance: 2.8,
+      baseRate: 4000,
+      ratePerKm: 15,
+      additionalFees: 200,
     },
     {
       id: 4,
-      companyName: "ElectroFix Pro",
-      service: "Electrical Services",
+      companyName: "TermiteTerminators",
+      service: "Pest Control Services",
+      serviceType: "Termite Treatment",
       status: "pending",
       date: "2024-03-17",
-      price: 6500,
-      image:
-        "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 6000,
+      image: "https://cdn.pixabay.com/photo/2017/08/30/07/56/money-2696229_1280.jpg",
+      workerCount: 2,
+      estimatedTime: "3-5 hours",
+      location: "321 Elm St, Cebu City",
+      distance: 4.1,
+      baseRate: 5500,
+      ratePerKm: 30,
+      additionalFees: 300,
     },
     {
       id: 5,
-      companyName: "CleanPro Services",
-      service: "House Cleaning",
+      companyName: "CarpetRevive",
+      service: "Home Cleaning Services",
+      serviceType: "Carpet Cleaning",
       status: "ongoing",
       date: "2024-03-16",
-      price: 3500,
-      image:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 3000,
+      image: "https://cdn.pixabay.com/photo/2020/08/25/18/28/workplace-5517744_1280.jpg",
+      workerCount: 2,
+      estimatedTime: "2-4 hours",
+      location: "654 Maple Ave, Cebu City",
+      distance: 3.7,
+      baseRate: 2500,
+      ratePerKm: 18,
+      additionalFees: 0,
     },
     {
       id: 6,
-      companyName: "GardenMasters",
-      service: "Garden Maintenance",
-      status: "pending",
+      companyName: "PestAway",
+      service: "Pest Control Services",
+      serviceType: "General Pest Control",
+      status: "completed",
       date: "2024-03-15",
-      price: 4500,
-      image:
-        "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      price: 3500,
+      image: "https://cdn.pixabay.com/photo/2014/04/05/11/39/bug-316325_1280.jpg",
+      workerCount: 1,
+      estimatedTime: "1-2 hours",
+      location: "987 Cedar St, Cebu City",
+      distance: 2.3,
+      baseRate: 3000,
+      ratePerKm: 22,
+      additionalFees: 0,
     },
   ])
 
@@ -940,7 +1226,8 @@ const FloatingDock: React.FC = () => {
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
       booking.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.service.toLowerCase().includes(searchQuery.toLowerCase())
+      booking.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (booking.serviceType && booking.serviceType.toLowerCase().includes(searchQuery.toLowerCase()))
 
     if (activeTab === "all") return matchesSearch
     return matchesSearch && booking.status === activeTab

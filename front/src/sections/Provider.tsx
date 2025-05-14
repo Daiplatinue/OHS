@@ -1,6 +1,6 @@
 import { useState } from "react"
 import MyFloatingDockProvider from "../sections/Styles/MyFloatingDock-Provider"
-import { CircleIcon, Calendar, Clock, MapPin, AlertCircle, Check, X, CheckCircle2 } from "lucide-react"
+import { CircleIcon, Calendar, Clock, MapPin, AlertCircle, Check, X, CheckCircle2, Users } from "lucide-react"
 import { Dialog } from "@headlessui/react"
 import ProviderSimulation from "../sections/Styles/CustomerTrackingMap"
 
@@ -21,6 +21,8 @@ interface Service {
   autoCancelDate: string
   status: "pending" | "ongoing" | "completed" | "cancelled"
   completedDate?: string
+  workersRequired?: number
+  workersAssigned?: number
 }
 
 const keyframes = `
@@ -64,6 +66,7 @@ function ProviderDashboard() {
   const [showCancelReminder, setShowCancelReminder] = useState(false)
   const [showMapSimulation, setShowMapSimulation] = useState(false)
   const [serviceBeingTracked, setServiceBeingTracked] = useState<Service | null>(null)
+  const [showWorkersWaitingModal, setShowWorkersWaitingModal] = useState(false)
 
   const [pendingServices, setPendingServices] = useState<Service[]>([
     {
@@ -80,6 +83,8 @@ function ProviderDashboard() {
       createdAt: "05/15/2025",
       autoCancelDate: "05/17/2025",
       status: "pending",
+      workersRequired: 2,
+      workersAssigned: 0,
     },
     {
       id: 202,
@@ -95,6 +100,8 @@ function ProviderDashboard() {
       createdAt: "05/16/2025",
       autoCancelDate: "05/18/2025",
       status: "pending",
+      workersRequired: 1,
+      workersAssigned: 0,
     },
     {
       id: 203,
@@ -110,6 +117,8 @@ function ProviderDashboard() {
       createdAt: "05/18/2025",
       autoCancelDate: "05/20/2025",
       status: "pending",
+      workersRequired: 3,
+      workersAssigned: 0,
     },
     {
       id: 204,
@@ -125,6 +134,8 @@ function ProviderDashboard() {
       createdAt: "05/20/2025",
       autoCancelDate: "05/22/2025",
       status: "pending",
+      workersRequired: 4,
+      workersAssigned: 0,
     },
   ])
 
@@ -144,6 +155,8 @@ function ProviderDashboard() {
       createdAt: "05/05/2025",
       autoCancelDate: "05/07/2025",
       status: "ongoing",
+      workersRequired: 2,
+      workersAssigned: 2,
     },
     {
       id: 102,
@@ -159,6 +172,8 @@ function ProviderDashboard() {
       createdAt: "05/04/2025",
       autoCancelDate: "05/06/2025",
       status: "ongoing",
+      workersRequired: 3,
+      workersAssigned: 3,
     },
   ])
 
@@ -178,6 +193,8 @@ function ProviderDashboard() {
       autoCancelDate: "04/27/2025",
       status: "completed",
       completedDate: "05/01/2025",
+      workersRequired: 3,
+      workersAssigned: 3,
     },
     {
       id: 2,
@@ -194,6 +211,8 @@ function ProviderDashboard() {
       autoCancelDate: "04/28/2025",
       status: "completed",
       completedDate: "05/03/2025",
+      workersRequired: 2,
+      workersAssigned: 2,
     },
   ])
 
@@ -202,21 +221,49 @@ function ProviderDashboard() {
     setIsModalOpen(true)
   }
 
+  // Update the handleAcceptService function to ensure the modal shows the correct worker count
   const handleAcceptService = (serviceId: number) => {
     setIsLoading(true)
 
     setTimeout(() => {
-      const serviceToMove = pendingServices.find((service) => service.id === serviceId)
+      const serviceToUpdate = pendingServices.find((service) => service.id === serviceId)
 
-      if (serviceToMove) {
-        const updatedService = { ...serviceToMove, status: "ongoing" as const }
+      if (serviceToUpdate) {
+        // Increment the workers assigned count
+        const workersAssigned = (serviceToUpdate.workersAssigned || 1) + 1
+        const workersRequired = serviceToUpdate.workersRequired || 1
 
-        setPendingServices((prev) => prev.filter((service) => service.id !== serviceId))
-        setOngoingServices((prev) => [...prev, updatedService])
+        // Check if all required workers are now assigned
+        if (workersAssigned >= workersRequired) {
+          // Move to ongoing services if all workers are assigned
+          const updatedService = {
+            ...serviceToUpdate,
+            status: "ongoing" as const,
+            workersAssigned: workersRequired, // Ensure we don't exceed the required count
+          }
 
-        setSuccessMessage("Service accepted successfully!")
+          setPendingServices((prev) => prev.filter((service) => service.id !== serviceId))
+          setOngoingServices((prev) => [...prev, updatedService])
+
+          setSuccessMessage("Service accepted successfully! All required workers are now assigned.")
+        } else {
+          // Update the pending service with the new worker count
+          setPendingServices((prev) =>
+            prev.map((service) =>
+              service.id === serviceId ? { ...service, workersAssigned: workersAssigned } : service,
+            ),
+          )
+
+          // Show the waiting for more workers modal
+          setShowWorkersWaitingModal(true)
+          setSuccessMessage(
+            `Worker assigned successfully! Waiting for ${workersRequired - workersAssigned} more worker(s).`,
+          )
+        }
+
         setIsSuccessModalOpen(true)
 
+        // Don't automatically close the workers waiting modal
         setTimeout(() => {
           setIsSuccessModalOpen(false)
         }, 5000)
@@ -226,7 +273,8 @@ function ProviderDashboard() {
       setIsLoading(false)
     }, 1500)
   }
-  
+
+  // Update the handleCancelService and confirmCancelService functions to handle worker count decrements
   const handleCancelService = (serviceId: number) => {
     setShowCancelReminder(true)
     setSelectedService(ongoingServices.find((service) => service.id === serviceId) || null)
@@ -238,7 +286,48 @@ function ProviderDashboard() {
 
     setTimeout(() => {
       if (selectedService) {
-        setOngoingServices((prev) => prev.filter((service) => service.id !== selectedService.id))
+        // Get the current worker count
+        const workersAssigned = selectedService.workersAssigned || 0
+        const workersRequired = selectedService.workersRequired || 1
+
+        // Decrement the worker count by 1 (minimum 0)
+        const newWorkerCount = Math.max(0, workersAssigned - 1)
+
+        // If this was the last worker, remove from ongoing
+        if (newWorkerCount === 0) {
+          // Remove from ongoing services
+          setOngoingServices((prev) => prev.filter((service) => service.id !== selectedService.id))
+
+          // Add back to pending services with decremented worker count
+          setPendingServices((prev) => [
+            ...prev,
+            {
+              ...selectedService,
+              status: "pending" as const,
+              workersAssigned: newWorkerCount,
+            },
+          ])
+        } else if (newWorkerCount < workersRequired) {
+          // If we still have some workers but not enough, move back to pending
+          setOngoingServices((prev) => prev.filter((service) => service.id !== selectedService.id))
+
+          // Add back to pending services with decremented worker count
+          setPendingServices((prev) => [
+            ...prev,
+            {
+              ...selectedService,
+              status: "pending" as const,
+              workersAssigned: newWorkerCount,
+            },
+          ])
+        } else {
+          // Just update the worker count in ongoing services
+          setOngoingServices((prev) =>
+            prev.map((service) =>
+              service.id === selectedService.id ? { ...service, workersAssigned: newWorkerCount } : service,
+            ),
+          )
+        }
 
         // Increment cancel count
         const newCancelCount = cancelCount + 1
@@ -253,7 +342,7 @@ function ProviderDashboard() {
             window.location.href = "/login-alt"
           }, 30000)
         } else {
-          setSuccessMessage("Service has been cancelled.")
+          setSuccessMessage("Service has been cancelled. Worker count has been updated.")
           setIsModalOpen(false)
           setIsSuccessModalOpen(true)
 
@@ -336,6 +425,12 @@ function ProviderDashboard() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Workers
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Auto-Cancel
                 </th>
               </tr>
@@ -373,6 +468,22 @@ function ProviderDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                          ${(service.workersAssigned || 0) === 0
+                              ? "bg-gray-100 text-gray-800"
+                              : (service.workersAssigned || 0) < (service.workersRequired || 1)
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                        >
+                          <Users className="h-3 w-3 mr-1" />
+                          {service.workersAssigned || 0}/{service.workersRequired || 1}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
                         {getDaysRemaining(service.autoCancelDate) <= 1 ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             <AlertCircle className="h-3 w-3 mr-1" />
@@ -387,7 +498,7 @@ function ProviderDashboard() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-gray-500">
+                  <td colSpan={7} className="px-6 py-10 text-center text-sm text-gray-500">
                     No pending services found
                   </td>
                 </tr>
@@ -445,6 +556,12 @@ function ProviderDashboard() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Workers
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Status
                 </th>
                 {/* No Action column needed */}
@@ -480,6 +597,14 @@ function ProviderDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">₱{service.total.toLocaleString()}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <Users className="h-3 w-3 mr-1" />
+                          {service.workersAssigned || 0}/{service.workersRequired || 1}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-800">
@@ -549,6 +674,12 @@ function ProviderDashboard() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Workers
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Completed On
                 </th>
               </tr>
@@ -585,6 +716,14 @@ function ProviderDashboard() {
                       <div className="text-sm font-medium text-gray-900">₱{service.total.toLocaleString()}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <Users className="h-3 w-3 mr-1" />
+                          {service.workersAssigned || 0}/{service.workersRequired || 1}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         <Check className="h-3 w-3 mr-1" />
                         {service.completedDate}
@@ -594,7 +733,7 @@ function ProviderDashboard() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-gray-500">
+                  <td colSpan={7} className="px-6 py-10 text-center text-sm text-gray-500">
                     No completed services found
                   </td>
                 </tr>
@@ -793,31 +932,28 @@ function ProviderDashboard() {
           <nav className="flex -mb-px overflow-x-auto">
             <button
               onClick={() => setActiveTab("pending")}
-              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${
-                activeTab === "pending"
+              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${activeTab === "pending"
                   ? "border-sky-500 text-sky-500"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
+                }`}
             >
               Pending Services
             </button>
             <button
               onClick={() => setActiveTab("ongoing")}
-              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${
-                activeTab === "ongoing"
+              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${activeTab === "ongoing"
                   ? "border-sky-500 text-sky-500"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
+                }`}
             >
               Ongoing Services
             </button>
             <button
               onClick={() => setActiveTab("completed")}
-              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${
-                activeTab === "completed"
+              className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center gap-2 ${activeTab === "completed"
                   ? "border-sky-500 text-sky-500"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
+                }`}
             >
               Completed Services
             </button>
@@ -854,13 +990,12 @@ function ProviderDashboard() {
                     <h3 className="text-2xl font-light text-white tracking-tight">{selectedService.serviceName}</h3>
                     <div
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 
-                      ${
-                        selectedService.status === "pending"
+                      ${selectedService.status === "pending"
                           ? "bg-yellow-100 text-yellow-800"
                           : selectedService.status === "ongoing"
                             ? "bg-sky-100 text-sky-800"
                             : "bg-green-100 text-green-800"
-                      }`}
+                        }`}
                     >
                       {selectedService.status === "pending"
                         ? "Pending"
@@ -903,6 +1038,23 @@ function ProviderDashboard() {
                         <p className="mt-1 text-base font-medium text-gray-900 flex items-start">
                           <MapPin className="h-4 w-4 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
                           <span>{selectedService.location}</span>
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Workers Required</h3>
+                        <p className="mt-1 text-base font-medium text-gray-900 flex items-center">
+                          <Users className="h-4 w-4 text-gray-400 mr-2" />
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            ${(selectedService.workersAssigned || 0) === 0
+                                ? "bg-gray-100 text-gray-800"
+                                : (selectedService.workersAssigned || 0) < (selectedService.workersRequired || 1)
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-green-100 text-green-800"
+                              }`}
+                          >
+                            {selectedService.workersAssigned || 0}/{selectedService.workersRequired || 1} Workers
+                          </span>
                         </p>
                       </div>
                       {selectedService.status === "pending" && (
@@ -976,11 +1128,10 @@ function ProviderDashboard() {
                         <button
                           onClick={() => handleAcceptService(selectedService.id)}
                           disabled={isLoading}
-                          className={`flex-1 px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm ${
-                            isLoading
+                          className={`flex-1 px-6 py-3 text-white rounded-full transition-all duration-200 font-medium text-sm ${isLoading
                               ? "bg-sky-400 cursor-wait"
                               : "bg-sky-500 hover:bg-sky-600 shadow-lg shadow-sky-200"
-                          }`}
+                            }`}
                         >
                           {isLoading ? (
                             <span className="flex items-center justify-center">
@@ -1009,7 +1160,9 @@ function ProviderDashboard() {
                           ) : (
                             <span className="flex items-center justify-center">
                               <Check className="h-4 w-4 mr-2" />
-                              Accept Service
+                              {(selectedService.workersAssigned || 0) === 0
+                                ? "Accept Service"
+                                : `Assign Worker (${selectedService.workersAssigned}/${selectedService.workersRequired})`}
                             </span>
                           )}
                         </button>
@@ -1063,19 +1216,35 @@ function ProviderDashboard() {
           >
             <div className="flex flex-col items-center text-center">
               <div
-                className={`w-20 h-20 rounded-full ${successMessage.includes("cancelled") ? "bg-yellow-100" : "bg-green-100"} flex items-center justify-center mb-6 animate-[pulse_2s_ease-in-out_infinite]`}
+                className={`w-20 h-20 rounded-full ${successMessage.includes("cancelled")
+                    ? "bg-yellow-100"
+                    : successMessage.includes("Waiting")
+                      ? "bg-blue-100"
+                      : "bg-green-100"
+                  } flex items-center justify-center mb-6 animate-[pulse_2s_ease-in-out_infinite]`}
               >
                 {successMessage.includes("cancelled") ? (
                   <AlertCircle className="h-10 w-10 text-yellow-500 animate-[bounceIn_0.6s_ease-out]" />
+                ) : successMessage.includes("Waiting") ? (
+                  <Users className="h-10 w-10 text-blue-500 animate-[bounceIn_0.6s_ease-out]" />
                 ) : (
                   <CheckCircle2 className="h-10 w-10 text-green-500 animate-[bounceIn_0.6s_ease-out]" />
                 )}
               </div>
 
               <Dialog.Title
-                className={`text-xl font-medium ${successMessage.includes("cancelled") ? "text-yellow-600" : "text-gray-900"} mb-2 animate-[slideInUp_0.4s_ease-out]`}
+                className={`text-xl font-medium ${successMessage.includes("cancelled")
+                    ? "text-yellow-600"
+                    : successMessage.includes("Waiting")
+                      ? "text-blue-600"
+                      : "text-gray-900"
+                  } mb-2 animate-[slideInUp_0.4s_ease-out]`}
               >
-                {successMessage.includes("cancelled") ? "Warning" : "Success!"}
+                {successMessage.includes("cancelled")
+                  ? "Warning"
+                  : successMessage.includes("Waiting")
+                    ? "Worker Assigned"
+                    : "Success!"}
               </Dialog.Title>
               <p className="text-gray-600 mb-6 animate-[fadeIn_0.5s_ease-out_0.2s_both]">{successMessage}</p>
 
@@ -1085,6 +1254,83 @@ function ProviderDashboard() {
               >
                 Close
               </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Workers Waiting Modal */}
+      <Dialog
+        open={showWorkersWaitingModal}
+        onClose={() => setShowWorkersWaitingModal(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-md" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
+          <Dialog.Panel className="mx-auto max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl transform transition-all border border-blue-200 p-6 animate-[fadeIn_0.5s_ease-out]">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-6 animate-[pulse_2s_ease-in-out_infinite]">
+                <Users className="h-10 w-10 text-blue-500 animate-[bounceIn_0.6s_ease-out]" />
+              </div>
+
+              <Dialog.Title className="text-xl font-medium text-blue-600 mb-2 animate-[slideInUp_0.4s_ease-out]">
+                Worker Assignment Status
+              </Dialog.Title>
+
+              {selectedService && (
+                <>
+                  <p className="text-gray-600 mb-4 animate-[fadeIn_0.5s_ease-out_0.2s_both]">
+                    <span className="font-medium">
+                      {selectedService.workersAssigned} of {selectedService.workersRequired} workers assigned
+                    </span>
+                  </p>
+
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                      style={{
+                        width: `${((selectedService.workersAssigned || 0) / (selectedService.workersRequired || 1)) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+
+                  {selectedService.workersRequired &&
+                    selectedService.workersAssigned &&
+                    selectedService.workersRequired > selectedService.workersAssigned ? (
+                    <p className="text-gray-700 font-medium mb-6 animate-[fadeIn_0.5s_ease-out_0.3s_both]">
+                      {selectedService.workersRequired - selectedService.workersAssigned} more worker(s) needed
+                    </p>
+                  ) : (
+                    <p className="text-green-700 font-medium mb-6 animate-[fadeIn_0.5s_ease-out_0.3s_both]">
+                      All required workers have been assigned!
+                    </p>
+                  )}
+                </>
+              )}
+
+              <div className="flex space-x-4 w-full">
+                <button
+                  onClick={() => setShowWorkersWaitingModal(false)}
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-sm"
+                >
+                  Close
+                </button>
+                {selectedService &&
+                  selectedService.workersAssigned &&
+                  selectedService.workersRequired &&
+                  selectedService.workersAssigned < selectedService.workersRequired && (
+                    <button
+                      onClick={() => {
+                        setShowWorkersWaitingModal(false)
+                        setIsModalOpen(true)
+                      }}
+                      className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-200 font-medium text-sm"
+                    >
+                      Assign Another Worker
+                    </button>
+                  )}
+              </div>
             </div>
           </Dialog.Panel>
         </div>
@@ -1128,7 +1374,7 @@ function ProviderDashboard() {
       </Dialog>
 
       {/* Account Suspension Warning Modal */}
-      <Dialog open={showSuspensionWarning} onClose={() => {}} className="relative z-50">
+      <Dialog open={showSuspensionWarning} onClose={() => { }} className="relative z-50">
         <div className="fixed inset-0 bg-black/50 backdrop-blur-md" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">
@@ -1154,7 +1400,7 @@ function ProviderDashboard() {
 
       {/* Map Simulation Modal */}
       {showMapSimulation && serviceBeingTracked && (
-        <Dialog open={showMapSimulation} onClose={() => {}} className="relative z-50">
+        <Dialog open={showMapSimulation} onClose={() => { }} className="relative z-50">
           <div className="fixed inset-0 bg-black/30 backdrop-blur-md" aria-hidden="true" />
 
           <div className="fixed inset-0 flex items-center justify-center p-4 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif]">

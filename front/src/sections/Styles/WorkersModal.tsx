@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css"
 import { useState, useEffect, useRef } from "react"
-import { Share, Flag, Calendar, MapPin, X, Check, ArrowLeft } from "lucide-react"
+import { Share, Flag, Calendar, MapPin, X, Check, ArrowLeft, Users } from "lucide-react"
 import L from "leaflet"
 import LocationSelectionModal from "./LocationSelectionModal"
 import CompanyModal from "./CompanyModal"
@@ -16,6 +16,7 @@ interface Seller {
   ratePerKm: number
   badges: string[]
   description: string
+  workerCount?: number
 }
 
 interface WorkersModalProps {
@@ -113,7 +114,6 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
       }
     }
   }, [bookingStep])
-
 
   useEffect(() => {
     delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -247,7 +247,7 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
         <div className="p-6 flex justify-between items-center border-b border-gray-200">
           {bookingStep === 0 && !selectedSeller && !bookingSuccess && !confirmationStep && (
             <>
-              <h2 className="text-xl font-semibold text-black">Sellers for {productName}</h2>
+              <h2 className="text-xl font-semibold text-black">Providers for {productName}</h2>
               <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <X className="h-6 w-6" />
               </button>
@@ -261,7 +261,7 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                   onClick={resetBooking}
                   className="flex items-center text-sky-600 hover:text-sky-700 transition-colors"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-1" /> Back to sellers
+                  <ArrowLeft className="h-4 w-4 mr-1" /> Back to providers
                 </button>
                 <h2 className="text-xl font-semibold text-black mt-2">Select a Date</h2>
               </div>
@@ -320,7 +320,7 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
           {bookingStep === 0 && !selectedSeller && !bookingSuccess && !confirmationStep && (
             <div className="p-6">
               {sellers.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No sellers available for this product</p>
+                <p className="text-gray-400 text-center py-8">No providers available for this service</p>
               ) : (
                 <div className="space-y-6">
                   {sellers.map((seller) => (
@@ -354,6 +354,16 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                       </div>
 
                       <p className="text-gray-600 text-sm mb-3">{seller.description}</p>
+
+                      {/* Worker count information */}
+                      {seller.workerCount && (
+                        <div className="flex items-center mb-3 text-gray-600 text-sm">
+                          <Users className="h-4 w-4 mr-1 text-sky-600" />
+                          <span>
+                            {seller.workerCount} worker{seller.workerCount > 1 ? "s" : ""} will complete this service
+                          </span>
+                        </div>
+                      )}
 
                       <div className="flex justify-between items-center">
                         <div className="text-green-600 font-medium">
@@ -401,6 +411,17 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
               <div className="mb-6">
                 <h3 className="text-lg font-medium">{selectedSeller.name}</h3>
                 <p className="text-gray-600 text-sm">{selectedSeller.description}</p>
+
+                {/* Worker count information */}
+                {selectedSeller.workerCount && (
+                  <div className="flex items-center mt-2 text-gray-600 text-sm">
+                    <Users className="h-4 w-4 mr-1 text-sky-600" />
+                    <span>
+                      {selectedSeller.workerCount} worker{selectedSeller.workerCount > 1 ? "s" : ""} will complete this
+                      service
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="mb-6">
@@ -487,6 +508,15 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                   <Calendar className="h-4 w-4 mr-2 text-sky-600" />
                   <span className="font-medium">Selected date:</span> {formatDate(selectedDate)}
                 </p>
+
+                {/* Worker count information */}
+                {selectedSeller.workerCount && (
+                  <p className="text-gray-600 text-sm flex items-center mt-2">
+                    <Users className="h-4 w-4 mr-2 text-sky-600" />
+                    <span className="font-medium">Workers:</span> {selectedSeller.workerCount} worker
+                    {selectedSeller.workerCount > 1 ? "s" : ""}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -568,6 +598,15 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                     <span className="font-medium">{selectedSeller?.name}</span>
                   </div>
 
+                  {selectedSeller?.workerCount && (
+                    <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                      <span className="text-gray-600">Workers:</span>
+                      <span className="font-medium">
+                        {selectedSeller.workerCount} worker{selectedSeller.workerCount > 1 ? "s" : ""}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center pb-2 border-b border-gray-200">
                     <span className="text-gray-600">Date:</span>
                     <span className="font-medium">{formatDate(selectedDate)}</span>
@@ -630,6 +669,12 @@ function WorkersModal({ isOpen, onClose, productName, sellers }: WorkersModalPro
                 <div className="mb-2">
                   <span className="font-medium">Provider:</span> {selectedSeller?.name}
                 </div>
+                {selectedSeller?.workerCount && (
+                  <div className="mb-2">
+                    <span className="font-medium">Workers:</span> {selectedSeller.workerCount} worker
+                    {selectedSeller.workerCount > 1 ? "s" : ""}
+                  </div>
+                )}
                 <div className="mb-2">
                   <span className="font-medium">Date:</span> {formatDate(selectedDate)}
                 </div>

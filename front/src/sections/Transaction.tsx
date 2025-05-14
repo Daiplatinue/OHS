@@ -1,7 +1,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, CreditCard, Wallet, DollarSign, CheckCircle2, MapPin } from "lucide-react"
+import { ArrowLeft, CreditCard, Wallet, DollarSign, CheckCircle2, MapPin, Users, Clock } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import MyFloatingDockCustomer from "../sections/Styles/MyFloatingDock-Customer"
 import Footer from "../sections/Styles/Footer"
@@ -13,6 +13,27 @@ interface SellerInfo {
   reviews: number
   location: string
   price?: number
+  startingRate?: number
+  ratePerKm?: number
+  description?: string
+  workerCount?: number
+}
+
+interface BookingDetails {
+  id?: number
+  service?: string
+  serviceType?: string
+  date?: string
+  location?: string
+  distance?: number
+  price?: number
+  baseRate?: number
+  distanceCharge?: number
+  additionalFees?: number
+  total?: number
+  workerCount?: number
+  estimatedTime?: string
+  status?: string
 }
 
 function Transaction() {
@@ -37,7 +58,7 @@ function Transaction() {
   const [redirectUrl, setRedirectUrl] = useState<string>("/")
   const [planName, setPlanName] = useState<string>("")
   const [transactionType, setTransactionType] = useState<"subscription" | "booking">("subscription")
-  const [bookingDetails, setBookingDetails] = useState<any>(null)
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [previousPage, setPreviousPage] = useState<string>("")
@@ -73,8 +94,20 @@ function Transaction() {
     // Store the previous page URL for redirect
     setPreviousPage(document.referrer || location.state?.from || "")
 
+    // Check if we have booking data in localStorage
+    const storedBookingData = localStorage.getItem("currentBookingDetails")
+    let parsedBookingData = null
+
+    if (storedBookingData) {
+      try {
+        parsedBookingData = JSON.parse(storedBookingData)
+      } catch (e) {
+        console.error("Error parsing stored booking data", e)
+      }
+    }
+
     // Check if we have booking data in location state
-    const bookingData = location.state?.booking
+    const bookingData = location.state?.booking || parsedBookingData
     const sellerData = location.state?.seller
 
     // Get URL parameters
@@ -89,6 +122,8 @@ function Transaction() {
     // Set booking ID if provided
     if (bookingIdParam) {
       setBookingId(Number.parseInt(bookingIdParam, 10))
+    } else if (bookingData && bookingData.id) {
+      setBookingId(bookingData.id)
     } else if (sellerData && sellerData.id) {
       setBookingId(sellerData.id)
     }
@@ -96,6 +131,8 @@ function Transaction() {
     // Set booking status if provided
     if (statusParam) {
       setBookingStatus(statusParam)
+    } else if (bookingData && bookingData.status) {
+      setBookingStatus(bookingData.status)
     } else {
       // Default status for new bookings
       setBookingStatus("pending")
@@ -155,21 +192,45 @@ function Transaction() {
         setTotalAmount(Number.parseFloat(priceParam))
       }
     }
-    // Handle booking data from location state
+    // Handle booking data from location state or localStorage
     else if (bookingData || sellerData) {
       // This is a booking payment transaction
       setTransactionType("booking")
 
       if (bookingData) {
         // Set booking details
-        setBookingDetails(bookingData)
-        setPlanName(bookingData.serviceName || "Service Booking")
-        setTotalAmount(bookingData.total || 0)
+        setBookingDetails({
+          id: bookingData.id,
+          service: bookingData.service,
+          serviceType: bookingData.serviceType,
+          date: bookingData.date,
+          location: bookingData.location,
+          distance: bookingData.distance,
+          baseRate: bookingData.baseRate,
+          distanceCharge:
+            bookingData.distance && bookingData.ratePerKm
+              ? bookingData.distance * bookingData.ratePerKm
+              : bookingData.distanceCharge || 0,
+          additionalFees: bookingData.additionalFees || 0,
+          price: bookingData.price,
+          total: bookingData.price,
+          workerCount: bookingData.workerCount,
+          estimatedTime: bookingData.estimatedTime,
+          status: bookingData.status,
+        })
 
-        // Set booking ID if available
-        if (bookingData.id) {
-          setBookingId(bookingData.id)
-        }
+        setPlanName(bookingData.serviceType || bookingData.service || "Service Booking")
+
+        // Calculate total if not provided
+        const calculatedTotal =
+          (bookingData.baseRate || 0) +
+          (bookingData.distance && bookingData.ratePerKm
+            ? bookingData.distance * bookingData.ratePerKm
+            : bookingData.distanceCharge || 0) +
+          (bookingData.additionalFees || 0)
+
+        // Use the calculated total or the provided price
+        setTotalAmount(bookingData.price || calculatedTotal)
       }
 
       // Set seller information from state
@@ -181,13 +242,39 @@ function Transaction() {
           setTotalAmount(sellerData.price)
         }
 
-        // Set booking ID if available
-        if (sellerData.id && !bookingId) {
-          setBookingId(sellerData.id)
+        // Create booking details if not provided
+        if (!bookingData && sellerData) {
+          // Calculate distance charge if we have the data
+          const distanceCharge =
+            sellerData.ratePerKm && location.state?.distance ? sellerData.ratePerKm * location.state.distance : 0
+
+          // Create booking details object
+          const newBookingDetails: BookingDetails = {
+            id: sellerData.id,
+            service: location.state?.service || "Service",
+            serviceType: location.state?.serviceType || planName,
+            date: location.state?.date || new Date().toISOString().split("T")[0],
+            location: location.state?.location || sellerData.location,
+            distance: location.state?.distance || 0,
+            baseRate: sellerData.startingRate || sellerData.price,
+            distanceCharge: distanceCharge,
+            additionalFees: 0,
+            price: sellerData.price || (sellerData.startingRate ? sellerData.startingRate + distanceCharge : 0),
+            total: sellerData.price || (sellerData.startingRate ? sellerData.startingRate + distanceCharge : 0),
+            workerCount: sellerData.workerCount || 1,
+            estimatedTime: location.state?.estimatedTime || "1-2 hours",
+          }
+
+          setBookingDetails(newBookingDetails)
+
+          // Update total amount with calculated price
+          if (newBookingDetails.price) {
+            setTotalAmount(newBookingDetails.price)
+          }
         }
       }
     }
-  }, [location, totalAmount, previousPage, bookingId])
+  }, [location, totalAmount, previousPage, bookingId, planName])
 
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method)
@@ -319,6 +406,12 @@ function Transaction() {
     navigate(-1)
   }
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return ""
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+  }
+
   return (
     <div className="min-h-screen bg-white/90 text-black">
       {/* Include animation keyframes */}
@@ -342,7 +435,7 @@ function Transaction() {
 
           {seller ? (
             <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
-              <h2 className="text-xl font-semibold mb-4 text-gray-700">Seller Information</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">Service Provider Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-gray-700">Name</p>
@@ -354,17 +447,71 @@ function Transaction() {
                 </div>
                 <div>
                   <p className="text-gray-700">Rating</p>
-                  <p className="text-yellow-500">{"★".repeat(5)}</p>
+                  <p className="text-yellow-500">{"★".repeat(seller.rating)}</p>
                 </div>
                 <div>
                   <p className="text-gray-700">Reviews</p>
                   <p className="text-gray-800 font-medium">{seller.reviews}M reviews</p>
                 </div>
+                {seller.description && (
+                  <div className="col-span-2">
+                    <p className="text-gray-700">Description</p>
+                    <p className="text-gray-800">{seller.description}</p>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
             <div className="mb-8 p-6 bg-gray-300/70 rounded-lg text-center">
-              <p className="text-gray-700">No seller information available</p>
+              <p className="text-gray-700">No service provider information available</p>
+            </div>
+          )}
+
+          {/* Booking Details Section */}
+          {transactionType === "booking" && bookingDetails && (
+            <div className="mb-8 p-6 bg-gray-300/50 rounded-lg">
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">Booking Details</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p className="text-gray-700">Service</p>
+                  <p className="text-gray-800 font-medium">{bookingDetails.service}</p>
+                </div>
+                {bookingDetails.serviceType && (
+                  <div>
+                    <p className="text-gray-700">Service Type</p>
+                    <p className="text-gray-800 font-medium">{bookingDetails.serviceType}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-gray-700">Date</p>
+                  <p className="text-gray-800 font-medium">{formatDate(bookingDetails.date)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-700">Location</p>
+                  <p className="text-gray-800 font-medium">{bookingDetails.location}</p>
+                </div>
+                {bookingDetails.workerCount && (
+                  <div className="flex items-center">
+                    <Users className="h-4 w-4 mr-2 text-sky-500" />
+                    <div>
+                      <p className="text-gray-700">Workers</p>
+                      <p className="text-gray-800 font-medium">
+                        {bookingDetails.workerCount} worker{bookingDetails.workerCount > 1 ? "s" : ""}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {bookingDetails.estimatedTime && (
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2 text-sky-500" />
+                    <div>
+                      <p className="text-gray-700">Estimated Time</p>
+                      <p className="text-gray-800 font-medium">{bookingDetails.estimatedTime}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -379,29 +526,52 @@ function Transaction() {
               </div>
             ) : bookingDetails ? (
               <>
+                {/* Base Rate */}
                 <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
-                  <p className="text-gray-700">{planName}</p>
+                  <p className="text-gray-700">Base Service Rate</p>
                   <p className="text-gray-800 font-medium">
-                    ${bookingDetails.price?.toFixed(2) || totalAmount.toFixed(2)}
+                    ₱{(bookingDetails.baseRate || seller?.startingRate || 0).toLocaleString()}
                   </p>
                 </div>
-                {bookingDetails.distanceCharge && (
+
+                {/* Distance Charge */}
+                {(bookingDetails.distanceCharge ||
+                  (bookingDetails.distance && (seller?.ratePerKm || bookingDetails.distance > 0))) && (
                   <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
-                    <p className="text-gray-700">Distance Charge</p>
-                    <p className="text-gray-800 font-medium">${bookingDetails.distanceCharge.toFixed(2)}</p>
+                    <p className="text-gray-700">
+                      Distance Charge ({bookingDetails.distance?.toFixed(1) || "0"} km × ₱{seller?.ratePerKm || "20"})
+                    </p>
+                    <p className="text-gray-800 font-medium">
+                      ₱
+                      {(
+                        bookingDetails.distanceCharge ||
+                        (bookingDetails.distance && seller?.ratePerKm ? bookingDetails.distance * seller.ratePerKm : 0)
+                      ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                {/* Additional Fees */}
+                {bookingDetails.additionalFees && bookingDetails.additionalFees > 0 && (
+                  <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+                    <p className="text-gray-700">Additional Fees</p>
+                    <p className="text-gray-800 font-medium">₱{bookingDetails.additionalFees.toLocaleString()}</p>
                   </div>
                 )}
               </>
             ) : (
               <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
                 <p className="text-gray-700">Service Fee</p>
-                <p className="text-gray-800 font-medium">${totalAmount.toFixed(2)}</p>
+                <p className="text-gray-800 font-medium">₱{totalAmount.toLocaleString()}</p>
               </div>
             )}
 
             <div className="flex justify-between items-center">
               <p className="text-gray-700 font-bold">Total Amount</p>
-              <p className="text-xl text-gray-800 font-bold">${totalAmount.toFixed(2)}</p>
+              <p className="text-xl text-gray-800 font-bold">₱{totalAmount.toLocaleString()}</p>
             </div>
           </div>
 
