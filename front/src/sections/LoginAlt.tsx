@@ -1,8 +1,7 @@
-import type React from "react"
-
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Eye, EyeOff, X } from "lucide-react"
 import CustomerRequirements from "./Styles/CustomerRequirements"
+import ManagerRequirements from "./Styles/ManagerRequirements"
 
 const slideshowImages = [
   {
@@ -111,21 +110,13 @@ function App() {
   const [showPassword, setShowPassword] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
   const [showModal, setShowModal] = useState(false)
-  const [registerEmail, setRegisterEmail] = useState("")
-  const [registerPassword, setRegisterPassword] = useState("")
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false)
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [accountType, setAccountType] = useState("customer")
+  const [accountType, setAccountType] = useState<string | null>(null)
+  const [registrationStep, setRegistrationStep] = useState<"type" | "requirements">("type")
 
-  const [validId, setValidId] = useState<File | null>(null)
-  const [salaryCertificate, setSalaryCertificate] = useState<File | null>(null)
-  const [uploadedDocuments, setUploadedDocuments] = useState<{ [key: string]: File[] }>({})
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
-
-  const validIdRef = useRef<HTMLInputElement>(null)
-  const salaryCertificateRef = useRef<HTMLInputElement>(null)
-  const documentUploadRef = useRef<HTMLInputElement>(null)
+  const [, setValidId] = useState<File | null>(null)
+  const [, setSalaryCertificate] = useState<File | null>(null)
+  const [, setUploadedDocuments] = useState<{ [key: string]: File[] }>({})
+  const [, setActiveCategoryIndex] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -173,67 +164,6 @@ function App() {
       setUploadedDocuments(initialDocuments)
     }
   }, [accountType])
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<any>>,
-  ) => {
-    if (e.target.files && e.target.files.length > 0) {
-      if (e.target.multiple) {
-        const filesArray = Array.from(e.target.files)
-        setter(filesArray)
-      } else {
-        setter(e.target.files[0])
-      }
-    }
-  }
-
-  const handleCeoDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const currentCategory = documentCategories[activeCategoryIndex].id
-      const filesArray = Array.from(e.target.files)
-
-      setUploadedDocuments((prev) => ({
-        ...prev,
-        [currentCategory]: [...(prev[currentCategory] || []), ...filesArray],
-      }))
-    }
-  }
-
-  const handleRemoveCeoDocument = (categoryId: string, index: number) => {
-    setUploadedDocuments((prev) => ({
-      ...prev,
-      [categoryId]: prev[categoryId].filter((_, i) => i !== index),
-    }))
-  }
-
-  const navigateCategory = (direction: "next" | "prev") => {
-    if (direction === "next") {
-      setActiveCategoryIndex((prev) => (prev < documentCategories.length - 1 ? prev + 1 : prev))
-    } else {
-      setActiveCategoryIndex((prev) => (prev > 0 ? prev - 1 : prev))
-    }
-  }
-
-  const hasRequiredCeoDocuments = () => {
-    return Object.values(uploadedDocuments).every((docs) => docs.length > 0)
-  }
-
-  const isFormValid = () => {
-    if (!registerEmail || !registerPassword || !confirmPassword || registerPassword !== confirmPassword) {
-      return false
-    }
-
-    if (accountType === "customer") {
-      return validId && salaryCertificate
-    } else {
-      return Object.values(uploadedDocuments).some((docs) => docs.length > 0)
-    }
-  }
-
-  const getTotalDocumentCount = () => {
-    return Object.values(uploadedDocuments).reduce((total, docs) => total + docs.length, 0)
-  }
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -392,14 +322,89 @@ function App() {
             className="bg-white rounded-xl w-full max-w-4xl p-6 relative animate-fadeIn max-h-[90vh] overflow-y-auto"
           >
             <button
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false)
+                setRegistrationStep("type")
+                setAccountType(null)
+              }}
               className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 z-10"
             >
               <X size={20} />
               <span className="sr-only">Close</span>
             </button>
 
-            <CustomerRequirements onClose={() => setShowModal(false)} parentModal={true} />
+            {registrationStep === "type" ? (
+              <div className="py-8 px-4">
+                <h2 className="text-2xl font-bold text-center mb-8">Select Account Type</h2>
+                <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+                  <button
+                    onClick={() => {
+                      setAccountType("customer")
+                      setRegistrationStep("requirements")
+                    }}
+                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all"
+                  >
+                    <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-sky-500"
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-lg">Customer</h3>
+                    <p className="text-sm text-gray-500 text-center mt-2">Sign up to hire service providers</p>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAccountType("manager")
+                      setRegistrationStep("requirements")
+                    }}
+                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all"
+                  >
+                    <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-sky-500"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-lg">Manager</h3>
+                    <p className="text-sm text-gray-500 text-center mt-2">Sign up to offer services</p>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {accountType === "customer" ? (
+                  <CustomerRequirements onClose={() => setShowModal(false)} parentModal={true} />
+                ) : (
+                  <ManagerRequirements />
+                )}
+              </>
+            )}
           </div>
         </div>
       )}

@@ -18,7 +18,7 @@ interface CustomerRequirementsProps {
   parentModal?: boolean
 }
 
-export default function RegisterForm({ onClose, parentModal = false }: CustomerRequirementsProps) {
+export default function RegisterForm({ parentModal = false }: CustomerRequirementsProps) {
   // Form state
   const [currentStep, setCurrentStep] = useState(1)
   const [firstName, setFirstName] = useState("")
@@ -30,7 +30,8 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [accountType, setAccountType] = useState("customer")
+  const [gender, setGender] = useState("")
+  const [bio, setBio] = useState("")
 
   // ID document state
   const [frontId, setFrontId] = useState<File | null>(null)
@@ -87,6 +88,7 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
       lastName.trim() !== "" &&
       email.trim() !== "" &&
       mobileNumber.trim() !== "" &&
+      gender !== "" &&
       frontId !== null &&
       backId !== null
     )
@@ -106,6 +108,8 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
       setCurrentStep(2)
     } else if (currentStep === 2 && isStep2Valid()) {
       setCurrentStep(3)
+    } else if (currentStep === 3 && isStep3Valid()) {
+      setCurrentStep(4)
     }
   }
 
@@ -118,34 +122,10 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (isStep3Valid()) {
-      // Here you would typically send the data to your API
-      console.log({
-        firstName,
-        lastName,
-        middleName,
-        email,
-        mobileNumber,
-        password,
-        accountType,
-        frontId,
-        backId,
-        selectedLocation,
-        profilePicture,
-        coverPhoto,
-      })
-
-      // Reset form or redirect
-      alert("Registration successful!")
-      if (onClose) {
-        onClose()
-      }
-    }
   }
 
   return (
-    <div className="container mx-auto py-4 px-2">
+    <div className="py-4 px-2">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-center">
@@ -181,6 +161,15 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
                 3
               </div>
               <span className="text-sm mt-1">Profile Setup</span>
+            </div>
+            <div className={`flex-1 h-1 mx-2 ${currentStep >= 4 ? "bg-sky-500" : "bg-gray-200"}`}></div>
+            <div className="flex flex-col items-center">
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= 4 ? "bg-sky-500 text-white" : "bg-gray-200 text-gray-500"}`}
+              >
+                4
+              </div>
+              <span className="text-sm mt-1">Review</span>
             </div>
           </div>
         </div>
@@ -344,6 +333,25 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
                           placeholder="Enter your middle name"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
+                      </div>
+
+                      <div>
+                        <label htmlFor="gender" className="mb-1 block text-sm font-medium">
+                          Gender
+                        </label>
+                        <select
+                          id="gender"
+                          value={gender}
+                          onChange={(e) => setGender(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          required
+                        >
+                          <option value="">Select gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                          <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
                       </div>
 
                       <div>
@@ -572,35 +580,6 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
 
                     {/* Right side - Account details */}
                     <div>
-                      {/* Account Type */}
-                      <div className="mb-4">
-                        <label className="mb-2 block text-sm font-medium">Account Type</label>
-                        <div className="grid grid-cols-2 gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setAccountType("customer")}
-                            className={`flex items-center justify-center gap-2 rounded-lg border ${
-                              accountType === "customer"
-                                ? "border-sky-400 bg-sky-50 text-sky-600"
-                                : "border-gray-300 text-gray-500"
-                            } py-3 font-medium transition-colors`}
-                          >
-                            Customer
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setAccountType("ceo")}
-                            className={`flex items-center justify-center gap-2 rounded-lg border ${
-                              accountType === "ceo"
-                                ? "border-sky-400 bg-sky-50 text-sky-600"
-                                : "border-gray-300 text-gray-500"
-                            } py-3 font-medium transition-colors`}
-                          >
-                            CEO
-                          </button>
-                        </div>
-                      </div>
-
                       {/* Password */}
                       <div className="mb-4">
                         <label htmlFor="password" className="mb-1 block text-sm font-medium">
@@ -654,32 +633,222 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
                         )}
                       </div>
 
-                      {/* Summary */}
-                      <div className="mt-6 p-3 bg-gray-50 rounded-lg">
-                        <h4 className="text-sm font-medium mb-2">Account Summary</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Name:</span>
-                            <span className="font-medium">
-                              {firstName} {middleName ? middleName + " " : ""}
-                              {lastName}
-                            </span>
+                      {/* Bio */}
+                      <div className="mb-4">
+                        <label htmlFor="bio" className="mb-1 block text-sm font-medium">
+                          Bio
+                        </label>
+                        <textarea
+                          id="bio"
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          placeholder="Tell us about yourself"
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Account Review */}
+              {currentStep === 4 && (
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Review Your Profile</h3>
+
+                  {/* Profile Header - Similar to MyProfile.tsx */}
+                  <div className="bg-white rounded-xl overflow-hidden mb-6">
+                    {/* Cover Photo */}
+                    <div className="relative h-60 overflow-hidden">
+                      {coverPhotoPreview ? (
+                        <img
+                          src={coverPhotoPreview || "/placeholder.svg"}
+                          alt="Cover"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-r from-sky-400 to-blue-500"></div>
+                      )}
+                      <div className="absolute bottom-4 right-4 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full">
+                        <Camera className="h-5 w-5" />
+                      </div>
+                    </div>
+
+                    {/* Profile Info */}
+                    <div className="relative px-6 pb-6">
+                      <div className="absolute -top-16 left-6">
+                        <div className="relative">
+                          <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-white">
+                            {profilePicturePreview ? (
+                              <img
+                                src={profilePicturePreview || "/placeholder.svg"}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <Camera className="h-8 w-8 text-gray-400" />
+                              </div>
+                            )}
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Email:</span>
-                            <span className="font-medium">{email}</span>
+                          <div className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md">
+                            <Camera className="h-4 w-4 text-gray-600" />
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Account Type:</span>
-                            <span className="font-medium capitalize">{accountType}</span>
-                          </div>
-                          {selectedLocation && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Location:</span>
-                              <span className="font-medium">{selectedLocation.name.split(",")[0]}</span>
-                            </div>
-                          )}
                         </div>
+                      </div>
+
+                      <div className="pt-20">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h1 className="text-2xl font-bold text-gray-900">
+                                {firstName} {middleName ? middleName + " " : ""}
+                                {lastName}
+                              </h1>
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                                Customer
+                              </span>
+                            </div>
+                            {selectedLocation && (
+                              <div className="flex items-center gap-2 mt-1 text-gray-600">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="lucide lucide-map-pin"
+                                >
+                                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                  <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                <span>{selectedLocation.name}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {bio && <p className="text-gray-600 max-w-2xl mb-6">{bio}</p>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tabs Navigation */}
+                  <div className="border-b border-gray-200 mb-6">
+                    <nav className="flex -mb-px overflow-x-auto">
+                      <button className="py-4 px-6 font-medium text-sm border-b-2 border-sky-500 text-sky-500 flex items-center gap-2 whitespace-nowrap">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="lucide lucide-user"
+                        >
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Personal Info
+                      </button>
+                    </nav>
+                  </div>
+
+                  {/* Personal Information Section */}
+                  <div className="bg-white rounded-xl p-6 mb-6">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-xl font-semibold">Personal Information</h2>
+                    </div>
+
+                    <div className="bg-white rounded-xl p-6">
+                      <h3 className="text-lg font-semibold mb-6">Basic Information</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Full Name</h4>
+                          <p className="text-gray-900">
+                            {firstName} {middleName ? middleName + " " : ""}
+                            {lastName}
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Email</h4>
+                          <p className="text-gray-900">{email}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Phone</h4>
+                          <p className="text-gray-900">{mobileNumber}</p>
+                        </div>
+                        {selectedLocation && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-500 mb-1">Location</h4>
+                            <p className="text-gray-900 flex items-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-4 w-4 text-gray-400 mr-1"
+                              >
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                <circle cx="12" cy="10" r="3" />
+                              </svg>
+                              {selectedLocation.name}
+                            </p>
+                          </div>
+                        )}
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Gender</h4>
+                          <p className="text-gray-900 capitalize">{gender}</p>
+                        </div>
+                      </div>
+                      {bio && (
+                        <div className="mt-6">
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Bio</h4>
+                          <p className="text-gray-900">{bio}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-4 bg-sky-50 border border-sky-100 rounded-lg">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-0.5">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-sky-500"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h5 className="text-sm font-medium text-sky-800">Please review your information</h5>
+                        <p className="mt-1 text-sm text-sky-700">
+                          This is how your profile will appear to others. Make sure all the information is correct
+                          before creating your account. You can go back to previous steps to make changes.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -692,24 +861,28 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
                   type="button"
                   onClick={goToPreviousStep}
                   disabled={currentStep === 1}
-                  className={`px-4 py-2 flex items-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors ${
-                    currentStep === 1 ? "invisible" : ""
-                  }`}
+                  className={`px-4 py-2 flex items-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors ${currentStep === 1 ? "invisible" : ""
+                    }`}
                 >
                   <ChevronLeft className="mr-2 h-4 w-4" />
                   Back
                 </button>
 
-                {currentStep < 3 ? (
+                {currentStep < 4 ? (
                   <button
                     type="button"
                     onClick={goToNextStep}
-                    disabled={(currentStep === 1 && !isStep1Valid()) || (currentStep === 2 && !isStep2Valid())}
-                    className={`px-4 py-2 flex items-center bg-sky-500 text-white rounded-md hover:bg-sky-600 transition-colors ${
-                      (currentStep === 1 && !isStep1Valid()) || (currentStep === 2 && !isStep2Valid())
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
+                    disabled={
+                      (currentStep === 1 && !isStep1Valid()) ||
+                      (currentStep === 2 && !isStep2Valid()) ||
+                      (currentStep === 3 && !isStep3Valid())
+                    }
+                    className={`px-4 py-2 flex items-center bg-sky-500 text-white rounded-md hover:bg-sky-600 transition-colors ${(currentStep === 1 && !isStep1Valid()) ||
+                      (currentStep === 2 && !isStep2Valid()) ||
+                      (currentStep === 3 && !isStep3Valid())
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                      }`}
                   >
                     Next
                     <ChevronRight className="ml-2 h-4 w-4" />
@@ -717,10 +890,7 @@ export default function RegisterForm({ onClose, parentModal = false }: CustomerR
                 ) : (
                   <button
                     type="submit"
-                    disabled={!isStep3Valid()}
-                    className={`px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 transition-colors ${
-                      !isStep3Valid() ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 transition-colors"
                   >
                     Create Account
                   </button>
