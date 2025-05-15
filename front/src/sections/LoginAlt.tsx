@@ -175,9 +175,8 @@ function App() {
             {slideshowImages.map((image, index) => (
               <div
                 key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  activeSlide === index ? "opacity-100" : "opacity-0"
-                }`}
+                className={`absolute inset-0 transition-opacity duration-1000 ${activeSlide === index ? "opacity-100" : "opacity-0"
+                  }`}
               >
                 <img
                   src={image.src || "/placeholder.svg"}
@@ -193,9 +192,8 @@ function App() {
             {slideshowImages.map((_, index) => (
               <button
                 key={index}
-                className={`w-4 h-2 rounded-full transition-all ${
-                  activeSlide === index ? "bg-white w-7" : "bg-white/50"
-                }`}
+                className={`w-4 h-2 rounded-full transition-all ${activeSlide === index ? "bg-white w-7" : "bg-white/50"
+                  }`}
                 onClick={() => setActiveSlide(index)}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -336,13 +334,13 @@ function App() {
             {registrationStep === "type" ? (
               <div className="py-8 px-4">
                 <h2 className="text-2xl font-bold text-center mb-8">Select Account Type</h2>
-                <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+                <div className="flex justify-center gap-6 mx-auto">
                   <button
                     onClick={() => {
                       setAccountType("customer")
                       setRegistrationStep("requirements")
                     }}
-                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all"
+                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all w-[13rem] cursor-pointer"
                   >
                     <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
                       <svg
@@ -370,7 +368,7 @@ function App() {
                       setAccountType("manager")
                       setRegistrationStep("requirements")
                     }}
-                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all"
+                    className="flex flex-col items-center justify-center p-6 border-2 rounded-xl hover:border-sky-400 hover:bg-sky-50 transition-all w-[13rem] cursor-pointer"
                   >
                     <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
                       <svg
@@ -400,8 +398,10 @@ function App() {
               <>
                 {accountType === "customer" ? (
                   <CustomerRequirements onClose={() => setShowModal(false)} parentModal={true} />
-                ) : (
+                ) : accountType === "manager" ? (
                   <ManagerRequirements />
+                ) : (
+                  null
                 )}
               </>
             )}

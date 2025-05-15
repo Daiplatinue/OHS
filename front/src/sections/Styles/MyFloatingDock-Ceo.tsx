@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
@@ -14,6 +12,7 @@ import {
   Album,
   ChevronUp,
   Coffee,
+  UsersRound,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -141,6 +140,12 @@ const FloatingDock: React.FC = () => {
             icon={<Newspaper size={20} strokeWidth={1.5} color="gray" />}
             label="News"
             to="/ceo/news"
+            isActive={location.pathname === "/settings"}
+          />
+          <DockItem
+            icon={<UsersRound size={20} strokeWidth={1.5} color="gray" />}
+            label="Employees"
+            to="/ceo/employees"
             isActive={location.pathname === "/settings"}
           />
           <DockItem

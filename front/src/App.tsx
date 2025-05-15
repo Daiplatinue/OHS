@@ -22,6 +22,7 @@ import Bookings from './sections/Ceo_Tabs/Bookings';
 import EmailCeo from './sections/Ceo_Tabs/MyEmailsCeo';
 import NotificationCeo from './sections/Ceo_Tabs/MyNotificationsCeo';
 import NewsCeo from './sections/Ceo_Tabs/NewsCeo';
+import Employee from './sections/Ceo_Tabs/ProvidersManagement';
 
 import Provider from './sections/Provider';
 
@@ -58,6 +59,7 @@ const App: React.FC = () => {
         <Route path='/ceo/email' element={<EmailCeo />} />
         <Route path='/ceo/notificaitons' element={<NotificationCeo />} />
         <Route path='/ceo/news' element={<NewsCeo />} />
+        <Route path='/ceo/employees' element={<Employee />} />
 
         {/* Provider */}
         <Route path='/provider' element={<Provider />} />
