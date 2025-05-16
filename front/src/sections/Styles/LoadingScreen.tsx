@@ -1,142 +1,84 @@
-import { useEffect, useState } from "react"
-import { Car } from "lucide-react"
+import { useEffect, useState } from "react";
 
 function LoadingScreen() {
-  const [loading, setLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
-  const [displayedLetters, setDisplayedLetters] = useState(0)
-  const fullText = "HANDY GO"
-  const [showProgressBar, setShowProgressBar] = useState(false)
-  const [loadingTextIndex, setLoadingTextIndex] = useState(0)
-  const [titleMoveUp, setTitleMoveUp] = useState(false)
-
-  const loadingTexts = [
-    "Getting things ready...",
-    "Loading your services...",
-    "Almost there...",
-    "Preparing your experience...",
-    "Just a moment...",
-  ]
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [, setComplete] = useState(false);
+  const [firstSpread, setFirstSpread] = useState(false);
+  const [secondSpread, setSecondSpread] = useState(false);
 
   useEffect(() => {
-    const textInterval = setInterval(() => {
-      setDisplayedLetters((prev) => {
-        if (prev >= fullText.length) {
-          clearInterval(textInterval)
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          setComplete(true);
 
+          // Trigger spreads immediately after completion
+          setFirstSpread(true);
+          
+          // Second spread shortly after
           setTimeout(() => {
-            setTitleMoveUp(true)
-          }, 500)
+            setSecondSpread(true);
+          }, 500);
 
-          // Show progress bar after text animation completes and title moves up
+          // Hide loading screen
           setTimeout(() => {
-            setShowProgressBar(true)
+            setLoading(false);
+          }, 1500);
 
-            // Start progress bar animation - slower to make it last 10 seconds
-            const progressInterval = setInterval(() => {
-              setProgress((prev) => {
-                if (prev >= 100) {
-                  clearInterval(progressInterval)
-                  setTimeout(() => setLoading(false), 500) // Delay hiding the loading screen
-                  return 100
-                }
-                return prev + 0.5 // Slower increment for 10 second duration
-              })
-            }, 90) // Adjusted timing for 10 second total
-
-            // Rotate through loading texts
-            const loadingTextInterval = setInterval(() => {
-              setLoadingTextIndex((prev) => (prev + 1) % loadingTexts.length)
-            }, 3000)
-
-            return () => {
-              clearInterval(progressInterval)
-              clearInterval(loadingTextInterval)
-            }
-          }, 1000)
-          return prev
+          return 100;
         }
-        return prev + 1
-      })
-    }, 150) // Adjust timing for letter appearance
+        return prev + 0.5;
+      });
+    }, 30);
 
-    return () => clearInterval(textInterval)
-  }, [])
+    return () => clearInterval(progressInterval);
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white text-gray-800 z-50">
-        {/* Main content */}
-        <div className="relative flex flex-col items-center">
-          <div
-            className={`flex items-center justify-center transition-all duration-700 ease-out mb-[-5rem] ${
-              titleMoveUp ? "transform -translate-y-16 mb-[-6rem]" : ""
-            }`}
-          >
-            <h1 className="text-6xl font-semibold relative text-sky-300 tracking-tight">
-              {fullText.split("").map((letter, index) => (
-                <span
-                  key={index}
-                  className="transition-all duration-300 inline-block"
-                  style={{
-                    opacity: index < displayedLetters ? 1 : 0,
-                    transform: index < displayedLetters ? "translateY(0)" : "translateY(20px)",
-                  }}
-                >
-                  {letter === " " ? "\u00A0" : letter}
-                </span>
-              ))}
-            </h1>
+  if (!loading) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 flex flex-col items-center justify-center bg-white text-gray-800 z-50 overflow-hidden"
+    >
+      {/* Centered black container with progress */}
+      <div className="w-full">
+        <div className="relative w-full">
+          {/* Gray background container */}
+          <div className=" w-full h-16 flex items-center justify-between px-8">
+            <div className="text-gray-500 font-bold text-2xl">LOADING</div>
           </div>
-
-          <div
-            className={`mt-12 w-full max-w-[300px] transition-all duration-1000 ease-out ${
-              showProgressBar ? "opacity-100" : "opacity-0"
-            }`}
+          
+          {/* Black overlay that grows with progress */}
+          <div 
+            className="absolute top-0 left-0 h-16 bg-sky-500 flex items-center justify-between px-8 transition-all duration-300 ease-out overflow-hidden"
+            style={{ width: `${progress}%` }}
           >
-            {/* Car indicator */}
-            <div className="relative h-8 mb-2">
-              <div
-                className="absolute transition-all duration-300"
-                style={{
-                  left: `${Math.min(Math.max(progress, 0), 100)}%`,
-                  transform: "translateX(-50%)",
-                }}
-              >
-                <Car size={24} className="text-sky-300" />
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="h-1.5 bg-gray-100 w-full rounded-full overflow-hidden shadow-inner">
-              <div
-                className="h-full bg-gradient-to-r from-sky-300 to-sky-400 rounded-full transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            {/* Loading text */}
-            <div className="mt-4 text-center text-sm font-light text-gray-600 h-5 overflow-hidden">
-              {loadingTexts.map((text, index) => (
-                <div
-                  key={index}
-                  className="transition-opacity duration-500"
-                  style={{
-                    opacity: loadingTextIndex === index ? 1 : 0,
-                    display: loadingTextIndex === index ? "block" : "none",
-                  }}
-                >
-                  {text}
-                </div>
-              ))}
-            </div>
+            <div className="text-white font-bold text-2xl whitespace-nowrap">LOADING</div>
+            <div className="text-white font-bold text-2xl whitespace-nowrap">/{progress.toFixed(0)}</div>
           </div>
+       
         </div>
       </div>
-    )
-  }
 
-  return null
+      {/* First spread (black) */}
+      <div
+        className={`fixed inset-0 bg-sky-500 transition-all duration-1000 ease-in-out ${
+          firstSpread ? 'scale-y-100' : 'scale-y-0'
+        }`}
+        style={{ transformOrigin: 'center' }}
+      />
+
+      {/* Second spread (white) */}
+      <div
+        className={`fixed inset-0 bg-white transition-all duration-1000 ease-in-out ${
+          secondSpread ? 'scale-y-100' : 'scale-y-0'
+        }`}
+        style={{ transformOrigin: 'center' }}
+      />
+    </div>
+  );
 }
 
-export default LoadingScreen
+export default LoadingScreen;
