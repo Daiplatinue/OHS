@@ -876,7 +876,7 @@ function App() {
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<string>("")
   const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("")
+  const [, setSelectedSubcategory] = useState<string>("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
   useScrollReveal()

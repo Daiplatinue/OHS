@@ -90,7 +90,7 @@ export default function SponsorMarquee() {
           className="flex items-center gap-12 py-6 absolute top-0"
           style={{ whiteSpace: "nowrap" }}
         >
-          {sponsors.map((sponsor, index) => (
+          {sponsors.map((_sponsor, index) => (
             <div key={`sponsor2-${index}`} className="flex-shrink-0">
             </div>
           ))}

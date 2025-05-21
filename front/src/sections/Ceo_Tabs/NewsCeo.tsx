@@ -836,7 +836,7 @@ function NotificationItem({
 }
 
 function NewsCeo() {
-  const [activeTab, setActiveTab] = useState("posts")
+  const [, setActiveTab] = useState("posts")
   const [currentTime, setCurrentTime] = useState(new Date())
   const [posts, setPosts] = useState<Post[]>(samplePosts)
   const [notifications, setNotifications] = useState<Notification[]>(sampleNotifications)

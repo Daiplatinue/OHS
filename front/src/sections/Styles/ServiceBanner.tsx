@@ -1,5 +1,3 @@
-import image1 from "../../assets/Staircase Silhouettes.jpeg"
-import image2 from "../../assets/Monochromatic Woman in Geometric Patterns.jpeg"
 import image3 from "../../assets/Converging Giants_ A Symmetrical Skyscraper Ascent.jpeg"
 
 export default function ProductShowcase() {

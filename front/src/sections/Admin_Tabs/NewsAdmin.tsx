@@ -698,7 +698,7 @@ function CreatePostDialog({ onCreatePost }: CreatePostDialogProps) {
 }
 
 function NewsAdmin() {
-  const [activeTab, setActiveTab] = useState("pending")
+  const [, setActiveTab] = useState("pending")
   const [currentTime, setCurrentTime] = useState(new Date())
   const [posts, setPosts] = useState<Post[]>(samplePosts)
   const [pendingPosts, setPendingPosts] = useState([
